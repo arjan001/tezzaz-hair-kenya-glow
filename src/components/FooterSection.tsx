@@ -32,7 +32,8 @@ const FooterSection = () => {
             </div>
             <div className="flex items-center gap-3">
               <Phone className="w-4 h-4 text-gold flex-shrink-0" />
-              <p className="font-body text-cream/50 text-xs">+254 700 123 456</p>
+              <p className="font-body text-cream/50 text-xs">+254 711 135090
+              </p>
             </div>
             <div className="flex items-center gap-3">
               <Mail className="w-4 h-4 text-gold flex-shrink-0" />
@@ -45,8 +46,7 @@ const FooterSection = () => {
           </div>
 
           <div className="flex gap-2">
-            {[Facebook, Instagram, Twitter, Youtube].map((Icon, i) =>
-            <a key={i} href="#" className="border border-gold/30 p-2 hover:bg-gold hover:border-gold transition-all duration-200 group">
+            {[Facebook, Instagram, Twitter, Youtube].map((Icon, i) => <a key={i} href="#" className="border border-gold/30 p-2 hover:bg-gold hover:border-gold transition-all duration-200 group">
                 <Icon className="w-3.5 h-3.5 text-gold group-hover:text-cream transition-colors" />
               </a>
             )}
