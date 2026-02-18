@@ -1,89 +1,149 @@
+import heroSalon from "@/assets/hero-salon.jpg";
 import serviceNatural from "@/assets/service-natural.jpg";
 import serviceBraids from "@/assets/service-braids.jpg";
 import serviceTreatment from "@/assets/service-treatment.jpg";
+import serviceMakeup from "@/assets/service-makeup.jpg";
+import servicePedicure from "@/assets/service-pedicure.jpg";
+import serviceNails from "@/assets/service-nails.jpg";
+
+// SVG Icons for services
+const icons = {
+  hair: (
+    <svg viewBox="0 0 48 48" className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M24 4C14 4 8 12 8 20c0 8 4 14 16 18M24 4c10 0 16 8 16 16 0 8-4 14-16 18"/>
+      <path d="M20 22c0-4 4-6 4-6s4 2 4 6M18 32c2 4 6 6 6 6s4-2 6-6"/>
+    </svg>
+  ),
+  braids: (
+    <svg viewBox="0 0 48 48" className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M16 8c0 0 2 8-2 16s-2 16-2 16M24 6c0 0 2 8 0 18s0 18 0 18M32 8c0 0-2 8 2 16s2 16 2 16"/>
+      <path d="M14 16c5 2 15 2 20 0M12 28c6 2 18 2 24 0"/>
+    </svg>
+  ),
+  nails: (
+    <svg viewBox="0 0 48 48" className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth="2">
+      <rect x="10" y="6" width="8" height="14" rx="4"/>
+      <rect x="20" y="4" width="8" height="16" rx="4"/>
+      <rect x="30" y="6" width="8" height="14" rx="4"/>
+      <path d="M8 24h32l-4 18H12L8 24z"/>
+    </svg>
+  ),
+  pedicure: (
+    <svg viewBox="0 0 48 48" className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth="2">
+      <ellipse cx="24" cy="32" rx="16" ry="8"/>
+      <path d="M12 16c0-6 6-10 12-10s12 4 12 10"/>
+      <circle cx="18" cy="14" r="3"/><circle cx="30" cy="14" r="3"/>
+    </svg>
+  ),
+  makeup: (
+    <svg viewBox="0 0 48 48" className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M10 38L32 10l6 6-22 28-6-6z"/>
+      <path d="M28 14l6 6M10 38c-2 2-4 2-4 0 0-2 2-4 4-4l6 6c0 2-2 4-4 2z"/>
+    </svg>
+  ),
+  skincare: (
+    <svg viewBox="0 0 48 48" className="w-10 h-10" fill="none" stroke="currentColor" strokeWidth="2">
+      <circle cx="24" cy="22" r="14"/>
+      <path d="M24 8C16 8 10 14 10 22c0 3 1 6 3 8"/>
+      <path d="M24 36c4 0 8-2 10-6"/>
+      <circle cx="24" cy="22" r="6"/>
+    </svg>
+  ),
+};
 
 const services = [
   {
-    image: serviceNatural,
-    title: "Natural Hair Styling",
-    description: "Expert styling for afros, coils, and natural textures. We celebrate your crown in all its glory.",
-    price: "From KSh 1,500",
-    alt: "Natural hair styling Nairobi",
+    icon: icons.hair,
+    title: "Hair Styling",
+    desc: "From blowouts and silk presses to creative cuts — our expert stylists craft stunning looks for every texture and occasion.",
+    img: heroSalon,
   },
   {
-    image: serviceBraids,
-    title: "Braids & Cornrows",
-    description: "Intricate braiding styles from box braids to knotless braids, done with precision and care.",
-    price: "From KSh 2,500",
-    alt: "Braids and protective styles Nairobi",
+    icon: icons.braids,
+    title: "Braids & Locs",
+    desc: "Box braids, knotless braids, cornrows, twists and dreadlock grooming. Protective styling done with precision and love.",
+    img: serviceBraids,
   },
   {
-    image: serviceTreatment,
-    title: "Hair Treatments",
-    description: "Deep conditioning, protein treatments, and scalp care for healthy, thriving hair.",
-    price: "From KSh 1,200",
-    alt: "Hair treatment salon Nairobi",
+    icon: icons.nails,
+    title: "Manicure & Nail Art",
+    desc: "Classic manicures, gel nails, nail art designs and extensions. Your nails, perfectly polished.",
+    img: serviceNails,
+  },
+  {
+    icon: icons.pedicure,
+    title: "Pedicure",
+    desc: "Relaxing foot soaks, exfoliation, nail shaping and polish — leave with soft, beautiful feet.",
+    img: servicePedicure,
+  },
+  {
+    icon: icons.makeup,
+    title: "Makeup",
+    desc: "Glam, natural and bridal makeup artistry that celebrates and enhances your natural beauty.",
+    img: serviceMakeup,
+  },
+  {
+    icon: icons.skincare,
+    title: "Skin Care",
+    desc: "Facial treatments, deep cleansing and rejuvenating skin therapies tailored for melanin-rich skin.",
+    img: serviceTreatment,
   },
 ];
 
 const ServicesSection = () => {
+  const handleNav = (href: string) => {
+    const el = document.querySelector(href);
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <section id="services" className="bg-cream section-padding">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-16">
-          <p className="font-display italic text-gold text-xl mb-3">What We Offer</p>
-          <h2 className="font-display text-4xl md:text-5xl text-charcoal font-bold mb-4">
-            Our <span className="text-gold">Signature Services</span>
+        <div className="text-center mb-14">
+          <p className="font-display italic text-gold text-xl mb-2">Our Services</p>
+          <h2 className="font-display text-4xl md:text-5xl text-charcoal font-bold mb-3">
+            Explore Our <span className="text-gold">Services</span>
           </h2>
-          <div className="w-20 h-0.5 bg-gold mx-auto" />
+          <div className="w-16 h-[2px] bg-gold mx-auto" />
         </div>
 
-        {/* Service Cards */}
+        {/* Services Grid */}
         <div className="grid md:grid-cols-3 gap-8">
           {services.map((service) => (
             <div
               key={service.title}
-              className="bg-card group overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300"
+              className="group bg-card border border-transparent hover:border-gold/30 transition-all duration-300 shadow-sm hover:shadow-lg"
             >
-              <div className="overflow-hidden h-64">
+              {/* Image */}
+              <div className="overflow-hidden h-52 relative">
                 <img
-                  src={service.image}
-                  alt={service.alt}
-                  className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                  src={service.img}
+                  alt={service.title}
+                  className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
                 />
+                <div className="absolute inset-0 bg-charcoal/20 group-hover:bg-charcoal/40 transition-colors duration-300" />
               </div>
-              <div className="p-6">
-                <h3 className="font-display text-xl text-charcoal font-bold mb-3">{service.title}</h3>
-                <p className="font-body text-muted-foreground text-sm leading-relaxed mb-4">{service.description}</p>
-                <div className="flex items-center justify-between">
-                  <span className="font-body text-gold font-bold">{service.price}</span>
-                  <button className="font-body text-xs tracking-widest uppercase text-charcoal border-b-2 border-gold hover:text-gold transition-colors duration-200 pb-0.5">
-                    Book Now
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
 
-        {/* Additional Services Strip */}
-        <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-0 border border-gold/30">
-          {[
-            { icon: "💆‍♀️", title: "Scalp Massage", price: "KSh 800" },
-            { icon: "✂️", title: "Hair Trimming", price: "KSh 500" },
-            { icon: "💈", title: "Locs Styling", price: "KSh 3,000" },
-            { icon: "🌿", title: "Colour & Highlights", price: "KSh 4,000" },
-          ].map((item, i) => (
-            <div
-              key={item.title}
-              className={`p-6 text-center border-gold/20 hover:bg-gold/5 transition-colors ${
-                i < 3 ? "border-r border-gold/30" : ""
-              } ${i >= 2 ? "" : "border-b border-gold/30 md:border-b-0"}`}
-            >
-              <div className="text-3xl mb-3">{item.icon}</div>
-              <h4 className="font-display text-charcoal font-semibold mb-1">{item.title}</h4>
-              <p className="font-body text-gold text-sm font-bold">{item.price}</p>
+              {/* Content */}
+              <div className="p-6 pt-5">
+                {/* Icon + Title */}
+                <div className="flex items-center gap-4 mb-3">
+                  <div className="text-gold flex-shrink-0">{service.icon}</div>
+                  <h3 className="font-display text-xl text-charcoal font-bold group-hover:text-gold transition-colors">
+                    {service.title}
+                  </h3>
+                </div>
+                <p className="font-body text-muted-foreground text-sm leading-relaxed mb-5">
+                  {service.desc}
+                </p>
+                <button
+                  onClick={() => handleNav("#booking")}
+                  className="font-body text-xs tracking-[0.2em] uppercase text-gold border-b-2 border-gold hover:text-charcoal hover:border-charcoal transition-colors duration-200 pb-0.5"
+                >
+                  Book Now →
+                </button>
+              </div>
             </div>
           ))}
         </div>
