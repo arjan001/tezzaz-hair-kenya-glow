@@ -45,11 +45,11 @@ const FooterSection = () => {
           </div>
 
           <div className="flex gap-2">
-            {[Facebook, Instagram, Twitter, Youtube].map((Icon, i) => (
-              <a key={i} href="#" className="border border-gold/30 p-2 hover:bg-gold hover:border-gold transition-all duration-200 group">
+            {[Facebook, Instagram, Twitter, Youtube].map((Icon, i) =>
+            <a key={i} href="#" className="border border-gold/30 p-2 hover:bg-gold hover:border-gold transition-all duration-200 group">
                 <Icon className="w-3.5 h-3.5 text-gold group-hover:text-cream transition-colors" />
               </a>
-            ))}
+            )}
           </div>
         </div>
 
@@ -60,23 +60,23 @@ const FooterSection = () => {
           </h4>
           <ul className="space-y-3 mt-4">
             {[
-              { label: "Home", href: "#home" },
-              { label: "About Us", href: "#about" },
-              { label: "Our Services", href: "#services" },
-              { label: "Gallery", href: "#gallery" },
-              { label: "Team", href: "#team" },
-              { label: "Contact", href: "#contact" },
-            ].map((link) => (
-              <li key={link.label}>
+            { label: "Home", href: "#home" },
+            { label: "About Us", href: "#about" },
+            { label: "Our Services", href: "#services" },
+            { label: "Gallery", href: "#gallery" },
+            { label: "Team", href: "#team" },
+            { label: "Contact", href: "#contact" }].
+            map((link) =>
+            <li key={link.label}>
                 <button
-                  onClick={() => handleNav(link.href)}
-                  className="font-body text-cream/50 text-sm hover:text-gold transition-colors flex items-center gap-2 group"
-                >
+                onClick={() => handleNav(link.href)}
+                className="font-body text-cream/50 text-sm hover:text-gold transition-colors flex items-center gap-2 group">
+
                   <span className="w-1.5 h-1.5 bg-gold/50 group-hover:bg-gold transition-colors" />
                   {link.label}
                 </button>
               </li>
-            ))}
+            )}
           </ul>
         </div>
 
@@ -87,23 +87,23 @@ const FooterSection = () => {
           </h4>
           <ul className="space-y-3 mt-4">
             {[
-              "Hair Styling",
-              "Braids & Locs",
-              "Manicure & Nail Art",
-              "Pedicure",
-              "Makeup",
-              "Skin Care",
-            ].map((s) => (
-              <li key={s}>
+            "Hair Styling",
+            "Braids & Locs",
+            "Manicure & Nail Art",
+            "Pedicure",
+            "Makeup",
+            "Skin Care"].
+            map((s) =>
+            <li key={s}>
                 <button
-                  onClick={() => handleNav("#services")}
-                  className="font-body text-cream/50 text-sm hover:text-gold transition-colors flex items-center gap-2 group"
-                >
+                onClick={() => handleNav("#services")}
+                className="font-body text-cream/50 text-sm hover:text-gold transition-colors flex items-center gap-2 group">
+
                   <span className="w-1.5 h-1.5 bg-gold/50 group-hover:bg-gold transition-colors" />
                   {s}
                 </button>
               </li>
-            ))}
+            )}
           </ul>
         </div>
 
@@ -119,8 +119,8 @@ const FooterSection = () => {
             <input
               type="email"
               placeholder="Your email address..."
-              className="flex-1 bg-transparent border border-gold/30 text-cream placeholder-cream/30 font-body text-xs px-4 py-3 focus:outline-none focus:border-gold"
-            />
+              className="flex-1 bg-transparent border border-gold/30 text-cream placeholder-cream/30 font-body text-xs px-4 py-3 focus:outline-none focus:border-gold" />
+
             <button className="bg-gold px-5 py-3 hover:bg-gold-dark transition-colors">
               <span className="text-cream text-xs font-body uppercase tracking-wide">Go</span>
             </button>
@@ -130,12 +130,12 @@ const FooterSection = () => {
             href="https://wa.me/254700123456"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-3 bg-[#25D366]/10 border border-[#25D366]/30 px-4 py-3 hover:bg-[#25D366]/20 transition-colors group"
-          >
+            className="flex items-center gap-3 bg-[#25D366]/10 border border-[#25D366]/30 px-4 py-3 hover:bg-[#25D366]/20 transition-colors group">
+
             <div className="w-8 h-8 bg-[#25D366] rounded-full flex items-center justify-center text-white text-sm font-bold">W</div>
             <div>
               <p className="font-body text-cream text-xs font-bold">Book via WhatsApp</p>
-              <p className="font-body text-cream/50 text-xs">+254 700 123 456</p>
+              <p className="font-body text-cream/50 text-xs">​+254 711 135090</p>
             </div>
           </a>
         </div>
@@ -152,8 +152,8 @@ const FooterSection = () => {
           </p>
         </div>
       </div>
-    </footer>
-  );
+    </footer>);
+
 };
 
 export default FooterSection;
