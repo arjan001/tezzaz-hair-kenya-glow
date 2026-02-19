@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/hero-salon.jpg";
 import aboutSalon from "@/assets/about-salon.jpg";
 import galleryImg from "@/assets/gallery-1.jpg";
@@ -30,12 +31,13 @@ const slides = [
     desc: "Premium hair, nail & skin products now available in-store and online. Shop the Kenyan beauty edit.",
     img: galleryImg,
     cta: "Shop Now",
-    href: "#shop",
+    href: "/shop",
   },
 ];
 
 const HeroSection = () => {
   const [slide, setSlide] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -45,8 +47,12 @@ const HeroSection = () => {
   }, []);
 
   const handleNav = (href: string) => {
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
+    if (href.startsWith("/")) {
+      navigate(href);
+    } else {
+      const el = document.querySelector(href);
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   const current = slides[slide];
@@ -101,22 +107,22 @@ const HeroSection = () => {
             </button>
           </div>
         </div>
+      </div>
 
-        {/* Stats bar */}
-        <div className="absolute bottom-0 left-0 right-0 bg-black/80 backdrop-blur-sm border-t border-white/10">
-          <div className="max-w-7xl mx-auto px-6 lg:px-10 flex">
-            {[
-              { num: "500+", label: "Happy Clients" },
-              { num: "8+", label: "Years Experience" },
-              { num: "30+", label: "Hair Styles" },
-              { num: "6+", label: "Services" },
-            ].map((s, i) => (
-              <div key={s.label} className={`flex-1 py-5 text-center ${i !== 3 ? "border-r border-white/10" : ""}`}>
-                <p className="font-display text-[hsl(var(--gold))] text-2xl font-bold">{s.num}</p>
-                <p className="font-body text-white/60 text-xs uppercase tracking-wide">{s.label}</p>
-              </div>
-            ))}
-          </div>
+      {/* Stats bar */}
+      <div className="absolute bottom-0 left-0 right-0 bg-black/80 backdrop-blur-sm border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-6 lg:px-10 flex">
+          {[
+            { num: "500+", label: "Happy Clients" },
+            { num: "8+", label: "Years Experience" },
+            { num: "30+", label: "Hair Styles" },
+            { num: "6+", label: "Services" },
+          ].map((s, i) => (
+            <div key={s.label} className={`flex-1 py-5 text-center ${i !== 3 ? "border-r border-white/10" : ""}`}>
+              <p className="font-display text-[hsl(var(--gold))] text-2xl font-bold">{s.num}</p>
+              <p className="font-body text-white/60 text-xs uppercase tracking-wide">{s.label}</p>
+            </div>
+          ))}
         </div>
       </div>
 
