@@ -43,21 +43,21 @@ const BookingSection = () => {
     <section id="booking" className="relative overflow-hidden">
       {/* Split background */}
       <div className="absolute inset-0 grid grid-cols-1 md:grid-cols-2">
-        <div className="bg-gold" />
-        <div className="bg-charcoal" />
+        <div className="bg-black" />
+        <div className="bg-gray-50" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto grid md:grid-cols-2 min-h-[560px]">
         {/* Left — CTA */}
         <div className="flex flex-col justify-center px-10 md:px-16 lg:px-20 py-20">
-          <p className="font-display italic text-cream/80 text-xl mb-4">Reserve Your Spot</p>
-          <h2 className="font-display text-5xl md:text-6xl font-bold text-cream leading-tight mb-4">
+          <p className="font-body text-xs uppercase tracking-[0.2em] text-[hsl(var(--gold))] mb-4">Reserve Your Spot</p>
+          <h2 className="font-display text-5xl md:text-6xl font-bold text-white leading-tight mb-4">
             Book Your<br />
             Appointment
           </h2>
-          <div className="w-16 h-[2px] bg-cream/50 mb-8" />
-          <p className="font-body text-cream/80 text-base leading-relaxed mb-10 max-w-sm">
-            Visit us at <strong>The Bazaar, 10th Floor, Wing B — Suite 1025</strong>, Nairobi.<br /><br />
+          <div className="w-12 h-[3px] bg-white mb-8" />
+          <p className="font-body text-white/70 text-base leading-relaxed mb-10 max-w-sm">
+            Visit us at <strong className="text-white">The Bazaar, 10th Floor, Wing B — Suite 1025</strong>, Nairobi.<br /><br />
             Our team of specialists are ready to give you a luxury experience you won't forget.
           </p>
 
@@ -69,7 +69,7 @@ const BookingSection = () => {
               "✓ Premium organic products",
               "✓ Mon–Sat 8am–8pm | Sun 9am–5pm",
             ].map((item) => (
-              <p key={item} className="font-body text-cream/90 text-sm">{item}</p>
+              <p key={item} className="font-body text-white/80 text-sm">{item}</p>
             ))}
           </div>
 
@@ -88,21 +88,21 @@ const BookingSection = () => {
 
         {/* Right — Form */}
         <div className="flex flex-col justify-center px-10 md:px-16 lg:px-20 py-20">
-          <h3 className="font-display text-2xl text-cream mb-2">Fill in Your Details</h3>
-          <p className="font-body text-cream/60 text-xs mb-8 uppercase tracking-widest">
+          <h3 className="font-display text-2xl text-black mb-2">Fill in Your Details</h3>
+          <p className="font-body text-gray-500 text-xs mb-8 uppercase tracking-widest">
             We'll confirm via email & phone
           </p>
 
           {submitted && (
-            <div className="bg-gold/20 border border-gold/40 text-cream font-body text-sm px-4 py-3 mb-6">
-              ✅ Booking email sent! We'll confirm your appointment shortly.
+            <div className="bg-black text-white font-body text-sm px-4 py-3 mb-6">
+              ✅ Booking sent! We'll confirm your appointment shortly.
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-cream/40" />
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
                 <input
                   type="text"
                   name="name"
@@ -110,11 +110,11 @@ const BookingSection = () => {
                   onChange={handleChange}
                   placeholder="Full Name"
                   required
-                  className="w-full bg-transparent border border-cream/30 text-cream placeholder-cream/40 font-body text-sm pl-9 pr-4 py-3 focus:outline-none focus:border-gold transition-colors"
+                  className="w-full bg-white border-2 border-gray-200 text-black placeholder-gray-400 font-body text-sm pl-9 pr-4 py-3 focus:outline-none focus:border-black transition-colors"
                 />
               </div>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-cream/40" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
                 <input
                   type="email"
                   name="email"
@@ -122,20 +122,20 @@ const BookingSection = () => {
                   onChange={handleChange}
                   placeholder="Email Address"
                   required
-                  className="w-full bg-transparent border border-cream/30 text-cream placeholder-cream/40 font-body text-sm pl-9 pr-4 py-3 focus:outline-none focus:border-gold transition-colors"
+                  className="w-full bg-white border-2 border-gray-200 text-black placeholder-gray-400 font-body text-sm pl-9 pr-4 py-3 focus:outline-none focus:border-black transition-colors"
                 />
               </div>
             </div>
 
             <div className="relative">
-              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-cream/40" />
+              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
               <input
                 type="tel"
                 name="phone"
                 value={form.phone}
                 onChange={handleChange}
                 placeholder="Phone (+254...)"
-                className="w-full bg-transparent border border-cream/30 text-cream placeholder-cream/40 font-body text-sm pl-9 pr-4 py-3 focus:outline-none focus:border-gold transition-colors"
+                className="w-full bg-white border-2 border-gray-200 text-black placeholder-gray-400 font-body text-sm pl-9 pr-4 py-3 focus:outline-none focus:border-black transition-colors"
               />
             </div>
 
@@ -144,7 +144,7 @@ const BookingSection = () => {
               value={form.service}
               onChange={handleChange}
               required
-              className="w-full bg-charcoal border border-cream/30 text-cream font-body text-sm px-4 py-3 focus:outline-none focus:border-gold transition-colors"
+              className="w-full bg-white border-2 border-gray-200 text-black font-body text-sm px-4 py-3 focus:outline-none focus:border-black transition-colors"
             >
               <option value="" disabled>Select a Service</option>
               <option value="Hair Styling">Hair Styling</option>
@@ -159,7 +159,7 @@ const BookingSection = () => {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="relative">
-                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-cream/40" />
+                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
                 <input
                   type="date"
                   name="date"
@@ -167,17 +167,17 @@ const BookingSection = () => {
                   onChange={handleChange}
                   required
                   min={new Date().toISOString().split("T")[0]}
-                  className="w-full bg-transparent border border-cream/30 text-cream/80 font-body text-sm pl-9 pr-4 py-3 focus:outline-none focus:border-gold transition-colors"
+                  className="w-full bg-white border-2 border-gray-200 text-black font-body text-sm pl-9 pr-4 py-3 focus:outline-none focus:border-black transition-colors"
                 />
               </div>
               <div className="relative">
-                <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-cream/40" />
+                <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
                 <select
                   name="time"
                   value={form.time}
                   onChange={handleChange}
                   required
-                  className="w-full bg-charcoal border border-cream/30 text-cream font-body text-sm pl-9 pr-4 py-3 focus:outline-none focus:border-gold transition-colors"
+                  className="w-full bg-white border-2 border-gray-200 text-black font-body text-sm pl-9 pr-4 py-3 focus:outline-none focus:border-black transition-colors"
                 >
                   <option value="" disabled>Preferred Time</option>
                   {["8:00 AM","9:00 AM","10:00 AM","11:00 AM","12:00 PM","1:00 PM","2:00 PM","3:00 PM","4:00 PM","5:00 PM","6:00 PM","7:00 PM"].map(t => (
@@ -188,21 +188,21 @@ const BookingSection = () => {
             </div>
 
             <div className="relative">
-              <FileText className="absolute left-3 top-3.5 w-3.5 h-3.5 text-cream/40" />
+              <FileText className="absolute left-3 top-3.5 w-3.5 h-3.5 text-gray-400" />
               <textarea
                 name="message"
                 value={form.message}
                 onChange={handleChange}
                 placeholder="Any special requests or notes..."
                 rows={3}
-                className="w-full bg-transparent border border-cream/30 text-cream placeholder-cream/40 font-body text-sm pl-9 pr-4 py-3 focus:outline-none focus:border-gold transition-colors resize-none"
+                className="w-full bg-white border-2 border-gray-200 text-black placeholder-gray-400 font-body text-sm pl-9 pr-4 py-3 focus:outline-none focus:border-black transition-colors resize-none"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3 mt-2">
               <button
                 type="submit"
-                className="bg-gold text-cream font-body text-xs tracking-[0.2em] uppercase py-4 hover:bg-gold-dark transition-colors duration-300"
+                className="bg-black text-white font-body text-xs tracking-[0.2em] uppercase py-4 hover:bg-gray-800 transition-colors duration-300"
               >
                 Confirm Booking
               </button>
@@ -223,3 +223,4 @@ const BookingSection = () => {
 };
 
 export default BookingSection;
+

@@ -20,19 +20,20 @@ const galleryItems = [
 
 const GallerySection = () => {
   return (
-    <section id="gallery" className="bg-cream section-padding">
+    <section id="gallery" className="bg-black section-padding">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-14">
-          <p className="font-display italic text-gold text-xl mb-2">Gallery</p>
-          <h2 className="font-display text-4xl md:text-5xl text-charcoal font-bold mb-3">
-            Explore Our <span className="text-gold">Gallery</span>
-          </h2>
-          <div className="w-16 h-[2px] bg-gold mx-auto" />
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+          <div>
+            <p className="font-body text-xs uppercase tracking-[0.2em] text-[hsl(var(--gold))] mb-2">Our Work</p>
+            <h2 className="font-display text-4xl md:text-5xl text-white font-bold">
+              Gallery
+            </h2>
+          </div>
         </div>
 
         {/* Mosaic Grid */}
-        <div className="grid grid-cols-4 grid-rows-3 gap-3 h-[600px]">
+        <div className="grid grid-cols-4 grid-rows-3 gap-2 h-[600px]">
           {galleryItems.map((item, i) => (
             <div
               key={i}
@@ -43,8 +44,8 @@ const GallerySection = () => {
                 alt={item.alt}
                 className="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-700"
               />
-              <div className="absolute inset-0 bg-charcoal/0 group-hover:bg-charcoal/30 transition-colors duration-300 flex items-center justify-center">
-                <span className="text-cream text-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">✦</span>
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300 flex items-center justify-center">
+                <span className="text-white text-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-display">✦</span>
               </div>
             </div>
           ))}
@@ -55,3 +56,4 @@ const GallerySection = () => {
 };
 
 export default GallerySection;
+

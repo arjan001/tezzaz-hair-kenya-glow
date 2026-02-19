@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Scissors, ChevronDown } from "lucide-react";
+import { Menu, X, Scissors, ChevronDown, Search, Heart, ShoppingBag, Sparkles } from "lucide-react";
 
 // TikTok SVG icon
 const TikTokIcon = () => (
@@ -22,14 +22,26 @@ const navLinks = [
     href: "#services",
     sub: ["Hair Styling", "Braids & Locs", "Nail Art", "Pedicure", "Makeup", "Skin Care"],
   },
-  { label: "Gallery", href: "#gallery" },
-  { label: "Blog", href: "#blog" },
+  { label: "Shop", href: "#shop", isShop: true },
   { label: "Contact", href: "#contact" },
 ];
 
-const Navbar = () => {
+const offers = [
+  "✨ FREE BROW SHAPING with any Hair Service this Month",
+  "💅 Buy 2 Nail Services, Get 1 FREE — Limited Time Offer",
+  "🎁 Refer a Friend & Both Get 15% OFF Your Next Visit",
+];
+
+interface NavbarProps {
+  onOpenSubscribe?: () => void;
+}
+
+const Navbar = ({ onOpenSubscribe }: NavbarProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [offerIdx, setOfferIdx] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 60);
@@ -37,142 +49,221 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setOfferIdx((i) => (i + 1) % offers.length);
+    }, 3500);
+    return () => clearInterval(interval);
+  }, []);
+
   const handleNav = (href: string) => {
     setMobileOpen(false);
+    setSearchOpen(false);
     const el = document.querySelector(href);
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-400 ${
-        isScrolled ? "bg-charcoal shadow-2xl" : "bg-charcoal"
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-6 lg:px-10 flex items-center justify-between h-[72px]">
-        {/* Logo Block */}
-        <div
-          className="flex items-center gap-0 cursor-pointer"
-          onClick={() => handleNav("#home")}
-        >
-          <div className="bg-gold px-3 py-4 flex items-center gap-2 h-[72px]">
-            <Scissors className="w-5 h-5 text-cream rotate-[-30deg]" />
-            <span className="font-display text-xl text-cream font-semibold tracking-wide">Tezzaz</span>
+    <>
+      {/* Announcement / Marquee Bar */}
+      <div className="fixed top-0 left-0 right-0 z-[60] bg-white border-b border-gray-200 h-9 flex items-center overflow-hidden">
+        <div className="flex items-center w-full">
+          <div className="flex-shrink-0 bg-black text-white font-body text-[10px] uppercase tracking-widest px-4 h-full flex items-center">
+            OFFERS
           </div>
-          <div className="px-3 h-[72px] flex items-center border-l-0 border border-gold/30">
-            <span className="font-display text-xl text-cream tracking-wide font-light">Hair</span>
+          <div className="flex-1 overflow-hidden px-4">
+            <p
+              key={offerIdx}
+              className="font-body text-xs text-gray-800 tracking-wide whitespace-nowrap animate-marquee"
+            >
+              {offers[offerIdx]}
+            </p>
           </div>
-        </div>
-
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-7">
-          {navLinks.map((link) =>
-            link.sub ? (
-              <div key={link.label} className="relative group">
-                <button
-                  onClick={() => handleNav(link.href)}
-                  className="flex items-center gap-1 font-body text-xs tracking-[0.15em] uppercase text-cream/80 hover:text-gold transition-colors duration-200"
-                >
-                  {link.label}
-                  <ChevronDown className="w-3 h-3" />
-                </button>
-                <div className="absolute top-full left-0 mt-2 bg-charcoal border border-gold/20 shadow-xl min-w-[180px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                  {link.sub.map((s) => (
-                    <button
-                      key={s}
-                      onClick={() => handleNav(link.href)}
-                      className="block w-full text-left font-body text-xs tracking-wide uppercase text-cream/70 hover:text-gold hover:bg-gold/10 px-5 py-3 transition-colors"
-                    >
-                      {s}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <button
-                key={link.label}
-                onClick={() => handleNav(link.href)}
-                className="font-body text-xs tracking-[0.15em] uppercase text-cream/80 hover:text-gold transition-colors duration-200"
-              >
-                {link.label}
-              </button>
-            )
-          )}
-        </nav>
-
-        {/* Social + CTA */}
-        <div className="hidden md:flex items-center gap-2">
-          <a
-            href="https://www.instagram.com/tezzaz_hair.ke/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="border border-gold/60 w-8 h-8 flex items-center justify-center text-gold hover:bg-gold hover:text-cream transition-all duration-200"
-            title="Instagram"
-          >
-            <InstagramIcon />
-          </a>
-          <a
-            href="https://www.tiktok.com/@tezzaz1"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="border border-gold/60 w-8 h-8 flex items-center justify-center text-gold hover:bg-gold hover:text-cream transition-all duration-200"
-            title="TikTok"
-          >
-            <TikTokIcon />
-          </a>
-          <button
-            onClick={() => handleNav("#booking")}
-            className="ml-3 bg-gold text-cream font-body text-xs tracking-[0.15em] uppercase px-5 py-2.5 hover:bg-gold-dark transition-colors duration-300"
-          >
-            Book Now
-          </button>
-        </div>
-
-        {/* Mobile Toggle */}
-        <button className="md:hidden text-cream" onClick={() => setMobileOpen(!mobileOpen)}>
-          {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
-      </div>
-
-      {/* Mobile Menu */}
-      {mobileOpen && (
-        <div className="md:hidden bg-charcoal border-t border-gold/20 px-6 py-6 flex flex-col gap-4">
-          {navLinks.map((link) => (
-            <button
-              key={link.label}
-              onClick={() => handleNav(link.href)}
-              className="font-body text-xs tracking-[0.15em] uppercase text-cream/80 hover:text-gold transition-colors text-left"
-            >
-              {link.label}
-            </button>
-          ))}
-          <div className="flex gap-3 mt-2">
-            <a
-              href="https://www.instagram.com/tezzaz_hair.ke/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="border border-gold/60 w-9 h-9 flex items-center justify-center text-gold hover:bg-gold hover:text-cream transition-all"
-            >
+          <div className="flex-shrink-0 flex gap-4 px-4">
+            <a href="https://www.instagram.com/tezzaz_hair.ke/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-black transition-colors">
               <InstagramIcon />
             </a>
-            <a
-              href="https://www.tiktok.com/@tezzaz1"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="border border-gold/60 w-9 h-9 flex items-center justify-center text-gold hover:bg-gold hover:text-cream transition-all"
-            >
+            <a href="https://www.tiktok.com/@tezzaz1" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-black transition-colors">
               <TikTokIcon />
             </a>
           </div>
-          <button
-            onClick={() => handleNav("#booking")}
-            className="mt-2 bg-gold text-cream font-body text-xs tracking-widest uppercase px-6 py-3"
-          >
-            Book Now
-          </button>
         </div>
-      )}
-    </header>
+      </div>
+
+      {/* Main Navbar */}
+      <header
+        className={`fixed top-9 left-0 right-0 z-50 transition-all duration-300 bg-white border-b border-gray-200 ${
+          isScrolled ? "shadow-md" : ""
+        }`}
+      >
+        {/* Top row: Logo + Search + Icons */}
+        <div className="max-w-7xl mx-auto px-6 lg:px-10 flex items-center justify-between h-[64px]">
+          {/* Logo */}
+          <div
+            className="flex items-center gap-0 cursor-pointer"
+            onClick={() => handleNav("#home")}
+          >
+            <div className="bg-black px-3 py-3 flex items-center gap-2 h-[64px]">
+              <Scissors className="w-4 h-4 text-white rotate-[-30deg]" />
+              <span className="font-display text-lg text-white font-semibold tracking-wide">Tezzaz</span>
+            </div>
+            <div className="px-3 h-[64px] flex items-center border border-black/10 border-l-0">
+              <span className="font-display text-lg text-black tracking-wide font-light">Hair</span>
+            </div>
+          </div>
+
+          {/* Center Search */}
+          <div className="hidden md:flex flex-1 max-w-md mx-8">
+            <div className="flex w-full border-2 border-black">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search services, products..."
+                className="flex-1 font-body text-sm px-4 py-2.5 focus:outline-none bg-white text-black placeholder-gray-400"
+              />
+              <button className="bg-black px-4 flex items-center justify-center hover:bg-gray-800 transition-colors">
+                <Search className="w-4 h-4 text-white" />
+              </button>
+            </div>
+          </div>
+
+          {/* Right Icons */}
+          <div className="flex items-center gap-2">
+            {/* Mobile search toggle */}
+            <button
+              className="md:hidden p-2 hover:bg-gray-100 transition-colors"
+              onClick={() => setSearchOpen(!searchOpen)}
+            >
+              <Search className="w-5 h-5 text-black" />
+            </button>
+            {/* Wishlist */}
+            <button
+              onClick={() => handleNav("#shop")}
+              className="relative p-2 hover:bg-gray-100 transition-colors group"
+              title="Wishlist"
+            >
+              <Heart className="w-5 h-5 text-black" />
+            </button>
+            {/* Cart */}
+            <button
+              onClick={() => handleNav("#shop")}
+              className="relative p-2 hover:bg-gray-100 transition-colors group"
+              title="Cart"
+            >
+              <ShoppingBag className="w-5 h-5 text-black" />
+              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-black text-white font-body text-[9px] flex items-center justify-center font-bold">0</span>
+            </button>
+            {/* Book CTA */}
+            <button
+              onClick={() => handleNav("#booking")}
+              className="hidden md:block ml-2 bg-black text-white font-body text-xs tracking-[0.15em] uppercase px-5 py-2.5 hover:bg-gray-800 transition-colors duration-300"
+            >
+              Book Now
+            </button>
+            {/* Mobile Toggle */}
+            <button className="md:hidden p-2 text-black" onClick={() => setMobileOpen(!mobileOpen)}>
+              {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile search bar */}
+        {searchOpen && (
+          <div className="md:hidden px-4 py-3 border-t border-gray-200 bg-white">
+            <div className="flex w-full border-2 border-black">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search services, products..."
+                className="flex-1 font-body text-sm px-4 py-2.5 focus:outline-none bg-white text-black"
+                autoFocus
+              />
+              <button className="bg-black px-4 flex items-center justify-center">
+                <Search className="w-4 h-4 text-white" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Bottom Nav Row */}
+        <div className="border-t border-gray-100">
+          <div className="max-w-7xl mx-auto px-6 lg:px-10">
+            <nav className="hidden md:flex items-center h-11 gap-8">
+              {navLinks.map((link) =>
+                link.isShop ? (
+                  <button
+                    key={link.label}
+                    onClick={() => handleNav(link.href)}
+                    className="relative flex items-center gap-1.5 font-body text-xs tracking-[0.15em] uppercase font-medium shop-glow-link"
+                  >
+                    <Sparkles className="w-3 h-3" />
+                    {link.label}
+                  </button>
+                ) : link.sub ? (
+                  <div key={link.label} className="relative group h-full flex items-center">
+                    <button
+                      onClick={() => handleNav(link.href)}
+                      className="flex items-center gap-1 font-body text-xs tracking-[0.15em] uppercase text-gray-700 hover:text-black transition-colors duration-200"
+                    >
+                      {link.label}
+                      <ChevronDown className="w-3 h-3" />
+                    </button>
+                    <div className="absolute top-full left-0 bg-white border border-gray-200 shadow-xl min-w-[180px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                      {link.sub.map((s) => (
+                        <button
+                          key={s}
+                          onClick={() => handleNav(link.href)}
+                          className="block w-full text-left font-body text-xs tracking-wide uppercase text-gray-600 hover:text-black hover:bg-gray-50 px-5 py-3 transition-colors"
+                        >
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    key={link.label}
+                    onClick={() => handleNav(link.href)}
+                    className="font-body text-xs tracking-[0.15em] uppercase text-gray-700 hover:text-black transition-colors duration-200"
+                  >
+                    {link.label}
+                  </button>
+                )
+              )}
+            </nav>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {mobileOpen && (
+          <div className="md:hidden bg-white border-t border-gray-200 px-6 py-6 flex flex-col gap-4">
+            {navLinks.map((link) => (
+              <button
+                key={link.label}
+                onClick={() => handleNav(link.href)}
+                className={`font-body text-xs tracking-[0.15em] uppercase text-left ${
+                  link.isShop ? "shop-glow-link font-medium" : "text-gray-700 hover:text-black"
+                } transition-colors`}
+              >
+                {link.isShop && <Sparkles className="w-3 h-3 inline mr-1.5" />}
+                {link.label}
+              </button>
+            ))}
+            <button
+              onClick={() => handleNav("#booking")}
+              className="mt-2 bg-black text-white font-body text-xs tracking-widest uppercase px-6 py-3"
+            >
+              Book Now
+            </button>
+          </div>
+        )}
+      </header>
+
+      {/* Spacer */}
+      <div className="h-[109px]" />
+    </>
   );
 };
 
