@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Plus, Search, Pencil, Trash2, X, Tag } from "lucide-react";
-import { categories as initialCategories } from "@/data/products";
 
 interface Category {
   id: string;
@@ -10,18 +9,8 @@ interface Category {
   productCount: number;
 }
 
-const defaultCategories: Category[] = initialCategories
-  .filter((c) => c.id !== "all")
-  .map((c) => ({
-    id: c.id,
-    name: c.name,
-    slug: `/${c.id}`,
-    image: "",
-    productCount: 0,
-  }));
-
 const AdminCategories = () => {
-  const [categoryList, setCategoryList] = useState<Category[]>(defaultCategories);
+  const [categoryList, setCategoryList] = useState<Category[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);

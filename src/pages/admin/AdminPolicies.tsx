@@ -20,40 +20,7 @@ interface Policy {
   lastUpdated: string;
 }
 
-const initialPolicies: Policy[] = [
-  {
-    id: "1",
-    title: "Return & Refund Policy",
-    slug: "return-refund",
-    content: "At Tezzaz Hair, we want you to be completely satisfied with your purchase. If you are not satisfied, you may return unused products in their original packaging within 7 days of purchase for a full refund. Products that have been opened or used cannot be returned for hygiene reasons. Refunds will be processed via M-Pesa within 3-5 business days. For service-related issues, please contact us within 24 hours of your appointment.",
-    isPublished: true,
-    lastUpdated: "15 Feb 2026",
-  },
-  {
-    id: "2",
-    title: "Shipping & Delivery Policy",
-    slug: "shipping-delivery",
-    content: "We offer delivery within Nairobi and surrounding areas. Standard delivery takes 1-3 business days. Same-day delivery is available for Nairobi CBD orders placed before 12pm. Free delivery on orders above KSh 2,000 within Nairobi CBD. Delivery fees vary by location. All orders are carefully packaged to ensure products arrive in perfect condition.",
-    isPublished: true,
-    lastUpdated: "10 Feb 2026",
-  },
-  {
-    id: "3",
-    title: "Privacy Policy",
-    slug: "privacy",
-    content: "Tezzaz Hair respects your privacy. We collect personal information only as needed to process orders and improve our services. Your data is never sold to third parties. We use secure payment processing through M-Pesa. You may request deletion of your personal data at any time by contacting us at admin@tezzazhair.com.",
-    isPublished: true,
-    lastUpdated: "01 Feb 2026",
-  },
-  {
-    id: "4",
-    title: "Terms of Service",
-    slug: "terms",
-    content: "By using the Tezzaz Hair website and services, you agree to these terms. All services must be booked in advance. Cancellations must be made at least 2 hours before the appointment. No-shows may be charged a cancellation fee. Prices are subject to change without notice. All product images are for illustration purposes.",
-    isPublished: true,
-    lastUpdated: "01 Feb 2026",
-  },
-];
+const initialPolicies: Policy[] = [];
 
 const ITEMS_PER_PAGE = 5;
 

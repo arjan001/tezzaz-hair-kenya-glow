@@ -10,11 +10,10 @@ import {
   Upload,
   Package,
 } from "lucide-react";
-import { products as initialProducts, categories } from "@/data/products";
 import type { Product } from "@/context/CartContext";
 
 const AdminProducts = () => {
-  const [productList, setProductList] = useState<Product[]>(initialProducts);
+  const [productList, setProductList] = useState<Product[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState("all");
   const [showAddModal, setShowAddModal] = useState(false);
@@ -148,7 +147,7 @@ const AdminProducts = () => {
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="e.g. Classic High-Rise Skinny Jeans - Size 30"
+              placeholder="e.g. Castor Oil Hair Serum"
               className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black"
             />
           </div>
@@ -176,16 +175,13 @@ const AdminProducts = () => {
             </div>
             <div>
               <label className="font-body text-xs font-medium text-black block mb-1">Category *</label>
-              <select
+              <input
+                type="text"
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black bg-white"
-              >
-                <option value="">Select</option>
-                {categories.filter((c) => c.id !== "all").map((c) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
-              </select>
+                placeholder="e.g. Hair Care"
+                className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black"
+              />
             </div>
           </div>
 
@@ -217,7 +213,7 @@ const AdminProducts = () => {
               type="text"
               value={formData.tags}
               onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-              placeholder="thrift, vintage, high-waist"
+              placeholder="hair care, serum, natural"
               className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black"
             />
           </div>
@@ -267,7 +263,7 @@ const AdminProducts = () => {
             </button>
             <button
               onClick={onSubmit}
-              disabled={!formData.name || !formData.price || !formData.category}
+              disabled={!formData.name || !formData.price}
               className="px-5 py-2.5 bg-black text-white rounded font-body text-xs hover:bg-gray-800 transition-colors disabled:bg-gray-300"
             >
               {submitLabel}
@@ -321,11 +317,7 @@ const AdminProducts = () => {
           onChange={(e) => setFilterCategory(e.target.value)}
           className="border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none bg-white min-w-[160px]"
         >
-          {categories.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
+          <option value="all">All Categories</option>
         </select>
       </div>
 
@@ -362,9 +354,7 @@ const AdminProducts = () => {
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="font-body text-sm text-gray-500">
-                      {categories.find((c) => c.id === product.category)?.name || product.category}
-                    </span>
+                    <span className="font-body text-sm text-gray-500">{product.category}</span>
                   </td>
                   <td className="px-4 py-3">
                     <span className="font-body text-sm font-bold text-black">{product.price}</span>
@@ -422,7 +412,9 @@ const AdminProducts = () => {
                 <tr>
                   <td colSpan={6} className="px-4 py-10 text-center">
                     <Package className="w-8 h-8 text-gray-200 mx-auto mb-2" />
-                    <p className="font-body text-sm text-gray-400">No products found</p>
+                    <p className="font-body text-sm text-gray-400">
+                      {productList.length === 0 ? "No products yet. Click 'Add Product' to get started." : "No products found"}
+                    </p>
                   </td>
                 </tr>
               )}
@@ -519,14 +511,9 @@ const AdminProducts = () => {
             </div>
             <div className="p-5">
               <h3 className="font-display text-lg font-bold text-black mb-1">{selectedProduct.name}</h3>
-              <p className="font-body text-xs text-gray-400 mb-2">
-                {categories.find((c) => c.id === selectedProduct.category)?.name || selectedProduct.category}
-              </p>
+              <p className="font-body text-xs text-gray-400 mb-2">{selectedProduct.category}</p>
               <p className="font-display text-xl font-bold text-black mb-3">{selectedProduct.price}</p>
               <p className="font-body text-sm text-gray-500">{selectedProduct.desc}</p>
-              {selectedProduct.details && (
-                <p className="font-body text-sm text-gray-400 mt-2">{selectedProduct.details}</p>
-              )}
             </div>
           </div>
         </div>

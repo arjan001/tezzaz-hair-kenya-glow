@@ -17,72 +17,40 @@ import {
 
 type Period = "today" | "7days" | "30days" | "90days";
 
-const generateData = (period: Period) => {
-  const multiplier = period === "today" ? 1 : period === "7days" ? 7 : period === "30days" ? 30 : 90;
+const generateData = (_period: Period) => {
   return {
-    visitors: Math.round(45 * multiplier + Math.random() * 20 * multiplier),
-    pageViews: Math.round(120 * multiplier + Math.random() * 50 * multiplier),
-    orders: Math.round(3 * multiplier + Math.random() * 2 * multiplier),
-    revenue: Math.round(4500 * multiplier + Math.random() * 2000 * multiplier),
-    bounceRate: Math.round(35 + Math.random() * 15),
-    avgSessionDuration: `${Math.round(2 + Math.random() * 3)}m ${Math.round(Math.random() * 59)}s`,
-    conversionRate: (2 + Math.random() * 3).toFixed(1),
-    returningVisitors: Math.round(30 + Math.random() * 20),
+    visitors: 0,
+    pageViews: 0,
+    orders: 0,
+    revenue: 0,
+    bounceRate: 0,
+    avgSessionDuration: "0m 0s",
+    conversionRate: "0.0",
+    returningVisitors: 0,
   };
 };
 
-const topPages = [
-  { path: "/", name: "Home Page", views: 4520, percentage: 35 },
-  { path: "/shop", name: "Shop", views: 2890, percentage: 22 },
-  { path: "/product/1", name: "Castor Oil Hair Serum", views: 1240, percentage: 10 },
-  { path: "/product/2", name: "Gel Nail Polish Set", views: 980, percentage: 8 },
-  { path: "/product/5", name: "Edge Control Gel", views: 870, percentage: 7 },
-  { path: "/#services", name: "Services Section", views: 760, percentage: 6 },
-  { path: "/#about", name: "About Section", views: 650, percentage: 5 },
-  { path: "/checkout", name: "Checkout", views: 420, percentage: 3 },
-  { path: "/wishlist", name: "Wishlist", views: 310, percentage: 2 },
-  { path: "/#contact", name: "Contact Section", views: 260, percentage: 2 },
-];
+const topPages: { path: string; name: string; views: number; percentage: number }[] = [];
 
-const trafficSources = [
-  { name: "Organic Search", visits: 3200, percentage: 40, color: "bg-black" },
-  { name: "Direct", visits: 1800, percentage: 22, color: "bg-gray-600" },
-  { name: "Social Media", visits: 1500, percentage: 19, color: "bg-[hsl(var(--gold))]" },
-  { name: "Instagram", visits: 900, percentage: 11, color: "bg-pink-500" },
-  { name: "WhatsApp", visits: 400, percentage: 5, color: "bg-green-500" },
-  { name: "TikTok", visits: 200, percentage: 3, color: "bg-gray-400" },
-];
+const trafficSources: { name: string; visits: number; percentage: number; color: string }[] = [];
 
-const deviceBreakdown = [
-  { name: "Mobile", percentage: 68, icon: Smartphone },
-  { name: "Desktop", percentage: 25, icon: Monitor },
-  { name: "Tablet", percentage: 7, icon: Monitor },
-];
+const deviceBreakdown: { name: string; percentage: number; icon: typeof Smartphone }[] = [];
 
-const recentActivity = [
-  { type: "visit", message: "New visitor from Nairobi, Kenya", time: "2 mins ago" },
-  { type: "order", message: "Order #TZ-2026-089 placed — KSh 2,050", time: "15 mins ago" },
-  { type: "visit", message: "3 visitors browsing Shop page", time: "20 mins ago" },
-  { type: "signup", message: "New newsletter subscriber — mary@gmail.com", time: "35 mins ago" },
-  { type: "order", message: "Order #TZ-2026-088 payment confirmed", time: "1 hour ago" },
-  { type: "visit", message: "Visitor from Mombasa viewing services", time: "1.5 hours ago" },
-  { type: "order", message: "Order #TZ-2026-087 dispatched", time: "2 hours ago" },
-  { type: "visit", message: "12 visitors on site right now", time: "Live" },
-];
+const recentActivity: { type: string; message: string; time: string }[] = [];
 
 const AdminAnalytics = () => {
   const [period, setPeriod] = useState<Period>("30days");
   const data = generateData(period);
 
   const statCards = [
-    { label: "Total Visitors", value: data.visitors.toLocaleString(), change: "+12.5%", up: true, icon: Users },
-    { label: "Page Views", value: data.pageViews.toLocaleString(), change: "+8.3%", up: true, icon: Eye },
-    { label: "Total Orders", value: data.orders.toLocaleString(), change: "+15.2%", up: true, icon: ShoppingCart },
-    { label: "Revenue", value: `KSh ${data.revenue.toLocaleString()}`, change: "+18.7%", up: true, icon: TrendingUp },
-    { label: "Bounce Rate", value: `${data.bounceRate}%`, change: "-3.2%", up: false, icon: MousePointer },
-    { label: "Avg Session", value: data.avgSessionDuration, change: "+5.1%", up: true, icon: Clock },
-    { label: "Conversion Rate", value: `${data.conversionRate}%`, change: "+1.8%", up: true, icon: BarChart3 },
-    { label: "Returning Visitors", value: `${data.returningVisitors}%`, change: "+4.6%", up: true, icon: Globe },
+    { label: "Total Visitors", value: data.visitors.toLocaleString(), change: "—", up: true, icon: Users },
+    { label: "Page Views", value: data.pageViews.toLocaleString(), change: "—", up: true, icon: Eye },
+    { label: "Total Orders", value: data.orders.toLocaleString(), change: "—", up: true, icon: ShoppingCart },
+    { label: "Revenue", value: `KSh ${data.revenue.toLocaleString()}`, change: "—", up: true, icon: TrendingUp },
+    { label: "Bounce Rate", value: `${data.bounceRate}%`, change: "—", up: true, icon: MousePointer },
+    { label: "Avg Session", value: data.avgSessionDuration, change: "—", up: true, icon: Clock },
+    { label: "Conversion Rate", value: `${data.conversionRate}%`, change: "—", up: true, icon: BarChart3 },
+    { label: "Returning Visitors", value: `${data.returningVisitors}%`, change: "—", up: true, icon: Globe },
   ];
 
   return (
