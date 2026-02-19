@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Heart, ShoppingBag, Search, Sparkles, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useMemo } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { Heart, ShoppingBag, Search, Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { products, categories } from "@/data/products";
 import heroImage from "@/assets/hero-salon.jpg";
@@ -15,21 +15,50 @@ const bannerSlides = [
   { img: galleryImg, text: "Free Delivery on Orders Above KSh 2,000", sub: "Nairobi-wide delivery" },
 ];
 
+const PRODUCTS_PER_PAGE = 6;
+
 const ShopPage = () => {
+  const [searchParams] = useSearchParams();
+  const initialSearch = searchParams.get("q") || "";
   const [activeCategory, setActiveCategory] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [bannerIdx, setBannerIdx] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const { addToCart, toggleWishlist, isInWishlist } = useCart();
   const navigate = useNavigate();
 
-  const filtered = products.filter((p) => {
-    const matchCat = activeCategory === "all" || p.category === activeCategory;
-    const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchCat && matchSearch;
-  });
+  const filtered = useMemo(() => {
+    return products.filter((p) => {
+      const matchCat = activeCategory === "all" || p.category === activeCategory;
+      const query = searchQuery.toLowerCase();
+      const matchSearch =
+        p.name.toLowerCase().includes(query) ||
+        p.desc.toLowerCase().includes(query) ||
+        p.category.toLowerCase().includes(query) ||
+        (p.badge && p.badge.toLowerCase().includes(query)) ||
+        p.price.toLowerCase().includes(query);
+      return matchCat && matchSearch;
+    });
+  }, [activeCategory, searchQuery]);
+
+  const totalPages = Math.ceil(filtered.length / PRODUCTS_PER_PAGE);
+  const paginatedProducts = filtered.slice(
+    (currentPage - 1) * PRODUCTS_PER_PAGE,
+    currentPage * PRODUCTS_PER_PAGE
+  );
 
   const nextBanner = () => setBannerIdx((i) => (i + 1) % bannerSlides.length);
   const prevBanner = () => setBannerIdx((i) => (i - 1 + bannerSlides.length) % bannerSlides.length);
+
+  const handleCategoryChange = (catId: string) => {
+    setActiveCategory(catId);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    setCurrentPage(1);
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -86,8 +115,8 @@ const ShopPage = () => {
                 <p className="font-body text-xs uppercase tracking-[0.2em] text-[hsl(var(--gold))]">Tezzaz Beauty Store</p>
               </div>
               <h1 className="font-display text-4xl md:text-5xl text-black font-bold mb-2">
-                Shop Beauty<br />
-                <span className="inline-block border-b-4 border-[hsl(var(--gold))]">Products</span>
+                Tezzaz Beauty Shop<br />
+                <span className="inline-block border-b-4 border-[hsl(var(--gold))]">& Sleepwear Collection</span>
               </h1>
               <p className="font-body text-gray-500 text-sm max-w-sm">
                 Premium hair, nail & beauty products — curated for Kenyan beauty.
@@ -95,12 +124,12 @@ const ShopPage = () => {
             </div>
 
             {/* Search */}
-            <div className="flex w-full md:w-72 border-2 border-black">
+            <div className="flex w-full md:w-80 border-2 border-black">
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search products..."
+                onChange={(e) => handleSearchChange(e.target.value)}
+                placeholder="Search by name, category, badge..."
                 className="flex-1 font-body text-sm px-4 py-2.5 focus:outline-none bg-white text-black"
               />
               <button className="bg-black px-4 flex items-center justify-center">
@@ -114,7 +143,7 @@ const ShopPage = () => {
             {categories.map((cat) => (
               <button
                 key={cat.id}
-                onClick={() => setActiveCategory(cat.id)}
+                onClick={() => handleCategoryChange(cat.id)}
                 className={`font-body text-xs uppercase tracking-widest px-5 py-2 border-2 transition-all duration-200 ${
                   activeCategory === cat.id
                     ? "bg-black text-white border-black"
@@ -126,9 +155,17 @@ const ShopPage = () => {
             ))}
           </div>
 
+          {/* Results count */}
+          <div className="flex items-center justify-between mb-4">
+            <p className="font-body text-xs text-gray-400">
+              Showing {paginatedProducts.length} of {filtered.length} products
+              {searchQuery && <span> for "<span className="text-black font-medium">{searchQuery}</span>"</span>}
+            </p>
+          </div>
+
           {/* Product Grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 md:gap-6">
-            {filtered.map((product) => (
+            {paginatedProducts.map((product) => (
               <div
                 key={product.id}
                 className="group border-2 border-gray-100 hover:border-black transition-all duration-300 bg-white cursor-pointer"
@@ -199,7 +236,55 @@ const ShopPage = () => {
           {filtered.length === 0 && (
             <div className="text-center py-20">
               <p className="font-body text-gray-400 text-sm">No products found matching your search.</p>
+              {searchQuery && (
+                <button
+                  onClick={() => { setSearchQuery(""); setActiveCategory("all"); }}
+                  className="mt-3 font-body text-xs text-black underline hover:text-[hsl(var(--gold))]"
+                >
+                  Clear search
+                </button>
+              )}
             </div>
+          )}
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 mt-12">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="w-10 h-10 border-2 border-gray-200 flex items-center justify-center hover:border-black transition-colors disabled:opacity-30 disabled:hover:border-gray-200"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`w-10 h-10 border-2 font-body text-sm font-bold transition-all ${
+                    page === currentPage
+                      ? "bg-black text-white border-black"
+                      : "border-gray-200 text-gray-600 hover:border-black"
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+              <button
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="w-10 h-10 border-2 border-gray-200 flex items-center justify-center hover:border-black transition-colors disabled:opacity-30 disabled:hover:border-gray-200"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+
+          {/* Page indicator */}
+          {totalPages > 1 && (
+            <p className="text-center mt-3 font-body text-xs text-gray-400">
+              Page {currentPage} of {totalPages}
+            </p>
           )}
         </div>
       </main>

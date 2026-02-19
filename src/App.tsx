@@ -20,6 +20,11 @@ import AdminCategories from "./pages/admin/AdminCategories";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminUsersRoles from "./pages/admin/AdminUsersRoles";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminNewsletter from "./pages/admin/AdminNewsletter";
+import AdminDelivery from "./pages/admin/AdminDelivery";
+import AdminAnalytics from "./pages/admin/AdminAnalytics";
+import AdminPolicies from "./pages/admin/AdminPolicies";
+import AdminTheme from "./pages/admin/AdminTheme";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +57,11 @@ const App = () => (
               <Route path="orders" element={<AdminOrders />} />
               <Route path="users" element={<AdminUsersRoles />} />
               <Route path="settings" element={<AdminSettings />} />
+              <Route path="newsletter" element={<AdminNewsletter />} />
+              <Route path="delivery" element={<AdminDelivery />} />
+              <Route path="analytics" element={<AdminAnalytics />} />
+              <Route path="policies" element={<AdminPolicies />} />
+              <Route path="theme" element={<AdminTheme />} />
             </Route>
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
