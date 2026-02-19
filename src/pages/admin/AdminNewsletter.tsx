@@ -31,20 +31,9 @@ interface Campaign {
   openRate: number;
 }
 
-const initialSubscribers: Subscriber[] = [
-  { id: "1", email: "jane@example.com", name: "Jane Wanjiku", subscribedAt: "15 Jan 2026", status: "active" },
-  { id: "2", email: "mary@example.com", name: "Mary Akinyi", subscribedAt: "20 Jan 2026", status: "active" },
-  { id: "3", email: "grace@example.com", name: "Grace Muthoni", subscribedAt: "01 Feb 2026", status: "active" },
-  { id: "4", email: "sarah@example.com", name: "Sarah Njeri", subscribedAt: "05 Feb 2026", status: "unsubscribed" },
-  { id: "5", email: "faith@example.com", name: "Faith Wambui", subscribedAt: "10 Feb 2026", status: "active" },
-  { id: "6", email: "mercy@example.com", name: "Mercy Nyambura", subscribedAt: "12 Feb 2026", status: "active" },
-];
+const initialSubscribers: Subscriber[] = [];
 
-const initialCampaigns: Campaign[] = [
-  { id: "1", subject: "Valentine's Day Special Offers", content: "Enjoy 20% off all hair services this Valentine's week!", sentAt: "14 Feb 2026", status: "sent", recipients: 45, openRate: 68 },
-  { id: "2", subject: "New Sleepwear Collection", content: "Check out our new silk sleepwear range.", sentAt: "10 Feb 2026", status: "sent", recipients: 42, openRate: 55 },
-  { id: "3", subject: "March Hair Care Tips", content: "Top 5 tips to keep your locs healthy this season.", sentAt: null, status: "draft", recipients: 0, openRate: 0 },
-];
+const initialCampaigns: Campaign[] = [];
 
 const ITEMS_PER_PAGE = 5;
 

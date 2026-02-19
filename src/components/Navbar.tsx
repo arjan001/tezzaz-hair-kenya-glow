@@ -20,7 +20,7 @@ const navLinks = [
   { label: "About", href: "/#about" },
   { label: "Services", href: "/services" },
   { label: "Shop", href: "/shop", isShop: true },
-  { label: "Contact", href: "/#contact" },
+  { label: "Gallery", href: "/gallery" },
 ];
 
 const offers = [

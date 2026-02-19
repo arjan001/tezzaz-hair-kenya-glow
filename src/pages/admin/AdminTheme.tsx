@@ -51,49 +51,9 @@ const initialThemes: ThemePreset[] = [
     fontBody: "Lato",
     isActive: true,
   },
-  {
-    id: "2",
-    name: "Elegant Gold",
-    primaryColor: "#D4AF37",
-    secondaryColor: "#2C2C2C",
-    backgroundColor: "#FFFEF7",
-    textColor: "#2C2C2C",
-    accentColor: "#B8860B",
-    fontHeading: "Playfair Display",
-    fontBody: "Inter",
-    isActive: false,
-  },
-  {
-    id: "3",
-    name: "Modern Minimal",
-    primaryColor: "#000000",
-    secondaryColor: "#555555",
-    backgroundColor: "#FFFFFF",
-    textColor: "#000000",
-    accentColor: "#333333",
-    fontHeading: "Inter",
-    fontBody: "Inter",
-    isActive: false,
-  },
-  {
-    id: "4",
-    name: "Rose Bloom",
-    primaryColor: "#E91E63",
-    secondaryColor: "#880E4F",
-    backgroundColor: "#FFF5F7",
-    textColor: "#1A1A1A",
-    accentColor: "#F06292",
-    fontHeading: "Lora",
-    fontBody: "Lato",
-    isActive: false,
-  },
 ];
 
-const initialBanners: Banner[] = [
-  { id: "1", title: "New Arrivals — Premium Hair Care Products", subtitle: "Shop the latest in Kenyan beauty", image: "/assets/hero-salon.jpg", link: "/shop", isActive: true, position: "hero" },
-  { id: "2", title: "Exclusive Nail Collections Now Available", subtitle: "Professional quality, salon results", image: "/assets/about-salon.jpg", link: "/shop", isActive: true, position: "hero" },
-  { id: "3", title: "Valentine's Special — 20% Off All Services", subtitle: "Book now and save", image: "/assets/gallery-1.jpg", link: "/#booking", isActive: false, position: "promo" },
-];
+const initialBanners: Banner[] = [];
 
 const ITEMS_PER_PAGE = 5;
 

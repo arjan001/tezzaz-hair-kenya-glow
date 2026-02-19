@@ -30,6 +30,8 @@ import AdminDelivery from "./pages/admin/AdminDelivery";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminPolicies from "./pages/admin/AdminPolicies";
 import AdminTheme from "./pages/admin/AdminTheme";
+import AdminGallery from "./pages/admin/AdminGallery";
+import Gallery from "./pages/Gallery";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +58,7 @@ const App = () => (
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/track-order" element={<TrackOrder />} />
             <Route path="/services" element={<Services />} />
+            <Route path="/gallery" element={<Gallery />} />
             <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/refund-policy" element={<RefundPolicy />} />
@@ -72,6 +75,7 @@ const App = () => (
               <Route path="analytics" element={<AdminAnalytics />} />
               <Route path="policies" element={<AdminPolicies />} />
               <Route path="theme" element={<AdminTheme />} />
+              <Route path="gallery" element={<AdminGallery />} />
             </Route>
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

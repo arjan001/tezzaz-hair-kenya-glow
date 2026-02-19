@@ -1,16 +1,16 @@
-import { Package, Tag, Percent, ShoppingCart, Eye, ArrowRight } from "lucide-react";
+import { Package, Tag, Percent, ShoppingCart, Eye, ArrowRight, Image } from "lucide-react";
 import { Link } from "react-router-dom";
-import { products, categories } from "@/data/products";
 
 const stats = [
-  { label: "TOTAL PRODUCTS", value: products.length, sub: "Live from DB", icon: Package },
-  { label: "CATEGORIES", value: categories.length - 1, sub: "Active", icon: Tag },
-  { label: "ACTIVE OFFERS", value: products.filter((p) => p.badge === "On Offer").length, sub: "Running", icon: Percent },
+  { label: "TOTAL PRODUCTS", value: 0, sub: "No products yet", icon: Package },
+  { label: "CATEGORIES", value: 0, sub: "No categories yet", icon: Tag },
+  { label: "ACTIVE OFFERS", value: 0, sub: "None running", icon: Percent },
   { label: "TOTAL ORDERS", value: 0, sub: "KSh 0 revenue", icon: ShoppingCart },
 ];
 
 const quickActions = [
   { label: "Manage Products", desc: "Add, edit or remove products", icon: Package, href: "/admin/products" },
+  { label: "Manage Gallery", desc: "Add hair style designs", icon: Image, href: "/admin/gallery" },
   { label: "View Orders", desc: "Manage customer orders", icon: ShoppingCart, href: "/admin/orders" },
   { label: "View Store", desc: "See how customers see it", icon: Eye, href: "/" },
 ];
@@ -39,7 +39,7 @@ const AdminDashboard = () => {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {quickActions.map((action) => {
           const Icon = action.icon;
           return (
@@ -70,19 +70,8 @@ const AdminDashboard = () => {
               View All <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
-          <div className="divide-y divide-gray-50">
-            {products.slice(0, 4).map((product) => (
-              <div key={product.id} className="flex items-center justify-between px-5 py-3">
-                <div className="flex items-center gap-3">
-                  <Package className="w-4 h-4 text-gray-300" />
-                  <div>
-                    <p className="font-body text-sm text-black">{product.name}</p>
-                    <p className="font-body text-[11px] text-gray-400">{categories.find(c => c.id === product.category)?.name || product.category}</p>
-                  </div>
-                </div>
-                <p className="font-body text-sm font-bold text-black">{product.price}</p>
-              </div>
-            ))}
+          <div className="px-5 py-10 text-center">
+            <p className="font-body text-sm text-gray-400">No products yet</p>
           </div>
         </div>
 

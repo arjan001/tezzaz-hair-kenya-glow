@@ -17,11 +17,13 @@ import {
   Truck,
   BarChart3,
   FileText,
+  Image,
 } from "lucide-react";
 
 const sidebarLinks = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { label: "Products", href: "/admin/products", icon: Package },
+  { label: "Gallery", href: "/admin/gallery", icon: Image },
   { label: "Categories", href: "/admin/categories", icon: Tag },
   { label: "Orders", href: "/admin/orders", icon: ShoppingCart },
   { label: "Theme", href: "/admin/theme", icon: Palette },

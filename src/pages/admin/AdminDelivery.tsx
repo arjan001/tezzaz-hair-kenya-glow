@@ -34,19 +34,9 @@ interface DeliveryZone {
   isActive: boolean;
 }
 
-const initialLocations: DeliveryLocation[] = [
-  { id: "1", name: "Tezzaz Hair - The Bazaar", type: "pickup", address: "The Bazaar Plaza, 10th Floor, Wing B, Suite 1025, Nairobi", fee: 0, estimatedTime: "Ready in 30 mins", isActive: true },
-  { id: "2", name: "Tezzaz Collection Point - CBD", type: "pickup", address: "Moi Avenue, Opposite Kencom, Nairobi CBD", fee: 0, estimatedTime: "Ready in 1 hour", isActive: true },
-];
+const initialLocations: DeliveryLocation[] = [];
 
-const initialZones: DeliveryZone[] = [
-  { id: "1", name: "Nairobi CBD", areas: ["CBD", "Uhuru Park", "Railway", "River Road"], fee: 150, freeAbove: 2000, estimatedTime: "Same day", isActive: true },
-  { id: "2", name: "Westlands & Parklands", areas: ["Westlands", "Parklands", "Highridge", "Ngara"], fee: 200, freeAbove: 2500, estimatedTime: "Same day", isActive: true },
-  { id: "3", name: "Eastlands", areas: ["Buruburu", "Umoja", "Donholm", "South B", "South C"], fee: 250, freeAbove: 3000, estimatedTime: "1-2 days", isActive: true },
-  { id: "4", name: "Kileleshwa & Kilimani", areas: ["Kileleshwa", "Kilimani", "Lavington", "Hurlingham"], fee: 200, freeAbove: 2500, estimatedTime: "Same day", isActive: true },
-  { id: "5", name: "Karen & Langata", areas: ["Karen", "Langata", "Rongai", "Ngong"], fee: 350, freeAbove: 4000, estimatedTime: "1-2 days", isActive: true },
-  { id: "6", name: "Thika Road Corridor", areas: ["Roysambu", "Kasarani", "Githurai", "Kahawa"], fee: 300, freeAbove: 3500, estimatedTime: "1-2 days", isActive: true },
-];
+const initialZones: DeliveryZone[] = [];
 
 const ITEMS_PER_PAGE = 5;
 
