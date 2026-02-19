@@ -2,12 +2,19 @@ import { useNavigate } from "react-router-dom";
 import { Shield, ArrowLeft } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import FooterSection from "@/components/FooterSection";
+import SEOHead from "@/components/SEOHead";
 
 const PrivacyPolicy = () => {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-white">
+      <SEOHead
+        title="Privacy Policy"
+        description="Privacy Policy for Tezzaz Hair & Beauty Studio Nairobi. Learn how we collect, use, and protect your personal information in compliance with the Kenya Data Protection Act, 2019."
+        canonicalPath="/privacy-policy"
+        keywords="Tezzaz Hair privacy policy, data protection beauty salon Kenya, personal information beauty studio Nairobi, Kenya Data Protection Act salon, privacy policy hair salon Nairobi"
+      />
       <Navbar />
       <main>
         {/* Hero Banner */}

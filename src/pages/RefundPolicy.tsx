@@ -2,12 +2,19 @@ import { useNavigate } from "react-router-dom";
 import { RotateCcw, ArrowLeft } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import FooterSection from "@/components/FooterSection";
+import SEOHead from "@/components/SEOHead";
 
 const RefundPolicy = () => {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-white">
+      <SEOHead
+        title="Refund Policy"
+        description="Refund and return policy for Tezzaz Hair & Beauty Studio Nairobi. Learn about service refunds, product returns, refund processing timelines via M-Pesa and card, and non-refundable items."
+        canonicalPath="/refund-policy"
+        keywords="Tezzaz Hair refund policy, return policy beauty salon Nairobi, service refund hair salon Kenya, product return policy Nairobi, M-Pesa refund beauty studio, hair salon refund Nairobi CBD"
+      />
       <Navbar />
       <main>
         {/* Hero Banner */}

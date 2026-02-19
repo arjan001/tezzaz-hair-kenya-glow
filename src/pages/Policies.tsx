@@ -2,6 +2,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { BookOpen, ArrowLeft, FileText, Shield, RotateCcw, ArrowRight } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import FooterSection from "@/components/FooterSection";
+import SEOHead from "@/components/SEOHead";
 
 const policyLinks = [
   {
@@ -29,6 +30,12 @@ const Policies = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEOHead
+        title="Policies - Terms, Privacy & Refunds"
+        description="Read the legal policies for Tezzaz Hair & Beauty Studio Nairobi. Find our terms and conditions, privacy policy, refund policy, health & safety guidelines, and delivery information."
+        canonicalPath="/policies"
+        keywords="Tezzaz Hair policies, terms and conditions Nairobi salon, privacy policy beauty studio Kenya, refund policy hair salon, Tezzaz legal information, salon health safety Nairobi"
+      />
       <Navbar />
       <main>
         {/* Hero Banner */}

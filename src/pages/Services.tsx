@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import FooterSection from "@/components/FooterSection";
+import SEOHead from "@/components/SEOHead";
 
 import serviceNatural from "@/assets/service-natural.jpg";
 import serviceBraids from "@/assets/service-braids.jpg";
@@ -90,6 +91,47 @@ const ServicesPage = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEOHead
+        title="Our Services - Hair, Nails, Makeup & Skin Care"
+        description="Explore Tezzaz Hair & Beauty Studio services in Nairobi: professional hair styling, braids & locs, nail art, pedicure, makeup, skin care and natural hair treatments. Book your appointment at The Bazaar Plaza today."
+        canonicalPath="/services"
+        keywords="Tezzaz services, hair styling Nairobi, braids Nairobi, nail art Nairobi CBD, pedicure Nairobi, makeup artist Kenya, skin care Nairobi, natural hair treatment, dreadlocks Nairobi, sisterlocks Kenya, beauty services Bazaar Plaza, locs retouch Nairobi, gel nails Nairobi, bridal makeup Nairobi"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "Service",
+          "serviceType": "Beauty Salon Services",
+          "provider": {
+            "@type": "BeautySalon",
+            "name": "Tezzaz Hair & Beauty Studio",
+            "url": "https://tezzaz-hair.com",
+            "telephone": "+254711135090",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "The Bazaar Plaza, 10th Floor, Wing B, Suite 1025",
+              "addressLocality": "Nairobi",
+              "addressRegion": "Nairobi",
+              "addressCountry": "KE",
+            },
+          },
+          "areaServed": {
+            "@type": "City",
+            "name": "Nairobi",
+          },
+          "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Beauty Services",
+            "itemListElement": [
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Hair Styling" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Braids & Locs" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Nail Art & Polish" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Pedicure" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Makeup" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Skin Care" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Natural Hair" } },
+            ],
+          },
+        }}
+      />
       <Navbar />
       <main>
         {/* Hero Banner */}

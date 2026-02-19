@@ -2,12 +2,19 @@ import { useNavigate } from "react-router-dom";
 import { FileText, ArrowLeft } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import FooterSection from "@/components/FooterSection";
+import SEOHead from "@/components/SEOHead";
 
 const TermsAndConditions = () => {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-white">
+      <SEOHead
+        title="Terms & Conditions"
+        description="Terms and Conditions for Tezzaz Hair & Beauty Studio Nairobi. Understand our appointment policies, payment terms, service guidelines, client responsibilities, and intellectual property rights."
+        canonicalPath="/terms-and-conditions"
+        keywords="Tezzaz Hair terms and conditions, salon terms of service Nairobi, beauty studio booking policy, appointment cancellation policy Kenya, hair salon payment terms Nairobi"
+      />
       <Navbar />
       <main>
         {/* Hero Banner */}
