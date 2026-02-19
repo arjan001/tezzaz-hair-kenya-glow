@@ -1,4 +1,17 @@
-import { Scissors, Facebook, Instagram, Twitter, Youtube, Phone, Mail, MapPin, Clock } from "lucide-react";
+import { Scissors, Phone, Mail, MapPin, Clock } from "lucide-react";
+
+// TikTok icon
+const TikTokIcon = () => (
+  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor">
+    <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.75a8.2 8.2 0 004.79 1.53V6.83a4.85 4.85 0 01-1.02-.14z"/>
+  </svg>
+);
+
+const InstagramIcon = () => (
+  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor">
+    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+  </svg>
+);
 
 const FooterSection = () => {
   const handleNav = (href: string) => {
@@ -9,7 +22,7 @@ const FooterSection = () => {
   return (
     <footer className="bg-[hsl(25,15%,8%)]">
       {/* Top footer */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-16 grid grid-cols-1 md:grid-cols-4 gap-10">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
         {/* Brand */}
         <div>
           <div className="flex items-center gap-0 mb-5">
@@ -32,12 +45,11 @@ const FooterSection = () => {
             </div>
             <div className="flex items-center gap-3">
               <Phone className="w-4 h-4 text-gold flex-shrink-0" />
-              <p className="font-body text-cream/50 text-xs">+254 711 135090
-              </p>
+              <a href="tel:+254711135090" className="font-body text-cream/50 text-xs hover:text-gold transition-colors">+254 711 135090</a>
             </div>
             <div className="flex items-center gap-3">
               <Mail className="w-4 h-4 text-gold flex-shrink-0" />
-              <p className="font-body text-cream/50 text-xs">hello@tezzazhair.co.ke</p>
+              <a href="mailto:booking@tezzaz-hair.com" className="font-body text-cream/50 text-xs hover:text-gold transition-colors">booking@tezzaz-hair.com</a>
             </div>
             <div className="flex items-start gap-3">
               <Clock className="w-4 h-4 text-gold flex-shrink-0 mt-0.5" />
@@ -46,10 +58,35 @@ const FooterSection = () => {
           </div>
 
           <div className="flex gap-2">
-            {[Facebook, Instagram, Twitter, Youtube].map((Icon, i) => <a key={i} href="#" className="border border-gold/30 p-2 hover:bg-gold hover:border-gold transition-all duration-200 group">
-                <Icon className="w-3.5 h-3.5 text-gold group-hover:text-cream transition-colors" />
-              </a>
-            )}
+            <a
+              href="https://www.instagram.com/tezzaz_hair.ke/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border border-gold/30 p-2 hover:bg-gold hover:border-gold transition-all duration-200 group"
+              title="Instagram"
+            >
+              <InstagramIcon />
+            </a>
+            <a
+              href="https://www.tiktok.com/@tezzaz1"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border border-gold/30 p-2 hover:bg-gold hover:border-gold transition-all duration-200 group"
+              title="TikTok"
+            >
+              <TikTokIcon />
+            </a>
+            <a
+              href="https://wa.me/254711135090"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border border-gold/30 p-2 hover:bg-[#25D366] hover:border-[#25D366] transition-all duration-200 group"
+              title="WhatsApp"
+            >
+              <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-gold group-hover:text-white transition-colors" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+              </svg>
+            </a>
           </div>
         </div>
 
@@ -60,23 +97,23 @@ const FooterSection = () => {
           </h4>
           <ul className="space-y-3 mt-4">
             {[
-            { label: "Home", href: "#home" },
-            { label: "About Us", href: "#about" },
-            { label: "Our Services", href: "#services" },
-            { label: "Gallery", href: "#gallery" },
-            { label: "Team", href: "#team" },
-            { label: "Contact", href: "#contact" }].
-            map((link) =>
-            <li key={link.label}>
+              { label: "Home", href: "#home" },
+              { label: "About Us", href: "#about" },
+              { label: "Our Services", href: "#services" },
+              { label: "Gallery", href: "#gallery" },
+              { label: "Book Appointment", href: "#booking" },
+              { label: "Contact", href: "#contact" },
+            ].map((link) => (
+              <li key={link.label}>
                 <button
-                onClick={() => handleNav(link.href)}
-                className="font-body text-cream/50 text-sm hover:text-gold transition-colors flex items-center gap-2 group">
-
+                  onClick={() => handleNav(link.href)}
+                  className="font-body text-cream/50 text-sm hover:text-gold transition-colors flex items-center gap-2 group"
+                >
                   <span className="w-1.5 h-1.5 bg-gold/50 group-hover:bg-gold transition-colors" />
                   {link.label}
                 </button>
               </li>
-            )}
+            ))}
           </ul>
         </div>
 
@@ -87,55 +124,76 @@ const FooterSection = () => {
           </h4>
           <ul className="space-y-3 mt-4">
             {[
-            "Hair Styling",
-            "Braids & Locs",
-            "Manicure & Nail Art",
-            "Pedicure",
-            "Makeup",
-            "Skin Care"].
-            map((s) =>
-            <li key={s}>
+              "Hair Styling",
+              "Braids & Locs",
+              "Nail Art & Polish",
+              "Pedicure",
+              "Makeup",
+              "Skin Care",
+              "Natural Hair",
+            ].map((s) => (
+              <li key={s}>
                 <button
-                onClick={() => handleNav("#services")}
-                className="font-body text-cream/50 text-sm hover:text-gold transition-colors flex items-center gap-2 group">
-
+                  onClick={() => handleNav("#services")}
+                  className="font-body text-cream/50 text-sm hover:text-gold transition-colors flex items-center gap-2 group"
+                >
                   <span className="w-1.5 h-1.5 bg-gold/50 group-hover:bg-gold transition-colors" />
                   {s}
                 </button>
               </li>
-            )}
+            ))}
           </ul>
         </div>
 
-        {/* Newsletter */}
+        {/* Map + Newsletter */}
         <div>
           <h4 className="font-display text-cream font-semibold text-lg mb-5 relative after:content-[''] after:absolute after:-bottom-2 after:left-0 after:w-8 after:h-[2px] after:bg-gold">
-            Newsletter
+            Find Us
           </h4>
-          <p className="font-body text-cream/50 text-sm mb-5 mt-4 leading-relaxed">
-            Subscribe for hair tips, style inspiration & exclusive Nairobi offers.
+          {/* Google Maps embed */}
+          <div className="mb-5 mt-4 border border-gold/20 overflow-hidden">
+            <iframe
+              title="Tezzaz Hair Location – The Bazaar Nairobi"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8186538264573!2d36.81985!3d-1.28209!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f10d22ef09a33%3A0x1a2b3c4d5e6f7890!2sThe%20Bazaar%20Shopping%20Centre%2C%20Nairobi!5e0!3m2!1sen!2ske!4v1234567890"
+              width="100%"
+              height="160"
+              style={{ border: 0, filter: "grayscale(40%) contrast(1.1)" }}
+              allowFullScreen={false}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
+
+          {/* Newsletter */}
+          <p className="font-body text-cream/50 text-xs mb-3 leading-relaxed">
+            Subscribe for style tips & exclusive Nairobi offers.
           </p>
           <div className="flex mb-5">
             <input
               type="email"
-              placeholder="Your email address..."
-              className="flex-1 bg-transparent border border-gold/30 text-cream placeholder-cream/30 font-body text-xs px-4 py-3 focus:outline-none focus:border-gold" />
-
-            <button className="bg-gold px-5 py-3 hover:bg-gold-dark transition-colors">
+              placeholder="Your email..."
+              className="flex-1 bg-transparent border border-gold/30 text-cream placeholder-cream/30 font-body text-xs px-4 py-3 focus:outline-none focus:border-gold"
+            />
+            <button className="bg-gold px-4 py-3 hover:bg-gold-dark transition-colors">
               <span className="text-cream text-xs font-body uppercase tracking-wide">Go</span>
             </button>
           </div>
+
           {/* WhatsApp CTA */}
           <a
-            href="https://wa.me/254700123456"
+            href="https://wa.me/254711135090"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-3 bg-[#25D366]/10 border border-[#25D366]/30 px-4 py-3 hover:bg-[#25D366]/20 transition-colors group">
-
-            <div className="w-8 h-8 bg-[#25D366] rounded-full flex items-center justify-center text-white text-sm font-bold">W</div>
+            className="flex items-center gap-3 bg-[#25D366]/10 border border-[#25D366]/30 px-4 py-3 hover:bg-[#25D366]/20 transition-colors group"
+          >
+            <div className="w-8 h-8 bg-[#25D366] rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+              <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+              </svg>
+            </div>
             <div>
               <p className="font-body text-cream text-xs font-bold">Book via WhatsApp</p>
-              <p className="font-body text-cream/50 text-xs">​+254 711 135090</p>
+              <p className="font-body text-cream/50 text-xs">+254 711 135090</p>
             </div>
           </a>
         </div>
@@ -152,8 +210,8 @@ const FooterSection = () => {
           </p>
         </div>
       </div>
-    </footer>);
-
+    </footer>
+  );
 };
 
 export default FooterSection;
