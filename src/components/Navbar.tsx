@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Scissors, ChevronDown, Search, Heart, ShoppingBag, Sparkles } from "lucide-react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Menu, X, Scissors, ChevronDown, Heart, ShoppingBag, Sparkles } from "lucide-react";
+import { useCart } from "@/context/CartContext";
 
-// TikTok SVG icon
 const TikTokIcon = () => (
   <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor">
     <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.75a8.2 8.2 0 004.79 1.53V6.83a4.85 4.85 0 01-1.02-.14z"/>
@@ -15,21 +16,21 @@ const InstagramIcon = () => (
 );
 
 const navLinks = [
-  { label: "Home", href: "#home" },
-  { label: "About", href: "#about" },
+  { label: "Home", href: "/" },
+  { label: "About", href: "/#about" },
   {
     label: "Services",
-    href: "#services",
+    href: "/#services",
     sub: ["Hair Styling", "Braids & Locs", "Nail Art", "Pedicure", "Makeup", "Skin Care"],
   },
-  { label: "Shop", href: "#shop", isShop: true },
-  { label: "Contact", href: "#contact" },
+  { label: "Shop", href: "/shop", isShop: true },
+  { label: "Contact", href: "/#contact" },
 ];
 
 const offers = [
-  "✨ FREE BROW SHAPING with any Hair Service this Month",
-  "💅 Buy 2 Nail Services, Get 1 FREE — Limited Time Offer",
-  "🎁 Refer a Friend & Both Get 15% OFF Your Next Visit",
+  "FREE BROW SHAPING with any Hair Service this Month",
+  "Buy 2 Nail Services, Get 1 FREE — Limited Time Offer",
+  "Refer a Friend & Both Get 15% OFF Your Next Visit",
 ];
 
 interface NavbarProps {
@@ -39,12 +40,13 @@ interface NavbarProps {
 const Navbar = ({ onOpenSubscribe }: NavbarProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [offerIdx, setOfferIdx] = useState(0);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { cartCount, wishlist } = useCart();
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 60);
+    const handleScroll = () => setIsScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -58,32 +60,39 @@ const Navbar = ({ onOpenSubscribe }: NavbarProps) => {
 
   const handleNav = (href: string) => {
     setMobileOpen(false);
-    setSearchOpen(false);
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
+    if (href.startsWith("/#")) {
+      const hash = href.substring(1);
+      if (location.pathname === "/") {
+        const el = document.querySelector(hash);
+        if (el) el.scrollIntoView({ behavior: "smooth" });
+      } else {
+        navigate("/" + hash);
+      }
+    } else {
+      navigate(href);
+    }
   };
 
   return (
     <>
       {/* Announcement / Marquee Bar */}
-      <div className="fixed top-0 left-0 right-0 z-[60] bg-white border-b border-gray-200 h-9 flex items-center overflow-hidden">
-        <div className="flex items-center w-full">
-          <div className="flex-shrink-0 bg-black text-white font-body text-[10px] uppercase tracking-widest px-4 h-full flex items-center">
-            OFFERS
-          </div>
-          <div className="flex-1 overflow-hidden px-4">
+      <div className="fixed top-0 left-0 right-0 z-[60] bg-black h-8 flex items-center overflow-hidden">
+        <div className="flex items-center justify-center w-full">
+          <div className="flex items-center gap-3">
+            <span className="hidden sm:inline font-body text-[10px] uppercase tracking-widest text-[hsl(var(--gold))] font-bold">Offers</span>
+            <span className="hidden sm:inline w-px h-3 bg-white/20" />
             <p
               key={offerIdx}
-              className="font-body text-xs text-gray-800 tracking-wide whitespace-nowrap animate-marquee"
+              className="font-body text-[11px] text-white/80 tracking-wide whitespace-nowrap animate-marquee"
             >
               {offers[offerIdx]}
             </p>
           </div>
-          <div className="flex-shrink-0 flex gap-4 px-4">
-            <a href="https://www.instagram.com/tezzaz_hair.ke/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-black transition-colors">
+          <div className="absolute right-4 flex gap-3">
+            <a href="https://www.instagram.com/tezzaz_hair.ke/" target="_blank" rel="noopener noreferrer" className="text-white/50 hover:text-white transition-colors">
               <InstagramIcon />
             </a>
-            <a href="https://www.tiktok.com/@tezzaz1" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-black transition-colors">
+            <a href="https://www.tiktok.com/@tezzaz1" target="_blank" rel="noopener noreferrer" className="text-white/50 hover:text-white transition-colors">
               <TikTokIcon />
             </a>
           </div>
@@ -92,71 +101,101 @@ const Navbar = ({ onOpenSubscribe }: NavbarProps) => {
 
       {/* Main Navbar */}
       <header
-        className={`fixed top-9 left-0 right-0 z-50 transition-all duration-300 bg-white border-b border-gray-200 ${
+        className={`fixed top-8 left-0 right-0 z-50 transition-all duration-300 bg-white border-b border-gray-200 ${
           isScrolled ? "shadow-md" : ""
         }`}
       >
-        {/* Top row: Logo + Search + Icons */}
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 flex items-center justify-between h-[64px]">
+        <div className="max-w-7xl mx-auto px-4 lg:px-10 flex items-center justify-between h-[56px]">
           {/* Logo */}
           <div
-            className="flex items-center gap-0 cursor-pointer"
-            onClick={() => handleNav("#home")}
+            className="flex items-center gap-0 cursor-pointer flex-shrink-0"
+            onClick={() => handleNav("/")}
           >
-            <div className="bg-black px-3 py-3 flex items-center gap-2 h-[64px]">
-              <Scissors className="w-4 h-4 text-white rotate-[-30deg]" />
-              <span className="font-display text-lg text-white font-semibold tracking-wide">Tezzaz</span>
+            <div className="bg-black px-2.5 py-2.5 flex items-center gap-1.5 h-[56px]">
+              <Scissors className="w-3.5 h-3.5 text-white rotate-[-30deg]" />
+              <span className="font-display text-base text-white font-semibold tracking-wide">Tezzaz</span>
             </div>
-            <div className="px-3 h-[64px] flex items-center border border-black/10 border-l-0">
-              <span className="font-display text-lg text-black tracking-wide font-light">Hair</span>
+            <div className="px-2.5 h-[56px] flex items-center border border-black/10 border-l-0">
+              <span className="font-display text-base text-black tracking-wide font-light">Hair</span>
             </div>
           </div>
 
-          {/* Center Search */}
-          <div className="hidden md:flex flex-1 max-w-md mx-8">
-            <div className="flex w-full border-2 border-black">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search services, products..."
-                className="flex-1 font-body text-sm px-4 py-2.5 focus:outline-none bg-white text-black placeholder-gray-400"
-              />
-              <button className="bg-black px-4 flex items-center justify-center hover:bg-gray-800 transition-colors">
-                <Search className="w-4 h-4 text-white" />
-              </button>
-            </div>
-          </div>
+          {/* Center Nav Links */}
+          <nav className="hidden md:flex items-center justify-center flex-1 gap-7">
+            {navLinks.map((link) =>
+              link.isShop ? (
+                <button
+                  key={link.label}
+                  onClick={() => handleNav(link.href)}
+                  className="relative flex items-center gap-1.5 font-body text-xs tracking-[0.15em] uppercase font-medium shop-glow-link"
+                >
+                  <Sparkles className="w-3 h-3" />
+                  {link.label}
+                </button>
+              ) : link.sub ? (
+                <div key={link.label} className="relative group h-full flex items-center">
+                  <button
+                    onClick={() => handleNav(link.href)}
+                    className="flex items-center gap-1 font-body text-xs tracking-[0.15em] uppercase text-gray-700 hover:text-black transition-colors duration-200"
+                  >
+                    {link.label}
+                    <ChevronDown className="w-3 h-3" />
+                  </button>
+                  <div className="absolute top-full left-0 bg-white border border-gray-200 shadow-xl min-w-[180px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    {link.sub.map((s) => (
+                      <button
+                        key={s}
+                        onClick={() => handleNav(link.href)}
+                        className="block w-full text-left font-body text-xs tracking-wide uppercase text-gray-600 hover:text-black hover:bg-gray-50 px-5 py-3 transition-colors"
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <button
+                  key={link.label}
+                  onClick={() => handleNav(link.href)}
+                  className="font-body text-xs tracking-[0.15em] uppercase text-gray-700 hover:text-black transition-colors duration-200"
+                >
+                  {link.label}
+                </button>
+              )
+            )}
+          </nav>
 
           {/* Right Icons */}
-          <div className="flex items-center gap-2">
-            {/* Mobile search toggle */}
-            <button
-              className="md:hidden p-2 hover:bg-gray-100 transition-colors"
-              onClick={() => setSearchOpen(!searchOpen)}
-            >
-              <Search className="w-5 h-5 text-black" />
-            </button>
+          <div className="flex items-center gap-1.5 flex-shrink-0">
             {/* Wishlist */}
             <button
-              onClick={() => handleNav("#shop")}
-              className="relative p-2 hover:bg-gray-100 transition-colors group"
+              onClick={() => navigate("/wishlist")}
+              className="relative p-2 hover:bg-gray-100 transition-colors"
               title="Wishlist"
             >
               <Heart className="w-5 h-5 text-black" />
+              {wishlist.length > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[hsl(var(--gold))] text-white font-body text-[9px] flex items-center justify-center font-bold">
+                  {wishlist.length}
+                </span>
+              )}
             </button>
             {/* Cart */}
             <button
-              onClick={() => handleNav("#shop")}
-              className="relative p-2 hover:bg-gray-100 transition-colors group"
+              onClick={() => navigate("/checkout")}
+              className="relative p-2 hover:bg-gray-100 transition-colors"
               title="Cart"
             >
               <ShoppingBag className="w-5 h-5 text-black" />
-              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-black text-white font-body text-[9px] flex items-center justify-center font-bold">0</span>
+              {cartCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-black text-white font-body text-[9px] flex items-center justify-center font-bold">
+                  {cartCount}
+                </span>
+              )}
             </button>
             {/* Book CTA */}
             <button
-              onClick={() => handleNav("#booking")}
+              onClick={() => handleNav("/#booking")}
               className="hidden md:block ml-2 bg-black text-white font-body text-xs tracking-[0.15em] uppercase px-5 py-2.5 hover:bg-gray-800 transition-colors duration-300"
             >
               Book Now
@@ -165,74 +204,6 @@ const Navbar = ({ onOpenSubscribe }: NavbarProps) => {
             <button className="md:hidden p-2 text-black" onClick={() => setMobileOpen(!mobileOpen)}>
               {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
-          </div>
-        </div>
-
-        {/* Mobile search bar */}
-        {searchOpen && (
-          <div className="md:hidden px-4 py-3 border-t border-gray-200 bg-white">
-            <div className="flex w-full border-2 border-black">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search services, products..."
-                className="flex-1 font-body text-sm px-4 py-2.5 focus:outline-none bg-white text-black"
-                autoFocus
-              />
-              <button className="bg-black px-4 flex items-center justify-center">
-                <Search className="w-4 h-4 text-white" />
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Bottom Nav Row */}
-        <div className="border-t border-gray-100">
-          <div className="max-w-7xl mx-auto px-6 lg:px-10">
-            <nav className="hidden md:flex items-center h-11 gap-8">
-              {navLinks.map((link) =>
-                link.isShop ? (
-                  <button
-                    key={link.label}
-                    onClick={() => handleNav(link.href)}
-                    className="relative flex items-center gap-1.5 font-body text-xs tracking-[0.15em] uppercase font-medium shop-glow-link"
-                  >
-                    <Sparkles className="w-3 h-3" />
-                    {link.label}
-                  </button>
-                ) : link.sub ? (
-                  <div key={link.label} className="relative group h-full flex items-center">
-                    <button
-                      onClick={() => handleNav(link.href)}
-                      className="flex items-center gap-1 font-body text-xs tracking-[0.15em] uppercase text-gray-700 hover:text-black transition-colors duration-200"
-                    >
-                      {link.label}
-                      <ChevronDown className="w-3 h-3" />
-                    </button>
-                    <div className="absolute top-full left-0 bg-white border border-gray-200 shadow-xl min-w-[180px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                      {link.sub.map((s) => (
-                        <button
-                          key={s}
-                          onClick={() => handleNav(link.href)}
-                          className="block w-full text-left font-body text-xs tracking-wide uppercase text-gray-600 hover:text-black hover:bg-gray-50 px-5 py-3 transition-colors"
-                        >
-                          {s}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <button
-                    key={link.label}
-                    onClick={() => handleNav(link.href)}
-                    className="font-body text-xs tracking-[0.15em] uppercase text-gray-700 hover:text-black transition-colors duration-200"
-                  >
-                    {link.label}
-                  </button>
-                )
-              )}
-            </nav>
           </div>
         </div>
 
@@ -252,7 +223,7 @@ const Navbar = ({ onOpenSubscribe }: NavbarProps) => {
               </button>
             ))}
             <button
-              onClick={() => handleNav("#booking")}
+              onClick={() => handleNav("/#booking")}
               className="mt-2 bg-black text-white font-body text-xs tracking-widest uppercase px-6 py-3"
             >
               Book Now
@@ -262,7 +233,7 @@ const Navbar = ({ onOpenSubscribe }: NavbarProps) => {
       </header>
 
       {/* Spacer */}
-      <div className="h-[109px]" />
+      <div className="h-[88px]" />
     </>
   );
 };

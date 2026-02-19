@@ -1,4 +1,5 @@
-import { Scissors, Phone, Mail, MapPin, Clock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Scissors, Phone, Mail, MapPin, Clock, ShoppingBag, Package } from "lucide-react";
 
 const TikTokIcon = () => (
   <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor">
@@ -13,9 +14,16 @@ const InstagramIcon = () => (
 );
 
 const FooterSection = () => {
+  const navigate = useNavigate();
+
   const handleNav = (href: string) => {
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
+    if (href.startsWith("/")) {
+      navigate(href);
+      window.scrollTo(0, 0);
+    } else {
+      const el = document.querySelector(href);
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   return (
@@ -96,10 +104,10 @@ const FooterSection = () => {
           </h4>
           <ul className="space-y-3">
             {[
-              { label: "Home", href: "#home" },
+              { label: "Home", href: "/" },
               { label: "About Us", href: "#about" },
               { label: "Our Services", href: "#services" },
-              { label: "Shop", href: "#shop" },
+              { label: "Shop", href: "/shop" },
               { label: "Book Appointment", href: "#booking" },
               { label: "Contact", href: "#contact" },
             ].map((link) => (
@@ -116,12 +124,12 @@ const FooterSection = () => {
           </ul>
         </div>
 
-        {/* Services */}
+        {/* Shop & Services */}
         <div>
           <h4 className="font-body text-white text-xs uppercase tracking-[0.2em] mb-6 pb-3 border-b border-white/10">
             Our Services
           </h4>
-          <ul className="space-y-3">
+          <ul className="space-y-3 mb-8">
             {[
               "Hair Styling",
               "Braids & Locs",
@@ -138,6 +146,34 @@ const FooterSection = () => {
                 >
                   <span className="w-1 h-1 bg-[hsl(var(--gold))]/50 group-hover:bg-[hsl(var(--gold))] transition-colors" />
                   {s}
+                </button>
+              </li>
+            ))}
+          </ul>
+
+          <h4 className="font-body text-white text-xs uppercase tracking-[0.2em] mb-4 pb-3 border-b border-white/10">
+            Shop
+          </h4>
+          <ul className="space-y-3">
+            {[
+              { label: "All Products", href: "/shop" },
+              { label: "My Wishlist", href: "/wishlist" },
+              { label: "Cart / Checkout", href: "/checkout" },
+              { label: "Track Order", href: "/track-order" },
+            ].map((link) => (
+              <li key={link.label}>
+                <button
+                  onClick={() => handleNav(link.href)}
+                  className="font-body text-white/50 text-sm hover:text-white transition-colors flex items-center gap-2 group"
+                >
+                  {link.href === "/shop" ? (
+                    <ShoppingBag className="w-3 h-3 text-[hsl(var(--gold))]/50 group-hover:text-[hsl(var(--gold))]" />
+                  ) : link.href === "/track-order" ? (
+                    <Package className="w-3 h-3 text-[hsl(var(--gold))]/50 group-hover:text-[hsl(var(--gold))]" />
+                  ) : (
+                    <span className="w-1 h-1 bg-[hsl(var(--gold))]/50 group-hover:bg-[hsl(var(--gold))] transition-colors" />
+                  )}
+                  {link.label}
                 </button>
               </li>
             ))}
