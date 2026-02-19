@@ -12,6 +12,177 @@ import {
 } from "lucide-react";
 import type { Product } from "@/context/CartContext";
 
+interface ProductFormData {
+  name: string;
+  price: string;
+  originalPrice: string;
+  category: string;
+  collection: string;
+  desc: string;
+  img: string;
+  tags: string;
+  inStock: boolean;
+  isNew: boolean;
+  onOffer: boolean;
+}
+
+const ProductFormModal = ({
+  title,
+  onSubmit,
+  submitLabel,
+  onClose,
+  formData,
+  setFormData,
+}: {
+  title: string;
+  onSubmit: () => void;
+  submitLabel: string;
+  onClose: () => void;
+  formData: ProductFormData;
+  setFormData: React.Dispatch<React.SetStateAction<ProductFormData>>;
+}) => (
+  <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
+    <div className="bg-white w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-lg">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h2 className="font-display text-lg font-bold">{title}</h2>
+        <button onClick={onClose} className="text-gray-400 hover:text-black">
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+      <div className="p-6 space-y-4">
+        <div>
+          <label className="font-body text-xs font-medium text-black block mb-1">Product Name *</label>
+          <input
+            type="text"
+            value={formData.name}
+            onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+            placeholder="e.g. Castor Oil Hair Serum"
+            className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black"
+          />
+        </div>
+
+        <div className="grid grid-cols-3 gap-3">
+          <div>
+            <label className="font-body text-xs font-medium text-black block mb-1">Price (KSh) *</label>
+            <input
+              type="number"
+              value={formData.price}
+              onChange={(e) => setFormData((prev) => ({ ...prev, price: e.target.value }))}
+              placeholder="3500"
+              className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black"
+            />
+          </div>
+          <div>
+            <label className="font-body text-xs font-medium text-black block mb-1">Original Price (KSh)</label>
+            <input
+              type="number"
+              value={formData.originalPrice}
+              onChange={(e) => setFormData((prev) => ({ ...prev, originalPrice: e.target.value }))}
+              placeholder="5500"
+              className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black"
+            />
+          </div>
+          <div>
+            <label className="font-body text-xs font-medium text-black block mb-1">Category *</label>
+            <input
+              type="text"
+              value={formData.category}
+              onChange={(e) => setFormData((prev) => ({ ...prev, category: e.target.value }))}
+              placeholder="e.g. Hair Care"
+              className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="font-body text-xs font-medium text-black block mb-1">Description *</label>
+          <textarea
+            value={formData.desc}
+            onChange={(e) => setFormData((prev) => ({ ...prev, desc: e.target.value }))}
+            rows={3}
+            placeholder="Describe the product..."
+            className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black resize-none"
+          />
+        </div>
+
+        <div>
+          <label className="font-body text-xs font-medium text-black block mb-1">Image URL</label>
+          <input
+            type="text"
+            value={formData.img}
+            onChange={(e) => setFormData((prev) => ({ ...prev, img: e.target.value }))}
+            placeholder="Or paste image URL..."
+            className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black"
+          />
+        </div>
+
+        <div>
+          <label className="font-body text-xs font-medium text-black block mb-1">Tags (comma separated)</label>
+          <input
+            type="text"
+            value={formData.tags}
+            onChange={(e) => setFormData((prev) => ({ ...prev, tags: e.target.value }))}
+            placeholder="hair care, serum, natural"
+            className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black"
+          />
+        </div>
+
+        <div className="flex items-center gap-6">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <div
+              className={`w-9 h-5 rounded-full relative transition-colors ${formData.inStock ? "bg-black" : "bg-gray-200"}`}
+              onClick={() => setFormData((prev) => ({ ...prev, inStock: !prev.inStock }))}
+            >
+              <div
+                className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${formData.inStock ? "left-[18px]" : "left-0.5"}`}
+              />
+            </div>
+            <span className="font-body text-xs text-black">In Stock</span>
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <div
+              className={`w-9 h-5 rounded-full relative transition-colors ${formData.isNew ? "bg-black" : "bg-gray-200"}`}
+              onClick={() => setFormData((prev) => ({ ...prev, isNew: !prev.isNew }))}
+            >
+              <div
+                className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${formData.isNew ? "left-[18px]" : "left-0.5"}`}
+              />
+            </div>
+            <span className="font-body text-xs text-black">New</span>
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <div
+              className={`w-9 h-5 rounded-full relative transition-colors ${formData.onOffer ? "bg-black" : "bg-gray-200"}`}
+              onClick={() => setFormData((prev) => ({ ...prev, onOffer: !prev.onOffer }))}
+            >
+              <div
+                className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${formData.onOffer ? "left-[18px]" : "left-0.5"}`}
+              />
+            </div>
+            <span className="font-body text-xs text-black">On Offer</span>
+          </label>
+        </div>
+
+        <div className="flex justify-end gap-3 pt-3 border-t border-gray-100">
+          <button
+            onClick={onClose}
+            className="px-5 py-2.5 border border-gray-200 rounded font-body text-xs hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onSubmit}
+            disabled={!formData.name || !formData.price}
+            className="px-5 py-2.5 bg-black text-white rounded font-body text-xs hover:bg-gray-800 transition-colors disabled:bg-gray-300"
+          >
+            {submitLabel}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 const AdminProducts = () => {
   const [productList, setProductList] = useState<Product[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -21,7 +192,7 @@ const AdminProducts = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ProductFormData>({
     name: "",
     price: "",
     originalPrice: "",
@@ -120,159 +291,6 @@ const AdminProducts = () => {
     setShowDeleteModal(false);
     setSelectedProduct(null);
   };
-
-  const ProductFormModal = ({
-    title,
-    onSubmit,
-    submitLabel,
-    onClose,
-  }: {
-    title: string;
-    onSubmit: () => void;
-    submitLabel: string;
-    onClose: () => void;
-  }) => (
-    <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
-      <div className="bg-white w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-lg">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="font-display text-lg font-bold">{title}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-black">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-        <div className="p-6 space-y-4">
-          <div>
-            <label className="font-body text-xs font-medium text-black block mb-1">Product Name *</label>
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="e.g. Castor Oil Hair Serum"
-              className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black"
-            />
-          </div>
-
-          <div className="grid grid-cols-3 gap-3">
-            <div>
-              <label className="font-body text-xs font-medium text-black block mb-1">Price (KSh) *</label>
-              <input
-                type="number"
-                value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                placeholder="3500"
-                className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black"
-              />
-            </div>
-            <div>
-              <label className="font-body text-xs font-medium text-black block mb-1">Original Price (KSh)</label>
-              <input
-                type="number"
-                value={formData.originalPrice}
-                onChange={(e) => setFormData({ ...formData, originalPrice: e.target.value })}
-                placeholder="5500"
-                className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black"
-              />
-            </div>
-            <div>
-              <label className="font-body text-xs font-medium text-black block mb-1">Category *</label>
-              <input
-                type="text"
-                value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                placeholder="e.g. Hair Care"
-                className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="font-body text-xs font-medium text-black block mb-1">Description *</label>
-            <textarea
-              value={formData.desc}
-              onChange={(e) => setFormData({ ...formData, desc: e.target.value })}
-              rows={3}
-              placeholder="Describe the product..."
-              className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black resize-none"
-            />
-          </div>
-
-          <div>
-            <label className="font-body text-xs font-medium text-black block mb-1">Image URL</label>
-            <input
-              type="text"
-              value={formData.img}
-              onChange={(e) => setFormData({ ...formData, img: e.target.value })}
-              placeholder="Or paste image URL..."
-              className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black"
-            />
-          </div>
-
-          <div>
-            <label className="font-body text-xs font-medium text-black block mb-1">Tags (comma separated)</label>
-            <input
-              type="text"
-              value={formData.tags}
-              onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-              placeholder="hair care, serum, natural"
-              className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black"
-            />
-          </div>
-
-          <div className="flex items-center gap-6">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <div
-                className={`w-9 h-5 rounded-full relative transition-colors ${formData.inStock ? "bg-black" : "bg-gray-200"}`}
-                onClick={() => setFormData({ ...formData, inStock: !formData.inStock })}
-              >
-                <div
-                  className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${formData.inStock ? "left-[18px]" : "left-0.5"}`}
-                />
-              </div>
-              <span className="font-body text-xs text-black">In Stock</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <div
-                className={`w-9 h-5 rounded-full relative transition-colors ${formData.isNew ? "bg-black" : "bg-gray-200"}`}
-                onClick={() => setFormData({ ...formData, isNew: !formData.isNew })}
-              >
-                <div
-                  className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${formData.isNew ? "left-[18px]" : "left-0.5"}`}
-                />
-              </div>
-              <span className="font-body text-xs text-black">New</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <div
-                className={`w-9 h-5 rounded-full relative transition-colors ${formData.onOffer ? "bg-black" : "bg-gray-200"}`}
-                onClick={() => setFormData({ ...formData, onOffer: !formData.onOffer })}
-              >
-                <div
-                  className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${formData.onOffer ? "left-[18px]" : "left-0.5"}`}
-                />
-              </div>
-              <span className="font-body text-xs text-black">On Offer</span>
-            </label>
-          </div>
-
-          <div className="flex justify-end gap-3 pt-3 border-t border-gray-100">
-            <button
-              onClick={onClose}
-              className="px-5 py-2.5 border border-gray-200 rounded font-body text-xs hover:bg-gray-50 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={onSubmit}
-              disabled={!formData.name || !formData.price}
-              className="px-5 py-2.5 bg-black text-white rounded font-body text-xs hover:bg-gray-800 transition-colors disabled:bg-gray-300"
-            >
-              {submitLabel}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <div>
@@ -433,6 +451,8 @@ const AdminProducts = () => {
             setShowAddModal(false);
             resetForm();
           }}
+          formData={formData}
+          setFormData={setFormData}
         />
       )}
 
@@ -447,6 +467,8 @@ const AdminProducts = () => {
             setSelectedProduct(null);
             resetForm();
           }}
+          formData={formData}
+          setFormData={setFormData}
         />
       )}
 
