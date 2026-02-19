@@ -3,7 +3,6 @@ import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import FooterSection from "@/components/FooterSection";
 import SEOHead from "@/components/SEOHead";
-import galleryBanner from "@/assets/gallery-banner.png";
 
 interface GalleryItem {
   id: number;
@@ -47,21 +46,14 @@ const Gallery = () => {
       />
       <Navbar />
 
-      {/* Thin Banner */}
-      <div className="relative w-full h-[180px] sm:h-[220px] overflow-hidden">
-        <img
-          src={galleryBanner}
-          alt="Tezzaz Hair Gallery"
-          className="w-full h-full object-cover object-center"
-        />
-        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-          <div className="text-center">
-            <p className="font-body text-[10px] sm:text-xs uppercase tracking-[0.25em] text-[hsl(var(--gold))] mb-2">Our Work</p>
-            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl text-white font-bold">Gallery</h1>
-            <p className="font-body text-xs sm:text-sm text-white/60 mt-2 max-w-md mx-auto">
-              Browse our latest hairdressing designs and transformations
-            </p>
-          </div>
+      {/* Banner */}
+      <div className="w-full h-[180px] sm:h-[220px] bg-black flex items-center justify-center">
+        <div className="text-center">
+          <p className="font-body text-[10px] sm:text-xs uppercase tracking-[0.25em] text-[hsl(var(--gold))] mb-2">Our Work</p>
+          <h1 className="font-display text-3xl sm:text-4xl md:text-5xl text-white font-bold">Gallery</h1>
+          <p className="font-body text-xs sm:text-sm text-white/60 mt-2 max-w-md mx-auto">
+            Browse our latest hairdressing designs and transformations
+          </p>
         </div>
       </div>
 
