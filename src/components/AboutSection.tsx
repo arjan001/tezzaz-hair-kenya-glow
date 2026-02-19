@@ -23,7 +23,7 @@ const AboutSection = () => {
             </div>
             <div>
               <p className="font-body text-cream/60 text-xs uppercase tracking-widest">Call us anytime</p>
-              <p className="font-display text-cream text-xl font-bold">+254 700 123 456</p>
+              <p className="font-display text-cream text-xl font-bold">+254 711 135090</p>
             </div>
             <button
               onClick={() => handleNav("#booking")}

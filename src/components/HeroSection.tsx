@@ -71,7 +71,7 @@ const HeroSection = () => {
               </div>
               <div>
                 <p className="font-body text-[10px] text-gold group-hover:text-cream uppercase tracking-widest font-bold transition-colors">Call Us</p>
-                <p className="font-body text-charcoal group-hover:text-cream font-bold text-sm transition-colors">+254 700 123 456</p>
+                <p className="font-body text-charcoal group-hover:text-cream font-bold text-sm transition-colors">+254 711 135090</p>
               </div>
             </div>
             <div className="flex items-center gap-3 border-2 border-gold px-4 py-3 group hover:bg-gold transition-colors duration-300">
@@ -80,7 +80,7 @@ const HeroSection = () => {
               </div>
               <div>
                 <p className="font-body text-[10px] text-gold group-hover:text-cream uppercase tracking-widest font-bold transition-colors">Mail Us</p>
-                <p className="font-body text-charcoal group-hover:text-cream font-bold text-sm transition-colors">hello@tezzazhair.co.ke</p>
+                <p className="font-body text-charcoal group-hover:text-cream font-bold text-sm transition-colors">booking@tezzaz-hair.com</p>
               </div>
             </div>
           </div>
