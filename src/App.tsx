@@ -4,6 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CartProvider } from "@/context/CartContext";
+import CartSidebar from "@/components/CartSidebar";
+import { useCart } from "@/context/CartContext";
 import Index from "./pages/Index";
 import Shop from "./pages/Shop";
 import ProductPage from "./pages/Product";
@@ -11,8 +13,22 @@ import Wishlist from "./pages/Wishlist";
 import Checkout from "./pages/Checkout";
 import TrackOrder from "./pages/TrackOrder";
 import NotFound from "./pages/NotFound";
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminProducts from "./pages/admin/AdminProducts";
+import AdminCategories from "./pages/admin/AdminCategories";
+import AdminOrders from "./pages/admin/AdminOrders";
+import AdminUsersRoles from "./pages/admin/AdminUsersRoles";
+import AdminSettings from "./pages/admin/AdminSettings";
 
 const queryClient = new QueryClient();
+
+const CartSidebarWrapper = () => {
+  const { cartSidebarOpen, setCartSidebarOpen } = useCart();
+  return (
+    <CartSidebar open={cartSidebarOpen} onClose={() => setCartSidebarOpen(false)} />
+  );
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -21,6 +37,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <CartSidebarWrapper />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/shop" element={<Shop />} />
@@ -28,6 +45,14 @@ const App = () => (
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/track-order" element={<TrackOrder />} />
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="products" element={<AdminProducts />} />
+              <Route path="categories" element={<AdminCategories />} />
+              <Route path="orders" element={<AdminOrders />} />
+              <Route path="users" element={<AdminUsersRoles />} />
+              <Route path="settings" element={<AdminSettings />} />
+            </Route>
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
