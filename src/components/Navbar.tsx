@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Menu, X, Scissors, ChevronDown, Heart, ShoppingBag, Sparkles } from "lucide-react";
+import { Menu, X, Scissors, Heart, ShoppingBag, Sparkles } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 
 const TikTokIcon = () => (
@@ -18,11 +18,7 @@ const InstagramIcon = () => (
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "About", href: "/#about" },
-  {
-    label: "Services",
-    href: "/#services",
-    sub: ["Hair Styling", "Braids & Locs", "Nail Art", "Pedicure", "Makeup", "Skin Care"],
-  },
+  { label: "Services", href: "/services" },
   { label: "Shop", href: "/shop", isShop: true },
   { label: "Contact", href: "/#contact" },
 ];
@@ -132,27 +128,6 @@ const Navbar = ({ onOpenSubscribe }: NavbarProps) => {
                   <Sparkles className="w-3 h-3" />
                   {link.label}
                 </button>
-              ) : link.sub ? (
-                <div key={link.label} className="relative group h-full flex items-center">
-                  <button
-                    onClick={() => handleNav(link.href)}
-                    className="flex items-center gap-1 font-body text-xs tracking-[0.15em] uppercase text-gray-700 hover:text-black transition-colors duration-200"
-                  >
-                    {link.label}
-                    <ChevronDown className="w-3 h-3" />
-                  </button>
-                  <div className="absolute top-full left-0 bg-white border border-gray-200 shadow-xl min-w-[180px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                    {link.sub.map((s) => (
-                      <button
-                        key={s}
-                        onClick={() => handleNav(link.href)}
-                        className="block w-full text-left font-body text-xs tracking-wide uppercase text-gray-600 hover:text-black hover:bg-gray-50 px-5 py-3 transition-colors"
-                      >
-                        {s}
-                      </button>
-                    ))}
-                  </div>
-                </div>
               ) : (
                 <button
                   key={link.label}

@@ -106,7 +106,7 @@ const FooterSection = () => {
             {[
               { label: "Home", href: "/" },
               { label: "About Us", href: "#about" },
-              { label: "Our Services", href: "#services" },
+              { label: "Our Services", href: "/services" },
               { label: "Shop", href: "/shop" },
               { label: "Book Appointment", href: "#booking" },
               { label: "Contact", href: "#contact" },
@@ -141,7 +141,7 @@ const FooterSection = () => {
             ].map((s) => (
               <li key={s}>
                 <button
-                  onClick={() => handleNav("#services")}
+                  onClick={() => handleNav("/services")}
                   className="font-body text-white/50 text-sm hover:text-white transition-colors flex items-center gap-2 group"
                 >
                   <span className="w-1 h-1 bg-[hsl(var(--gold))]/50 group-hover:bg-[hsl(var(--gold))] transition-colors" />
@@ -154,7 +154,7 @@ const FooterSection = () => {
           <h4 className="font-body text-white text-xs uppercase tracking-[0.2em] mb-4 pb-3 border-b border-white/10">
             Shop
           </h4>
-          <ul className="space-y-3">
+          <ul className="space-y-3 mb-8">
             {[
               { label: "All Products", href: "/shop" },
               { label: "My Wishlist", href: "/wishlist" },
@@ -173,6 +173,28 @@ const FooterSection = () => {
                   ) : (
                     <span className="w-1 h-1 bg-[hsl(var(--gold))]/50 group-hover:bg-[hsl(var(--gold))] transition-colors" />
                   )}
+                  {link.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+
+          <h4 className="font-body text-white text-xs uppercase tracking-[0.2em] mb-4 pb-3 border-b border-white/10">
+            Policies
+          </h4>
+          <ul className="space-y-3">
+            {[
+              { label: "Terms & Conditions", href: "/terms-and-conditions" },
+              { label: "Privacy Policy", href: "/privacy-policy" },
+              { label: "Refund Policy", href: "/refund-policy" },
+              { label: "All Policies", href: "/policies" },
+            ].map((link) => (
+              <li key={link.label}>
+                <button
+                  onClick={() => handleNav(link.href)}
+                  className="font-body text-white/50 text-sm hover:text-white transition-colors flex items-center gap-2 group"
+                >
+                  <span className="w-1 h-1 bg-[hsl(var(--gold))]/50 group-hover:bg-[hsl(var(--gold))] transition-colors" />
                   {link.label}
                 </button>
               </li>
@@ -233,21 +255,41 @@ const FooterSection = () => {
 
       {/* Bottom Bar */}
       <div className="border-t border-white/10">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 py-5 flex flex-col md:flex-row items-center justify-between gap-3">
-          <p className="font-body text-white/30 text-xs">
-            © 2025 Tezzaz Hair. All Rights Reserved. | The Bazaar, 10th Floor, Suite 1025, Nairobi, Kenya.
-          </p>
-          <p className="font-body text-white/30 text-xs">
-            Built by{" "}
-            <a
-              href="http://oneplusafrica.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[hsl(var(--gold))] hover:text-white transition-colors"
-            >
-              OnePlus Africa Tech Solutions
-            </a>
-          </p>
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 py-5 flex flex-col gap-4">
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+            {[
+              { label: "Terms & Conditions", href: "/terms-and-conditions" },
+              { label: "Privacy Policy", href: "/privacy-policy" },
+              { label: "Refund Policy", href: "/refund-policy" },
+              { label: "Policies", href: "/policies" },
+            ].map((link, i) => (
+              <span key={link.label} className="flex items-center gap-6">
+                <button
+                  onClick={() => handleNav(link.href)}
+                  className="font-body text-white/40 text-[11px] uppercase tracking-wide hover:text-[hsl(var(--gold))] transition-colors"
+                >
+                  {link.label}
+                </button>
+                {i < 3 && <span className="w-px h-3 bg-white/10 hidden sm:block" />}
+              </span>
+            ))}
+          </div>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-3">
+            <p className="font-body text-white/30 text-xs">
+              © 2025 Tezzaz Hair. All Rights Reserved. | The Bazaar, 10th Floor, Suite 1025, Nairobi, Kenya.
+            </p>
+            <p className="font-body text-white/30 text-xs">
+              Built by{" "}
+              <a
+                href="http://oneplusafrica.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[hsl(var(--gold))] hover:text-white transition-colors"
+              >
+                OnePlus Africa Tech Solutions
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </footer>
