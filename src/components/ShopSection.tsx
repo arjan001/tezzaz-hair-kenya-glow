@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Heart, ShoppingBag, Sparkles, ArrowRight } from "lucide-react";
+import { Heart, ShoppingBag, Sparkles, ArrowRight, Search } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { products } from "@/data/products";
 
@@ -7,6 +8,19 @@ const ShopSection = () => {
   const navigate = useNavigate();
   const { addToCart, toggleWishlist, isInWishlist } = useCart();
   const featured = products.slice(0, 6);
+  const [searchInput, setSearchInput] = useState("");
+
+  const handleSearch = () => {
+    if (searchInput.trim()) {
+      navigate(`/shop?q=${encodeURIComponent(searchInput.trim())}`);
+    } else {
+      navigate("/shop");
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") handleSearch();
+  };
 
   return (
     <section id="shop" className="bg-white section-padding">
@@ -25,6 +39,20 @@ const ShopSection = () => {
             <p className="font-body text-gray-500 text-sm max-w-sm">
               Premium hair, nail & beauty products — curated for Kenyan beauty. Shop & book all in one place.
             </p>
+            {/* Search Bar */}
+            <div className="flex w-full max-w-sm mt-4 border-2 border-black">
+              <input
+                type="text"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Search products..."
+                className="flex-1 font-body text-sm px-4 py-2.5 focus:outline-none bg-white text-black"
+              />
+              <button onClick={handleSearch} className="bg-black px-4 flex items-center justify-center hover:bg-gray-800 transition-colors">
+                <Search className="w-4 h-4 text-white" />
+              </button>
+            </div>
           </div>
           <button
             onClick={() => navigate("/shop")}

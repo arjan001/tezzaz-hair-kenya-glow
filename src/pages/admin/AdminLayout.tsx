@@ -12,6 +12,11 @@ import {
   Scissors,
   Menu,
   X,
+  Palette,
+  Mail,
+  Truck,
+  BarChart3,
+  FileText,
 } from "lucide-react";
 
 const sidebarLinks = [
@@ -19,6 +24,11 @@ const sidebarLinks = [
   { label: "Products", href: "/admin/products", icon: Package },
   { label: "Categories", href: "/admin/categories", icon: Tag },
   { label: "Orders", href: "/admin/orders", icon: ShoppingCart },
+  { label: "Theme", href: "/admin/theme", icon: Palette },
+  { label: "Newsletter", href: "/admin/newsletter", icon: Mail },
+  { label: "Delivery", href: "/admin/delivery", icon: Truck },
+  { label: "Analytics", href: "/admin/analytics", icon: BarChart3 },
+  { label: "Policies", href: "/admin/policies", icon: FileText },
   { label: "Users & Roles", href: "/admin/users", icon: Users },
   { label: "Settings", href: "/admin/settings", icon: Settings },
 ];
