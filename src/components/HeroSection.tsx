@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/hero-salon.jpg";
 import aboutSalon from "@/assets/about-salon.jpg";
 import galleryImg from "@/assets/gallery-1.jpg";
@@ -12,7 +13,7 @@ const slides = [
     desc: "Experience world-class artistry celebrating African beauty. Located at The Bazaar, 10th Floor.",
     img: heroImage,
     cta: "Book Appointment",
-    href: "#booking",
+    href: "/#booking",
   },
   {
     tag: "Braids · Locs · Natural Hair",
@@ -21,7 +22,7 @@ const slides = [
     desc: "Premium protective styles, natural hair treatments and luxury services — all under one roof.",
     img: aboutSalon,
     cta: "See Our Services",
-    href: "#services",
+    href: "/#services",
   },
   {
     tag: "New — Tezzaz Beauty Shop",
@@ -30,12 +31,13 @@ const slides = [
     desc: "Premium hair, nail & skin products now available in-store and online. Shop the Kenyan beauty edit.",
     img: galleryImg,
     cta: "Shop Now",
-    href: "#shop",
+    href: "/shop",
   },
 ];
 
 const HeroSection = () => {
   const [slide, setSlide] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -45,8 +47,16 @@ const HeroSection = () => {
   }, []);
 
   const handleNav = (href: string) => {
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
+    if (href.startsWith("/") && !href.startsWith("/#")) {
+      navigate(href);
+    } else if (href.startsWith("/#")) {
+      const hash = href.substring(1);
+      const el = document.querySelector(hash);
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    } else {
+      const el = document.querySelector(href);
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   const current = slides[slide];
@@ -94,7 +104,7 @@ const HeroSection = () => {
               {current.cta} <ArrowRight className="w-4 h-4" />
             </button>
             <button
-              onClick={() => handleNav("#services")}
+              onClick={() => handleNav("/#services")}
               className="flex items-center gap-2 border-2 border-white/60 text-white font-body text-xs tracking-[0.2em] uppercase px-8 py-4 hover:border-white hover:bg-white/10 transition-all duration-300"
             >
               Our Services
