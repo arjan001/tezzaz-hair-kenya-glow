@@ -59,56 +59,54 @@ const ServicesSection = () => {
   };
 
   return (
-    <section id="services" className="bg-cream section-padding">
+    <section id="services" className="bg-white section-padding border-t-2 border-black">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-14">
-          <p className="font-display italic text-gold text-xl mb-2">Our Services</p>
-          <h2 className="font-display text-4xl md:text-5xl text-charcoal font-bold mb-3">
-            Explore Our <span className="text-gold">Services</span>
-          </h2>
-          <div className="w-16 h-[2px] bg-gold mx-auto mb-4" />
-          <p className="font-body text-charcoal/60 max-w-xl mx-auto text-sm leading-relaxed">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+          <div>
+            <p className="font-body text-xs uppercase tracking-[0.2em] text-[hsl(var(--gold))] mb-2">What We Offer</p>
+            <h2 className="font-display text-4xl md:text-5xl text-black font-bold">
+              Our Services
+            </h2>
+          </div>
+          <p className="font-body text-gray-500 text-sm max-w-sm">
             Hair, Beauty & Nails all under one roof at The Bazaar — Nairobi's finest.
           </p>
         </div>
 
         {/* Services Grid */}
-        <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-0 border border-gold/20">
-          {services.map((service, i) => {
+        <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-px bg-gray-200 border-2 border-black">
+          {services.map((service) => {
             const Icon = service.icon;
             return (
               <div
                 key={service.title}
-                className="group relative overflow-hidden border border-gold/10 hover:border-gold/40 transition-all duration-300"
-                style={{ background: i % 2 === 0 ? "hsl(var(--cream))" : "hsl(var(--cream-dark))" }}
+                className="group relative overflow-hidden bg-white hover:bg-black transition-all duration-300"
               >
                 {/* Image */}
                 <div className="overflow-hidden h-44 relative">
                   <img
                     src={service.img}
                     alt={service.title}
-                    className="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-700"
+                    className="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-700 group-hover:opacity-40"
                   />
-                  {/* Gold overlay strip on hover */}
-                  <div className="absolute inset-0 bg-charcoal/10 group-hover:bg-gold/20 transition-colors duration-300" />
                   {/* Icon badge */}
-                  <div className="absolute top-3 right-3 bg-gold p-2 shadow-lg">
-                    <Icon className="w-4 h-4 text-cream" />
+                  <div className="absolute top-3 right-3 bg-black group-hover:bg-white p-2 shadow-lg transition-colors">
+                    <Icon className="w-4 h-4 text-white group-hover:text-black transition-colors" />
                   </div>
                 </div>
 
                 {/* Content */}
                 <div className="p-5">
-                  <h3 className="font-display text-lg text-charcoal font-bold mb-2 group-hover:text-gold transition-colors">
+                  <h3 className="font-display text-lg text-black group-hover:text-white font-bold mb-2 transition-colors">
                     {service.title}
                   </h3>
-                  <p className="font-body text-charcoal/60 text-xs leading-relaxed mb-4">
+                  <p className="font-body text-gray-500 group-hover:text-white/60 text-xs leading-relaxed mb-4 transition-colors">
                     {service.desc}
                   </p>
                   <button
                     onClick={() => handleNav("#booking")}
-                    className="font-body text-[10px] tracking-[0.2em] uppercase text-gold border-b border-gold hover:text-charcoal hover:border-charcoal transition-colors duration-200 pb-0.5"
+                    className="font-body text-[10px] tracking-[0.2em] uppercase text-black group-hover:text-[hsl(var(--gold))] border-b border-black group-hover:border-[hsl(var(--gold))] hover:opacity-80 transition-colors duration-200 pb-0.5"
                   >
                     Book Now →
                   </button>
@@ -118,17 +116,17 @@ const ServicesSection = () => {
           })}
 
           {/* CTA tile */}
-          <div className="group bg-charcoal flex flex-col items-center justify-center p-8 text-center border border-gold/20 min-h-[280px]">
-            <div className="w-16 h-[2px] bg-gold mb-6" />
-            <p className="font-display text-cream text-xl font-bold mb-3 leading-tight">
-              Ready for a <span className="text-gold">Glow Up?</span>
+          <div className="group bg-black flex flex-col items-center justify-center p-8 text-center min-h-[280px]">
+            <div className="w-12 h-[2px] bg-[hsl(var(--gold))] mb-6" />
+            <p className="font-display text-white text-xl font-bold mb-3 leading-tight">
+              Ready for a <span className="text-[hsl(var(--gold))]">Glow Up?</span>
             </p>
-            <p className="font-body text-cream/60 text-xs leading-relaxed mb-6">
-              Book your session at The Bazaar, 10th Floor, Wing B — Suite 1025
+            <p className="font-body text-white/50 text-xs leading-relaxed mb-6">
+              The Bazaar, 10th Floor, Wing B — Suite 1025
             </p>
             <button
               onClick={() => handleNav("#booking")}
-              className="bg-gold text-cream font-body text-xs tracking-[0.2em] uppercase px-7 py-3 hover:bg-gold-dark transition-colors"
+              className="bg-white text-black font-body text-xs tracking-[0.2em] uppercase px-7 py-3 hover:bg-[hsl(var(--gold))] hover:text-white transition-colors duration-300"
             >
               Book Now
             </button>

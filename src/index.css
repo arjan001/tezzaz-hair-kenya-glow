@@ -14,15 +14,15 @@
 
 @layer base {
   :root {
-    /* Brand Colors */
-    --gold: 38 65% 48%;
-    --gold-light: 42 70% 65%;
-    --gold-dark: 35 60% 35%;
-    --cream: 40 35% 96%;
-    --cream-dark: 38 25% 90%;
-    --charcoal: 25 15% 12%;
-    --charcoal-light: 25 10% 25%;
-    --warm-brown: 28 40% 30%;
+    /* Brand Colors – Neo-brutalist B&W with Beauty accent */
+    --gold: 340 60% 55%;
+    --gold-light: 340 50% 72%;
+    --gold-dark: 340 65% 38%;
+    --cream: 0 0% 98%;
+    --cream-dark: 0 0% 93%;
+    --charcoal: 0 0% 8%;
+    --charcoal-light: 0 0% 20%;
+    --warm-brown: 340 30% 30%;
 
     /* Shadcn Tokens */
     --background: 209 40% 96%;
@@ -185,5 +185,33 @@
 
   .section-padding {
     @apply px-6 py-20 md:px-16 lg:px-24;
+  }
+
+  /* Shop nav link glow — pink/magenta pulse */
+  .shop-glow-link {
+    color: hsl(320 80% 55%);
+    text-shadow: 0 0 8px hsl(320 80% 55% / 0.7);
+    animation: shop-pulse 2s ease-in-out infinite;
+  }
+
+  .shop-glow-link:hover {
+    color: hsl(320 80% 45%);
+  }
+
+  /* Marquee slide-in animation */
+  @keyframes marquee {
+    0% { transform: translateX(60px); opacity: 0; }
+    10% { transform: translateX(0); opacity: 1; }
+    85% { transform: translateX(0); opacity: 1; }
+    100% { transform: translateX(-40px); opacity: 0; }
+  }
+
+  .animate-marquee {
+    animation: marquee 3.5s ease-in-out;
+  }
+
+  @keyframes shop-pulse {
+    0%, 100% { text-shadow: 0 0 6px hsl(320 80% 55% / 0.5); }
+    50% { text-shadow: 0 0 16px hsl(320 80% 55% / 0.9), 0 0 30px hsl(300 80% 60% / 0.4); }
   }
 }

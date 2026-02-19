@@ -1,24 +1,48 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import heroImage from "@/assets/hero-salon.jpg";
-import { Phone, Mail, ChevronLeft, ChevronRight } from "lucide-react";
+import aboutSalon from "@/assets/about-salon.jpg";
+import galleryImg from "@/assets/gallery-1.jpg";
+import { ArrowRight } from "lucide-react";
+
+const slides = [
+  {
+    tag: "Hair · Beauty · Nails",
+    title: "Nairobi's Premier",
+    subtitle: "Beauty Studio",
+    desc: "Experience world-class artistry celebrating African beauty. Located at The Bazaar, 10th Floor.",
+    img: heroImage,
+    cta: "Book Appointment",
+    href: "#booking",
+  },
+  {
+    tag: "Braids · Locs · Natural Hair",
+    title: "Your Crown,",
+    subtitle: "Our Expertise",
+    desc: "Premium protective styles, natural hair treatments and luxury services — all under one roof.",
+    img: aboutSalon,
+    cta: "See Our Services",
+    href: "#services",
+  },
+  {
+    tag: "New — Tezzaz Beauty Shop",
+    title: "Shop Our",
+    subtitle: "Beauty Range",
+    desc: "Premium hair, nail & skin products now available in-store and online. Shop the Kenyan beauty edit.",
+    img: galleryImg,
+    cta: "Shop Now",
+    href: "#shop",
+  },
+];
 
 const HeroSection = () => {
   const [slide, setSlide] = useState(0);
 
-  const slides = [
-    {
-      tag: "Welcome to",
-      title: "Hair, Beauty",
-      subtitle: "& Nails",
-      desc: "Experience world-class artistry celebrating African beauty.",
-    },
-    {
-      tag: "Nairobi's Best",
-      title: "Your Crown",
-      subtitle: "Our Expertise",
-      desc: "Premium hair and beauty services at The Bazaar, Nairobi.",
-    },
-  ];
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSlide((s) => (s + 1) % slides.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleNav = (href: string) => {
     const el = document.querySelector(href);
@@ -28,99 +52,85 @@ const HeroSection = () => {
   const current = slides[slide];
 
   return (
-    <section id="home" className="min-h-screen grid md:grid-cols-2 pt-[72px]">
-      {/* Left — Cream */}
-      <div className="bg-cream flex flex-col justify-center px-10 md:px-16 lg:px-24 py-20 relative overflow-hidden min-h-[60vh]">
-        {/* Watermark */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
-          <span className="font-display text-[22vw] md:text-[14vw] font-bold text-gold/5 leading-none">✂</span>
-        </div>
+    <section id="home" className="min-h-[90vh] relative overflow-hidden bg-black">
+      {/* Full bleed image */}
+      {slides.map((s, i) => (
+        <img
+          key={i}
+          src={s.img}
+          alt={s.title}
+          className={`absolute inset-0 w-full h-full object-cover object-top transition-opacity duration-1000 ${
+            i === slide ? "opacity-100" : "opacity-0"
+          }`}
+        />
+      ))}
 
-        <div className="relative z-10">
-          <p className="font-display italic text-gold text-2xl mb-4 animate-fade-up" style={{ animationDelay: "0.1s", opacity: 0 }}>
-            {current.tag}
-          </p>
-          <h1 className="font-display text-[3.5rem] md:text-[4.2rem] font-bold text-charcoal leading-[1.05] mb-2 animate-fade-up" style={{ animationDelay: "0.2s", opacity: 0 }}>
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/10" />
+
+      {/* Content */}
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 h-full min-h-[90vh] flex flex-col justify-center py-20">
+        <div className="max-w-2xl">
+          <div className="inline-flex items-center gap-2 border border-white/30 bg-white/10 backdrop-blur-sm px-4 py-2 mb-6">
+            <span className="w-1.5 h-1.5 bg-[hsl(var(--gold))] rounded-full animate-pulse" />
+            <p className="font-body text-xs uppercase tracking-[0.2em] text-white/80">{current.tag}</p>
+          </div>
+
+          <h1 className="font-display text-5xl md:text-7xl font-bold text-white leading-[1.0] mb-4">
             {current.title}
             <br />
-            <span className="text-gold">{current.subtitle}</span>
+            <span className="text-[hsl(var(--gold))]">{current.subtitle}</span>
           </h1>
-          <p className="font-body text-charcoal/60 text-base mb-10 max-w-sm animate-fade-up" style={{ animationDelay: "0.35s", opacity: 0 }}>
+
+          <p className="font-body text-white/70 text-lg mb-10 max-w-xl leading-relaxed">
             {current.desc}
           </p>
 
-          <div className="flex flex-wrap gap-4 mb-10 animate-fade-up" style={{ animationDelay: "0.45s", opacity: 0 }}>
+          <div className="flex flex-wrap gap-4">
             <button
-              onClick={() => handleNav("#booking")}
-              className="bg-gold text-cream font-body text-xs tracking-[0.2em] uppercase px-8 py-4 hover:bg-gold-dark transition-colors duration-300"
+              onClick={() => handleNav(current.href)}
+              className="flex items-center gap-2 bg-white text-black font-body text-xs tracking-[0.2em] uppercase px-8 py-4 hover:bg-[hsl(var(--gold))] hover:text-white transition-all duration-300 font-bold"
             >
-              Book Appointment
+              {current.cta} <ArrowRight className="w-4 h-4" />
             </button>
             <button
               onClick={() => handleNav("#services")}
-              className="border-2 border-charcoal text-charcoal font-body text-xs tracking-[0.2em] uppercase px-8 py-4 hover:bg-charcoal hover:text-cream transition-all duration-300"
+              className="flex items-center gap-2 border-2 border-white/60 text-white font-body text-xs tracking-[0.2em] uppercase px-8 py-4 hover:border-white hover:bg-white/10 transition-all duration-300"
             >
               Our Services
             </button>
           </div>
+        </div>
 
-          <div className="flex flex-wrap gap-5 animate-fade-up" style={{ animationDelay: "0.6s", opacity: 0 }}>
-            <div className="flex items-center gap-3 border-2 border-gold px-4 py-3 group hover:bg-gold transition-colors duration-300">
-              <div className="bg-gold group-hover:bg-cream p-2 transition-colors">
-                <Phone className="w-4 h-4 text-cream group-hover:text-gold transition-colors" />
+        {/* Stats bar */}
+        <div className="absolute bottom-0 left-0 right-0 bg-black/80 backdrop-blur-sm border-t border-white/10">
+          <div className="max-w-7xl mx-auto px-6 lg:px-10 flex">
+            {[
+              { num: "500+", label: "Happy Clients" },
+              { num: "8+", label: "Years Experience" },
+              { num: "30+", label: "Hair Styles" },
+              { num: "6+", label: "Services" },
+            ].map((s, i) => (
+              <div key={s.label} className={`flex-1 py-5 text-center ${i !== 3 ? "border-r border-white/10" : ""}`}>
+                <p className="font-display text-[hsl(var(--gold))] text-2xl font-bold">{s.num}</p>
+                <p className="font-body text-white/60 text-xs uppercase tracking-wide">{s.label}</p>
               </div>
-              <div>
-                <p className="font-body text-[10px] text-gold group-hover:text-cream uppercase tracking-widest font-bold transition-colors">Call Us</p>
-                <p className="font-body text-charcoal group-hover:text-cream font-bold text-sm transition-colors">+254 711 135090</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 border-2 border-gold px-4 py-3 group hover:bg-gold transition-colors duration-300">
-              <div className="bg-gold group-hover:bg-cream p-2 transition-colors">
-                <Mail className="w-4 h-4 text-cream group-hover:text-gold transition-colors" />
-              </div>
-              <div>
-                <p className="font-body text-[10px] text-gold group-hover:text-cream uppercase tracking-widest font-bold transition-colors">Mail Us</p>
-                <p className="font-body text-charcoal group-hover:text-cream font-bold text-sm transition-colors">booking@tezzaz-hair.com</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Slide controls */}
-          <div className="flex items-center gap-3 mt-10">
-            <button onClick={() => setSlide(0)} className={`w-3 h-3 rounded-full border-2 border-gold transition-all ${slide === 0 ? "bg-gold" : "bg-transparent"}`} />
-            <button onClick={() => setSlide(1)} className={`w-3 h-3 rounded-full border-2 border-gold transition-all ${slide === 1 ? "bg-gold" : "bg-transparent"}`} />
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Right — Image with nav arrows */}
-      <div className="relative h-[50vh] md:h-auto overflow-hidden">
-        <img src={heroImage} alt="Tezzaz Hair Salon Nairobi" className="w-full h-full object-cover object-top" />
-        <div className="absolute inset-0 bg-gradient-to-br from-charcoal/30 to-transparent" />
-
-        {/* Stats */}
-        <div className="absolute bottom-0 left-0 right-0 flex">
-          {[
-            { num: "500+", label: "Happy Clients" },
-            { num: "8+", label: "Years Exp." },
-            { num: "30+", label: "Hair Styles" },
-          ].map((s) => (
-            <div key={s.label} className="flex-1 bg-charcoal/80 backdrop-blur-sm p-4 text-center border-r border-gold/20 last:border-r-0">
-              <p className="font-display text-gold text-xl font-bold">{s.num}</p>
-              <p className="font-body text-cream/80 text-xs uppercase tracking-wide">{s.label}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Arrow nav */}
-        <div className="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col gap-1">
-          <button onClick={() => setSlide((s) => (s === 0 ? 1 : 0))} className="bg-gold/80 hover:bg-gold p-3 transition-colors">
-            <ChevronLeft className="w-4 h-4 text-cream" />
-          </button>
-          <button onClick={() => setSlide((s) => (s === 1 ? 0 : 1))} className="bg-charcoal/80 hover:bg-charcoal p-3 transition-colors">
-            <ChevronRight className="w-4 h-4 text-cream" />
-          </button>
-        </div>
+      {/* Slide controls */}
+      <div className="absolute right-6 top-1/2 -translate-y-1/2 flex flex-col gap-2 z-20">
+        {slides.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setSlide(i)}
+            className={`transition-all duration-300 ${
+              i === slide ? "w-1 h-10 bg-[hsl(var(--gold))]" : "w-1 h-4 bg-white/40 hover:bg-white/70"
+            }`}
+          />
+        ))}
       </div>
     </section>
   );
