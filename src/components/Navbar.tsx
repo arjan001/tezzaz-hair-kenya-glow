@@ -43,7 +43,7 @@ const Navbar = ({ onOpenSubscribe }: NavbarProps) => {
   const [offerIdx, setOfferIdx] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
-  const { cartCount, wishlist } = useCart();
+  const { cartCount, wishlist, setCartSidebarOpen } = useCart();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
@@ -182,7 +182,7 @@ const Navbar = ({ onOpenSubscribe }: NavbarProps) => {
             </button>
             {/* Cart */}
             <button
-              onClick={() => navigate("/checkout")}
+              onClick={() => setCartSidebarOpen(true)}
               className="relative p-2 hover:bg-gray-100 transition-colors"
               title="Cart"
             >

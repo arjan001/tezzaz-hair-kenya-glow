@@ -29,6 +29,8 @@ interface CartContextType {
   isInWishlist: (productId: number) => boolean;
   cartCount: number;
   cartTotal: number;
+  cartSidebarOpen: boolean;
+  setCartSidebarOpen: (open: boolean) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -36,6 +38,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [wishlist, setWishlist] = useState<number[]>([]);
+  const [cartSidebarOpen, setCartSidebarOpen] = useState(false);
 
   const addToCart = (product: Product) => {
     setCart((prev) => {
@@ -93,6 +96,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         isInWishlist,
         cartCount,
         cartTotal,
+        cartSidebarOpen,
+        setCartSidebarOpen,
       }}
     >
       {children}

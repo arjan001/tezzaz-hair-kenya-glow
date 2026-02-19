@@ -1,124 +1,218 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag, Phone, Shield, X } from "lucide-react";
+import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag, Phone, Shield, X, Copy, Check, Package } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import Navbar from "@/components/Navbar";
 import FooterSection from "@/components/FooterSection";
 
-const MpesaModal = ({ total, onClose, onSuccess }: { total: number; onClose: () => void; onSuccess: (code: string) => void }) => {
-  const [phone, setPhone] = useState("");
-  const [step, setStep] = useState<"enter" | "processing" | "done">("enter");
-  const [code, setCode] = useState("");
+// Generate a paybill number for TEZZAZ_HAIR
+const PAYBILL_NUMBER = "899890";
+const generateAccountNumber = () => {
+  return "TZ" + Math.floor(100000 + Math.random() * 900000);
+};
 
-  const handlePay = () => {
-    if (!phone || phone.length < 10) return;
-    setStep("processing");
-    // Simulate M-Pesa STK push
-    setTimeout(() => {
-      const txCode = "TZ" + Math.random().toString(36).substring(2, 10).toUpperCase();
-      setCode(txCode);
-      setStep("done");
-    }, 3000);
+const MpesaPaybillModal = ({
+  total,
+  onClose,
+  onSuccess,
+}: {
+  total: number;
+  onClose: () => void;
+  onSuccess: (code: string) => void;
+}) => {
+  const [accountNumber] = useState(generateAccountNumber());
+  const [mpesaMessage, setMpesaMessage] = useState("");
+  const [phoneUsed, setPhoneUsed] = useState("");
+  const [copiedPaybill, setCopiedPaybill] = useState(false);
+  const [copiedAccount, setCopiedAccount] = useState(false);
+
+  const copyToClipboard = (text: string, type: "paybill" | "account") => {
+    navigator.clipboard.writeText(text);
+    if (type === "paybill") {
+      setCopiedPaybill(true);
+      setTimeout(() => setCopiedPaybill(false), 2000);
+    } else {
+      setCopiedAccount(true);
+      setTimeout(() => setCopiedAccount(false), 2000);
+    }
+  };
+
+  const handleSubmit = () => {
+    if (!mpesaMessage.trim()) return;
+    const txCode = "TZ" + Math.random().toString(36).substring(2, 10).toUpperCase();
+    onSuccess(txCode);
   };
 
   return (
     <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4">
-      <div className="bg-white w-full max-w-md relative">
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-black">
+      <div className="bg-white w-full max-w-md relative max-h-[90vh] overflow-y-auto">
+        <button onClick={onClose} className="absolute top-3 right-3 z-10 text-gray-400 hover:text-black bg-white rounded-full p-1">
           <X className="w-5 h-5" />
         </button>
 
         {/* Header */}
-        <div className="bg-[#4CAF50] px-6 py-5 text-white">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-              <Phone className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="font-body text-xs uppercase tracking-widest opacity-80">M-Pesa Payment</p>
-              <p className="font-display text-xl font-bold">Lipa na M-Pesa</p>
-            </div>
-          </div>
+        <div className="bg-[#4CAF50] px-6 py-5 text-white text-center">
+          <p className="font-display text-2xl font-bold tracking-wide">LIPA NA M-PESA</p>
+          <div className="w-16 h-0.5 bg-red-500 mx-auto mt-1" />
         </div>
 
         <div className="p-6">
-          {step === "enter" && (
-            <>
-              <div className="bg-gray-50 border border-gray-200 p-4 mb-6">
-                <div className="flex justify-between items-center">
-                  <span className="font-body text-xs uppercase tracking-widest text-gray-500">Total Amount</span>
-                  <span className="font-display text-2xl font-bold text-black">KSh {total.toLocaleString()}</span>
+          {/* Paybill Card */}
+          <div className="bg-white border border-gray-200 rounded-lg p-5 mb-5">
+            <p className="text-center font-body text-xs uppercase tracking-widest text-[#4CAF50] font-bold mb-3">
+              PAYBILL NUMBER
+            </p>
+            <div className="flex justify-center gap-1.5 mb-4">
+              {PAYBILL_NUMBER.split("").map((digit, i) => (
+                <div
+                  key={i}
+                  className="w-10 h-12 border-2 border-[#4CAF50] flex items-center justify-center font-display text-xl font-bold text-black"
+                >
+                  {digit}
                 </div>
-              </div>
-
-              <label className="block mb-2">
-                <span className="font-body text-xs uppercase tracking-widest text-gray-600">Phone Number</span>
-              </label>
-              <div className="flex border-2 border-black mb-4">
-                <div className="bg-gray-100 px-3 flex items-center border-r border-black">
-                  <span className="font-body text-sm text-gray-600">+254</span>
-                </div>
-                <input
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 9))}
-                  placeholder="7XX XXX XXX"
-                  className="flex-1 px-4 py-3 font-body text-sm focus:outline-none"
-                />
-              </div>
-
-              <p className="font-body text-xs text-gray-400 mb-6">
-                An STK push will be sent to your phone. Enter your M-Pesa PIN to complete payment.
-              </p>
-
-              <button
-                onClick={handlePay}
-                disabled={phone.length < 9}
-                className="w-full bg-[#4CAF50] text-white font-body text-xs uppercase tracking-widest py-4 hover:bg-[#43A047] transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              >
-                <Phone className="w-4 h-4" /> Pay KSh {total.toLocaleString()}
-              </button>
-
-              <div className="flex items-center justify-center gap-2 mt-4">
-                <Shield className="w-3 h-3 text-gray-400" />
-                <p className="font-body text-[10px] text-gray-400 uppercase tracking-widest">Secured by Safaricom M-Pesa</p>
-              </div>
-            </>
-          )}
-
-          {step === "processing" && (
-            <div className="text-center py-10">
-              <div className="w-16 h-16 border-4 border-[#4CAF50] border-t-transparent rounded-full animate-spin mx-auto mb-6" />
-              <p className="font-display text-lg font-bold text-black mb-2">Processing Payment</p>
-              <p className="font-body text-sm text-gray-500">Check your phone for the M-Pesa prompt...</p>
-              <p className="font-body text-xs text-gray-400 mt-2">+254 {phone}</p>
+              ))}
             </div>
-          )}
 
-          {step === "done" && (
-            <div className="text-center py-8">
-              <div className="w-16 h-16 bg-[#4CAF50] rounded-full flex items-center justify-center mx-auto mb-5">
-                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <p className="font-display text-lg font-bold text-black mb-1">Payment Successful!</p>
-              <p className="font-body text-sm text-gray-500 mb-4">Your order has been confirmed</p>
-              <div className="bg-gray-50 border border-gray-200 p-3 mb-6 inline-block">
-                <p className="font-body text-xs text-gray-500">Transaction Code</p>
-                <p className="font-body text-lg font-bold text-black tracking-wider">{code}</p>
-              </div>
-              <br />
+            <p className="text-center font-body text-xs text-gray-400 mb-2">Account Number</p>
+            <div className="flex justify-center gap-1.5 mb-4">
+              {accountNumber.split("").map((char, i) => (
+                <div
+                  key={i}
+                  className="w-9 h-11 border-2 border-[#4CAF50] flex items-center justify-center font-display text-lg font-bold text-black"
+                >
+                  {char}
+                </div>
+              ))}
+            </div>
+
+            <p className="text-center font-display text-sm font-bold uppercase tracking-wide mb-4">
+              TEZZAZ_HAIR
+            </p>
+
+            <div className="flex gap-3 justify-center">
               <button
-                onClick={() => onSuccess(code)}
-                className="bg-black text-white font-body text-xs uppercase tracking-widest px-8 py-3 hover:bg-gray-800 transition-colors"
+                onClick={() => copyToClipboard(PAYBILL_NUMBER, "paybill")}
+                className="flex items-center gap-1.5 px-4 py-2 border border-gray-200 rounded hover:bg-gray-50 transition-colors font-body text-xs"
               >
-                Track My Order
+                {copiedPaybill ? <Check className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
+                Copy Paybill
+              </button>
+              <button
+                onClick={() => copyToClipboard(accountNumber, "account")}
+                className="flex items-center gap-1.5 px-4 py-2 border border-gray-200 rounded hover:bg-gray-50 transition-colors font-body text-xs"
+              >
+                {copiedAccount ? <Check className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
+                Copy Account
               </button>
             </div>
-          )}
+
+            <div className="flex items-center justify-center gap-1 mt-3">
+              <span className="font-body text-xs font-bold text-[#4CAF50]">Safaricom</span>
+              <span className="font-body text-[10px] text-gray-500">M-PESA</span>
+            </div>
+          </div>
+
+          {/* Amount to Pay */}
+          <div className="border border-gray-200 rounded-lg p-4 mb-5 flex items-center justify-between bg-green-50/50">
+            <span className="font-body text-sm text-gray-600">Amount to Pay:</span>
+            <span className="font-display text-xl font-bold text-[#4CAF50]">
+              KSh {total.toLocaleString()}
+            </span>
+          </div>
+
+          {/* Paste M-Pesa SMS */}
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-5 h-5 border-2 border-[#4CAF50] rounded flex items-center justify-center flex-shrink-0">
+              <Check className="w-3 h-3 text-[#4CAF50]" />
+            </div>
+            <p className="font-body text-sm font-medium text-black">
+              After paying, paste the M-PESA SMS below
+            </p>
+          </div>
+
+          <label className="block mb-2">
+            <span className="font-body text-sm font-bold text-black">
+              M-PESA Confirmation Message <span className="text-red-500">*</span>
+            </span>
+          </label>
+          <textarea
+            value={mpesaMessage}
+            onChange={(e) => setMpesaMessage(e.target.value)}
+            rows={4}
+            className="w-full border border-gray-200 rounded px-4 py-3 font-body text-sm focus:outline-none focus:border-[#4CAF50] resize-none mb-2"
+            placeholder="Paste the full M-PESA SMS here e.g. SHK3A7B2C1 Confirmed. Ksh1,500.00 sent to TEZZAZ_HAIR..."
+          />
+          <p className="font-body text-[11px] text-[#4CAF50] mb-4">
+            Paste the entire confirmation SMS from Safaricom M-PESA
+          </p>
+
+          <label className="block mb-2">
+            <span className="font-body text-sm font-bold text-black">Phone Number Used (optional)</span>
+          </label>
+          <input
+            type="tel"
+            value={phoneUsed}
+            onChange={(e) => setPhoneUsed(e.target.value)}
+            placeholder="e.g. 0712 345 678"
+            className="w-full border border-gray-200 rounded px-4 py-3 font-body text-sm focus:outline-none focus:border-[#4CAF50] mb-5"
+          />
+
+          <button
+            onClick={handleSubmit}
+            disabled={!mpesaMessage.trim()}
+            className="w-full bg-[#4CAF50] text-white font-body text-sm font-bold uppercase tracking-widest py-4 rounded hover:bg-[#43A047] transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+          >
+            Submit Payment
+          </button>
+
+          <p className="font-body text-[11px] text-gray-400 text-center mt-3">
+            Our team will verify your payment. You will receive a confirmation shortly.
+          </p>
         </div>
       </div>
+    </div>
+  );
+};
+
+// Order Success View
+const OrderSuccessView = ({ orderCode, onContinue, onTrack }: { orderCode: string; onContinue: () => void; onTrack: () => void }) => {
+  return (
+    <div className="min-h-screen bg-white">
+      <Navbar />
+      <main className="max-w-xl mx-auto px-6 py-20 text-center">
+        <div className="w-20 h-20 bg-[#4CAF50] rounded-full flex items-center justify-center mx-auto mb-6">
+          <Package className="w-10 h-10 text-white" />
+        </div>
+        <h1 className="font-display text-3xl font-bold text-black mb-2">Order Placed!</h1>
+        <p className="font-body text-gray-500 text-sm mb-6">
+          Thank you for your order. Your payment is being verified.
+        </p>
+
+        <div className="bg-gray-50 border-2 border-gray-200 p-5 mb-8 inline-block">
+          <p className="font-body text-[10px] uppercase tracking-widest text-gray-400 mb-1">Order ID</p>
+          <p className="font-display text-2xl font-bold text-black tracking-wider">{orderCode}</p>
+        </div>
+
+        <div className="space-y-3">
+          <button
+            onClick={onTrack}
+            className="w-full bg-black text-white font-body text-xs uppercase tracking-widest py-4 hover:bg-gray-800 transition-colors"
+          >
+            Track Order
+          </button>
+          <button
+            onClick={onContinue}
+            className="w-full border-2 border-black text-black font-body text-xs uppercase tracking-widest py-4 hover:bg-gray-50 transition-colors"
+          >
+            Continue Shopping
+          </button>
+        </div>
+
+        <p className="font-body text-[11px] text-gray-400 mt-6">
+          You'll receive an SMS confirmation once payment is verified.
+        </p>
+      </main>
+      <FooterSection />
     </div>
   );
 };
@@ -127,6 +221,7 @@ const CheckoutPage = () => {
   const navigate = useNavigate();
   const { cart, updateQty, removeFromCart, cartTotal, clearCart } = useCart();
   const [showMpesa, setShowMpesa] = useState(false);
+  const [orderCode, setOrderCode] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -140,9 +235,21 @@ const CheckoutPage = () => {
   const total = cartTotal + deliveryFee;
 
   const handlePaymentSuccess = (code: string) => {
+    setShowMpesa(false);
+    setOrderCode(code);
     clearCart();
-    navigate(`/track-order?code=${code}`);
   };
+
+  // Show order success view
+  if (orderCode) {
+    return (
+      <OrderSuccessView
+        orderCode={orderCode}
+        onContinue={() => navigate("/shop")}
+        onTrack={() => navigate(`/track-order?code=${orderCode}`)}
+      />
+    );
+  }
 
   if (cart.length === 0 && !showMpesa) {
     return (
@@ -346,7 +453,7 @@ const CheckoutPage = () => {
       <FooterSection />
 
       {showMpesa && (
-        <MpesaModal
+        <MpesaPaybillModal
           total={total}
           onClose={() => setShowMpesa(false)}
           onSuccess={handlePaymentSuccess}
