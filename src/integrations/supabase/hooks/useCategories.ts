@@ -60,10 +60,21 @@ export function useDeleteCategory() {
   const { toast } = useToast();
   return useMutation({
     mutationFn: async (id: string) => {
+      // First detach any products referencing this category to avoid foreign key constraint violation
+      const { error: unlinkError } = await supabase
+        .from("products")
+        .update({ category_id: null })
+        .eq("category_id", id);
+      if (unlinkError) throw new Error("Failed to unlink products from category — " + unlinkError.message);
+
       const { error } = await supabase.from("categories").delete().eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["categories"] }); toast({ title: "Category deleted!" }); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["categories"] });
+      qc.invalidateQueries({ queryKey: ["products"] });
+      toast({ title: "Category deleted!" });
+    },
     onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
   });
 }
