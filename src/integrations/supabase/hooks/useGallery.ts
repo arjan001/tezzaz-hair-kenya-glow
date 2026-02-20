@@ -68,8 +68,8 @@ export function useDeleteGalleryItem() {
 
 export async function uploadGalleryImage(file: File): Promise<string> {
   const ext = file.name.split(".").pop();
-  const path = `gallery/${Date.now()}.${ext}`;
-  const { error } = await supabase.storage.from("gallery").upload(path, file, { upsert: true });
+  const path = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}.${ext}`;
+  const { error } = await supabase.storage.from("gallery").upload(path, file);
   if (error) throw error;
   const { data } = supabase.storage.from("gallery").getPublicUrl(path);
   return data.publicUrl;
@@ -77,8 +77,8 @@ export async function uploadGalleryImage(file: File): Promise<string> {
 
 export async function uploadProductImage(file: File): Promise<string> {
   const ext = file.name.split(".").pop();
-  const path = `products/${Date.now()}.${ext}`;
-  const { error } = await supabase.storage.from("products").upload(path, file, { upsert: true });
+  const path = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}.${ext}`;
+  const { error } = await supabase.storage.from("products").upload(path, file);
   if (error) throw error;
   const { data } = supabase.storage.from("products").getPublicUrl(path);
   return data.publicUrl;
