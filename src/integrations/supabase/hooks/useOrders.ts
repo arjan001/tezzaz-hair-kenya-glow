@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { trackAnalyticsEvent } from "@/integrations/supabase/analytics";
 
 export interface DbOrder {
   id: string;
@@ -68,9 +69,30 @@ export function useUpdateOrderStatus() {
   const qc = useQueryClient();
   const { toast } = useToast();
   return useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: DbOrder["status"] }) => {
+    mutationFn: async ({
+      id,
+      status,
+      order,
+    }: {
+      id: string;
+      status: DbOrder["status"];
+      order?: Pick<DbOrder, "order_code" | "total">;
+    }) => {
       const { error } = await supabase.from("orders").update({ status }).eq("id", id);
       if (error) throw error;
+
+      if (status === "confirmed" || status === "delivered") {
+        await trackAnalyticsEvent({
+          event_type: status === "confirmed" ? "order_confirmed" : "order_delivered",
+          page: "/admin/orders",
+          order_id: id,
+          metadata: {
+            order_code: order?.order_code,
+            total: order?.total,
+            status,
+          },
+        });
+      }
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["orders"] }); toast({ title: "Order status updated!" }); },
     onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),

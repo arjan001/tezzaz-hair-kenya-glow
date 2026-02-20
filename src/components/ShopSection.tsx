@@ -12,8 +12,8 @@ const ShopSection = () => {
 
   const { data: dbProducts = [], isLoading } = useProducts(true);
 
-  // Convert DB products to cart-compatible format (max 6 featured)
-  const featured: (Product & { dbId: string })[] = dbProducts.slice(0, 6).map((p) => ({
+  // Convert DB products to cart-compatible format (max 8 featured)
+  const featured: (Product & { dbId: string })[] = dbProducts.slice(0, 8).map((p) => ({
     id: parseInt(p.id.replace(/-/g, "").slice(0, 8), 16) || Math.random(),
     dbId: p.id,
     name: p.name,
@@ -100,7 +100,7 @@ const ShopSection = () => {
 
         {/* Product Grid */}
         {!isLoading && featured.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
             {featured.map((product) => (
               <div
                 key={product.id}
@@ -146,15 +146,15 @@ const ShopSection = () => {
                 </div>
 
                 {/* Info */}
-                <div className="p-4">
+                <div className="p-3">
                   <div className="flex items-start justify-between gap-2 mb-1">
-                    <h3 className="font-display text-sm text-black font-bold leading-tight">{product.name}</h3>
-                    <p className="font-body text-sm text-black font-bold flex-shrink-0">{product.price}</p>
+                    <h3 className="font-display text-[13px] text-black font-bold leading-tight">{product.name}</h3>
+                    <p className="font-body text-[13px] text-black font-bold flex-shrink-0">{product.price}</p>
                   </div>
-                  <p className="font-body text-gray-500 text-xs mb-3">{product.desc}</p>
+                  <p className="font-body text-gray-500 text-[11px] mb-2">{product.desc}</p>
                   <button
                     onClick={() => addToCart(product)}
-                    className="w-full bg-black text-white font-body text-[10px] uppercase tracking-widest py-2.5 hover:bg-[hsl(var(--gold))] transition-colors duration-300 flex items-center justify-center gap-2"
+                    className="w-full bg-black text-white font-body text-[9px] uppercase tracking-widest py-2 hover:bg-[hsl(var(--gold))] transition-colors duration-300 flex items-center justify-center gap-2"
                   >
                     <ShoppingBag className="w-3 h-3" />
                     Add to Cart

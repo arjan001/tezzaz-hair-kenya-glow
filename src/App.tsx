@@ -2,7 +2,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
 import AdminRoute from "@/components/AdminRoute";
@@ -36,6 +37,7 @@ import AdminTheme from "./pages/admin/AdminTheme";
 import AdminGallery from "./pages/admin/AdminGallery";
 import AdminRegister from "./pages/admin/AdminRegister";
 import Gallery from "./pages/Gallery";
+import { trackAnalyticsEvent } from "@/integrations/supabase/analytics";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +46,22 @@ const CartSidebarWrapper = () => {
   return (
     <CartSidebar open={cartSidebarOpen} onClose={() => setCartSidebarOpen(false)} />
   );
+};
+
+const AnalyticsTracker = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    trackAnalyticsEvent({
+      event_type: "page_view",
+      page: location.pathname,
+      metadata: {
+        search: location.search,
+      },
+    });
+  }, [location.pathname, location.search]);
+
+  return null;
 };
 
 const App = () => (
@@ -55,6 +73,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <CartSidebarWrapper />
+            <AnalyticsTracker />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/shop" element={<Shop />} />
