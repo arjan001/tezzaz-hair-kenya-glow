@@ -34,7 +34,6 @@ import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminPolicies from "./pages/admin/AdminPolicies";
 import AdminTheme from "./pages/admin/AdminTheme";
 import AdminGallery from "./pages/admin/AdminGallery";
-import AdminLogin from "./pages/admin/AdminLogin";
 import AdminRegister from "./pages/admin/AdminRegister";
 import Gallery from "./pages/Gallery";
 
@@ -70,6 +69,7 @@ const App = () => (
               <Route path="/refund-policy" element={<RefundPolicy />} />
               <Route path="/policies" element={<Policies />} />
               <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin/register" element={<AdminRegister />} />
               <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
                 <Route index element={<AdminDashboard />} />
                 <Route path="products" element={<AdminProducts />} />

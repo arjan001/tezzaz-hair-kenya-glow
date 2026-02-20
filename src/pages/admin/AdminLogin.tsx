@@ -96,6 +96,9 @@ const AdminLogin = () => {
         <p className="text-center font-body text-xs text-gray-400 mt-4">
           <a href="/" className="hover:text-black transition-colors">Back to store</a>
         </p>
+        <p className="text-center font-body text-xs text-gray-400 mt-2">
+          <a href="/admin/register" className="hover:text-black transition-colors">First time? Create Super Admin account</a>
+        </p>
       </div>
     </div>
   );
