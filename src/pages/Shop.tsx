@@ -34,7 +34,7 @@ const ShopPage = () => {
 
   // Convert DB products to cart-compatible format
   const products: Product[] = dbProducts.map((p) => ({
-    id: Number(p.id.replace(/-/g, "").slice(0, 8), 16) || Math.random(),
+    id: parseInt(p.id.replace(/-/g, "").slice(0, 8), 16) || Math.random(),
     dbId: p.id,
     name: p.name,
     category: p.category_name || "general",
