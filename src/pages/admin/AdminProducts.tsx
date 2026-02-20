@@ -180,7 +180,7 @@ const AdminProducts = () => {
 
   const filteredProducts = products.filter((p) => {
     const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchCat = filterCategory === "all" || p.category_name === filterCategory;
+    const matchCat = filterCategory === "all" || (p.category_name || "").toLowerCase() === filterCategory.toLowerCase();
     return matchSearch && matchCat;
   });
 
@@ -198,10 +198,12 @@ const AdminProducts = () => {
 
   const handleAdd = (formData: ProductFormData) => {
     if (!formData.name || !formData.price) return;
+    const matchedCategory = categories.find(c => c.name === formData.category_name);
     createProduct.mutate({
       name: formData.name,
       description: formData.description,
-      category_name: formData.category_name,
+      category_name: formData.category_name || null,
+      category_id: matchedCategory?.id || null,
       price_num: Number(formData.price),
       original_price: formData.originalPrice ? Number(formData.originalPrice) : null,
       badge: formData.badge || null,
@@ -216,11 +218,13 @@ const AdminProducts = () => {
 
   const handleEdit = (formData: ProductFormData) => {
     if (!selectedId) return;
+    const matchedCategory = categories.find(c => c.name === formData.category_name);
     updateProduct.mutate({
       id: selectedId,
       name: formData.name,
       description: formData.description,
-      category_name: formData.category_name,
+      category_name: formData.category_name || null,
+      category_id: matchedCategory?.id || null,
       price_num: Number(formData.price),
       original_price: formData.originalPrice ? Number(formData.originalPrice) : null,
       badge: formData.badge || null,

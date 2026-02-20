@@ -45,12 +45,23 @@ export function useUpdateCategory() {
   const { toast } = useToast();
   return useMutation({
     mutationFn: async ({ id, ...update }: Partial<DbCategory> & { id: string }) => {
+      // If the category name changed, update products that reference it
+      if (update.name) {
+        const { data: oldCategory } = await supabase.from("categories").select("name").eq("id", id).single();
+        if (oldCategory && oldCategory.name !== update.name) {
+          await supabase.from("products").update({ category_name: update.name }).eq("category_id", id);
+        }
+      }
       const { data, error } = await supabase.from("categories").update(update).eq("id", id).select();
       if (error) throw error;
       if (!data || data.length === 0) throw new Error("Failed to update category — check admin permissions");
       return data[0];
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["categories"] }); toast({ title: "Category updated!" }); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["categories"] });
+      qc.invalidateQueries({ queryKey: ["products"] });
+      toast({ title: "Category updated!" });
+    },
     onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
   });
 }
@@ -60,10 +71,10 @@ export function useDeleteCategory() {
   const { toast } = useToast();
   return useMutation({
     mutationFn: async (id: string) => {
-      // First detach any products referencing this category to avoid foreign key constraint violation
+      // Detach products: clear both category_id and category_name
       const { error: unlinkError } = await supabase
         .from("products")
-        .update({ category_id: null })
+        .update({ category_id: null, category_name: null })
         .eq("category_id", id);
       if (unlinkError) throw new Error("Failed to unlink products from category — " + unlinkError.message);
 

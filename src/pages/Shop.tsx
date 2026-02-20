@@ -47,16 +47,16 @@ const ShopPage = () => {
     shippingInfo: p.shipping_info || undefined,
   }));
 
-  const categories = [{ name: "All", id: "all" }, ...dbCategories.filter(c => c.slug !== "all").map(c => ({ name: c.name, id: c.slug }))];
+  const categories = [{ name: "All", id: "all" }, ...dbCategories.filter(c => c.slug !== "all").map(c => ({ name: c.name, id: c.name }))];
 
   const filtered = useMemo(() => {
     return products.filter((p) => {
-      const matchCat = activeCategory === "all" || p.category.toLowerCase() === activeCategory.toLowerCase() || p.category === activeCategory;
+      const matchCat = activeCategory === "all" || p.category.toLowerCase() === activeCategory.toLowerCase();
       const query = searchQuery.toLowerCase();
       const matchSearch = p.name.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query) || p.category.toLowerCase().includes(query);
       return matchCat && matchSearch;
     });
-  }, [activeCategory, searchQuery, products.length]);
+  }, [activeCategory, searchQuery, products]);
 
   const totalPages = Math.ceil(filtered.length / PRODUCTS_PER_PAGE);
   const paginatedProducts = filtered.slice((currentPage - 1) * PRODUCTS_PER_PAGE, currentPage * PRODUCTS_PER_PAGE);
