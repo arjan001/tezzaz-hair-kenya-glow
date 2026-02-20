@@ -40,6 +40,47 @@ const initialZones: DeliveryZone[] = [];
 
 const ITEMS_PER_PAGE = 5;
 
+const Modal = ({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) => (
+  <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
+    <div className="bg-white w-full max-w-md rounded-lg">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h2 className="font-display text-lg font-bold">{title}</h2>
+        <button onClick={onClose} className="text-gray-400 hover:text-black"><X className="w-5 h-5" /></button>
+      </div>
+      <div className="p-6">{children}</div>
+    </div>
+  </div>
+);
+
+const Pagination = ({
+  total,
+  totalPages,
+  currentPage,
+  setCurrentPage,
+}: {
+  total: number;
+  totalPages: number;
+  currentPage: number;
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+}) => (
+  <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100">
+    <p className="font-body text-xs text-gray-400">
+      Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1}-{Math.min(currentPage * ITEMS_PER_PAGE, total)} of {total}
+    </p>
+    <div className="flex items-center gap-1">
+      <button onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1} className="p-1.5 hover:bg-gray-100 rounded disabled:opacity-30">
+        <ChevronLeft className="w-4 h-4" />
+      </button>
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+        <button key={page} onClick={() => setCurrentPage(page)} className={`w-7 h-7 rounded font-body text-xs ${page === currentPage ? "bg-black text-white" : "hover:bg-gray-100 text-gray-600"}`}>{page}</button>
+      ))}
+      <button onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="p-1.5 hover:bg-gray-100 rounded disabled:opacity-30">
+        <ChevronRight className="w-4 h-4" />
+      </button>
+    </div>
+  </div>
+);
+
 const AdminDelivery = () => {
   const [activeTab, setActiveTab] = useState<"locations" | "zones">("locations");
   const [locations, setLocations] = useState<DeliveryLocation[]>(initialLocations);
@@ -152,37 +193,6 @@ const AdminDelivery = () => {
   const toggleZoneActive = (id: string) => {
     setZones((prev) => prev.map((z) => (z.id === id ? { ...z, isActive: !z.isActive } : z)));
   };
-
-  const Modal = ({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) => (
-    <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
-      <div className="bg-white w-full max-w-md rounded-lg">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="font-display text-lg font-bold">{title}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-black"><X className="w-5 h-5" /></button>
-        </div>
-        <div className="p-6">{children}</div>
-      </div>
-    </div>
-  );
-
-  const Pagination = ({ total, totalPages }: { total: number; totalPages: number }) => (
-    <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100">
-      <p className="font-body text-xs text-gray-400">
-        Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1}-{Math.min(currentPage * ITEMS_PER_PAGE, total)} of {total}
-      </p>
-      <div className="flex items-center gap-1">
-        <button onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1} className="p-1.5 hover:bg-gray-100 rounded disabled:opacity-30">
-          <ChevronLeft className="w-4 h-4" />
-        </button>
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-          <button key={page} onClick={() => setCurrentPage(page)} className={`w-7 h-7 rounded font-body text-xs ${page === currentPage ? "bg-black text-white" : "hover:bg-gray-100 text-gray-600"}`}>{page}</button>
-        ))}
-        <button onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="p-1.5 hover:bg-gray-100 rounded disabled:opacity-30">
-          <ChevronRight className="w-4 h-4" />
-        </button>
-      </div>
-    </div>
-  );
 
   return (
     <div>
@@ -301,7 +311,7 @@ const AdminDelivery = () => {
           ))}
           {filteredLocations.length > ITEMS_PER_PAGE && (
             <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-              <Pagination total={filteredLocations.length} totalPages={totalLocPages} />
+              <Pagination total={filteredLocations.length} totalPages={totalLocPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
             </div>
           )}
         </div>
@@ -357,7 +367,7 @@ const AdminDelivery = () => {
               </tbody>
             </table>
           </div>
-          <Pagination total={filteredZones.length} totalPages={totalZonePages} />
+          <Pagination total={filteredZones.length} totalPages={totalZonePages} currentPage={currentPage} setCurrentPage={setCurrentPage} />
         </div>
       )}
 
