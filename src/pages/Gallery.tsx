@@ -1,20 +1,30 @@
-import { useState } from "react";
-import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import { useMemo, useState } from "react";
+import { X, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import FooterSection from "@/components/FooterSection";
 import SEOHead from "@/components/SEOHead";
+import { useGallery } from "@/integrations/supabase/hooks/useGallery";
 
 interface GalleryItem {
-  id: number;
+  id: string;
   styleName: string;
-  description: string;
-  price: string;
+  description: string | null;
+  price: string | null;
   image: string;
 }
 
-const galleryItems: GalleryItem[] = [];
-
 const Gallery = () => {
+  const { data: dbItems = [], isLoading } = useGallery();
+  const galleryItems: GalleryItem[] = useMemo(() => (
+    dbItems.map((item) => ({
+      id: item.id,
+      styleName: item.style_name,
+      description: item.description,
+      price: item.price ? `KSh ${Number(item.price).toLocaleString()}` : null,
+      image: item.image_url,
+    }))
+  ), [dbItems]);
+
   const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState<number>(-1);
 
@@ -61,7 +71,11 @@ const Gallery = () => {
       {/* Gallery Masonry Grid */}
       <section className="bg-[#FAFAFA] py-10 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 lg:px-10">
-          {galleryItems.length === 0 ? (
+          {isLoading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-8 h-8 text-gray-300 animate-spin" />
+            </div>
+          ) : galleryItems.length === 0 ? (
             <div className="text-center py-20">
               <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-3xl text-gray-300">✦</span>
