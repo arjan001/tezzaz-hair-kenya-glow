@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -11,7 +11,6 @@ import {
   Eye,
   Scissors,
   Menu,
-  X,
   Palette,
   Mail,
   Truck,
@@ -113,7 +112,7 @@ const AdminLayout = () => {
         <div className="border-t border-gray-200 px-4 py-4">
           <div className="flex items-center gap-2.5 mb-4">
             <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-              <Users className="w-4 h-4 text-gray-500" />
+              <Shield className="w-4 h-4 text-gray-500" />
             </div>
             <div className="min-w-0">
               <p className="font-body text-xs font-bold text-black leading-tight truncate">{displayName}</p>
@@ -148,11 +147,12 @@ const AdminLayout = () => {
             </button>
             <nav className="flex items-center gap-1.5 font-body text-xs text-gray-400">
               <span>Admin</span>
-              <span>›</span>
+              <span>&rsaquo;</span>
               <span className="text-black font-medium">{currentPage}</span>
             </nav>
           </div>
           <div className="flex items-center gap-3">
+            <span className="font-body text-xs text-gray-400 hidden sm:inline">{user.email}</span>
             <button
               onClick={handleSignOut}
               disabled={signingOut}

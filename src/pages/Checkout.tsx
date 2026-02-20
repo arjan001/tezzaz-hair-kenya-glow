@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag, Phone, Shield, X, Copy, Check, Package } from "lucide-react";
+import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag, Phone, X, Copy, Check, Package, Loader2 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useCreateOrder } from "@/integrations/supabase/hooks/useOrders";
 import Navbar from "@/components/Navbar";
 import FooterSection from "@/components/FooterSection";
 
@@ -18,7 +19,7 @@ const MpesaPaybillModal = ({
 }: {
   total: number;
   onClose: () => void;
-  onSuccess: (code: string) => void;
+  onSuccess: (data: { code: string; mpesaMessage: string; mpesaPhone: string }) => void;
 }) => {
   const [accountNumber] = useState(generateAccountNumber());
   const [mpesaMessage, setMpesaMessage] = useState("");
@@ -40,7 +41,7 @@ const MpesaPaybillModal = ({
   const handleSubmit = () => {
     if (!mpesaMessage.trim()) return;
     const txCode = "TZ" + Math.random().toString(36).substring(2, 10).toUpperCase();
-    onSuccess(txCode);
+    onSuccess({ code: txCode, mpesaMessage, mpesaPhone: phoneUsed });
   };
 
   return (
@@ -220,8 +221,10 @@ const OrderSuccessView = ({ orderCode, onContinue, onTrack }: { orderCode: strin
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const { cart, updateQty, removeFromCart, cartTotal, clearCart } = useCart();
+  const createOrder = useCreateOrder();
   const [showMpesa, setShowMpesa] = useState(false);
   const [orderCode, setOrderCode] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -234,11 +237,46 @@ const CheckoutPage = () => {
   const deliveryFee = cartTotal >= 2000 ? 0 : 200;
   const total = cartTotal + deliveryFee;
 
-  const handlePaymentSuccess = (code: string) => {
+  const handlePaymentSuccess = async ({ code, mpesaMessage, mpesaPhone }: { code: string; mpesaMessage: string; mpesaPhone: string }) => {
     setShowMpesa(false);
-    setOrderCode(code);
-    clearCart();
+    setSubmitting(true);
+
+    const orderItems = cart.map((item) => ({
+      name: item.product.name,
+      qty: item.qty,
+      price: item.product.priceNum,
+      img: item.product.img || "",
+    }));
+
+    try {
+      await createOrder.mutateAsync({
+        order_code: code,
+        customer_name: formData.name,
+        customer_email: formData.email,
+        customer_phone: formData.phone,
+        delivery_address: formData.address,
+        city: formData.city,
+        notes: formData.notes || null,
+        items: orderItems,
+        subtotal: cartTotal,
+        delivery_fee: deliveryFee,
+        total,
+        payment_method: "mpesa",
+        mpesa_message: mpesaMessage || null,
+        mpesa_phone: mpesaPhone || null,
+        status: "pending",
+        user_id: null,
+      });
+      setOrderCode(code);
+      clearCart();
+    } catch {
+      // Error toast is handled by useCreateOrder hook
+    } finally {
+      setSubmitting(false);
+    }
   };
+
+  const canProceedToPayment = formData.name && formData.email && formData.phone && formData.address;
 
   // Show order success view
   if (orderCode) {
@@ -436,10 +474,18 @@ const CheckoutPage = () => {
 
               <button
                 onClick={() => setShowMpesa(true)}
-                className="w-full bg-[#4CAF50] text-white font-body text-xs uppercase tracking-widest py-4 hover:bg-[#43A047] transition-colors flex items-center justify-center gap-2"
+                disabled={!canProceedToPayment || submitting}
+                className="w-full bg-[#4CAF50] text-white font-body text-xs uppercase tracking-widest py-4 hover:bg-[#43A047] transition-colors flex items-center justify-center gap-2 disabled:bg-gray-300 disabled:cursor-not-allowed"
               >
-                <Phone className="w-4 h-4" /> Pay with M-Pesa
+                {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Phone className="w-4 h-4" />}
+                {submitting ? "Placing Order..." : "Pay with M-Pesa"}
               </button>
+
+              {!canProceedToPayment && (
+                <p className="font-body text-[10px] text-red-400 text-center mt-2">
+                  Please fill in all delivery details above
+                </p>
+              )}
 
               {cartTotal < 2000 && (
                 <p className="font-body text-[10px] text-gray-400 text-center mt-3">
