@@ -11,14 +11,16 @@ const AdminDashboard = () => {
   const { data: subscribers = [] } = useSubscribers();
   const { data: gallery = [] } = useGallery();
 
-  const totalRevenue = orders.filter((o) => o.status === "delivered").reduce((s, o) => s + Number(o.total), 0);
+  const totalRevenue = orders
+    .filter((o) => o.status === "confirmed" || o.status === "delivered")
+    .reduce((s, o) => s + Number(o.total), 0);
   const pendingOrders = orders.filter((o) => o.status === "pending").length;
   const activeSubscribers = subscribers.filter((s) => s.subscribed).length;
 
   const stats = [
     { label: "TOTAL PRODUCTS", value: products.length, sub: `${products.filter(p => p.in_stock).length} in stock`, icon: Package },
     { label: "TOTAL ORDERS", value: orders.length, sub: `${pendingOrders} pending`, icon: ShoppingCart },
-    { label: "REVENUE", value: `KSh ${totalRevenue.toLocaleString()}`, sub: "From delivered orders", icon: TrendingUp },
+    { label: "REVENUE", value: `KSh ${totalRevenue.toLocaleString()}`, sub: "From confirmed orders", icon: TrendingUp },
     { label: "SUBSCRIBERS", value: activeSubscribers, sub: "Newsletter", icon: Mail },
   ];
 

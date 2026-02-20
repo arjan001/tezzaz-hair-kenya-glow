@@ -8,49 +8,54 @@ import {
   Clock,
   Monitor,
   Smartphone,
+  Tablet,
   MousePointer,
   ArrowUpRight,
   ArrowDownRight,
   BarChart3,
   PieChart,
+  Loader2,
 } from "lucide-react";
+import { useAnalytics } from "@/integrations/supabase/hooks/useAnalytics";
 
 type Period = "today" | "7days" | "30days" | "90days";
 
-const generateData = (_period: Period) => {
-  return {
+const AdminAnalytics = () => {
+  const [period, setPeriod] = useState<Period>("30days");
+  const { data, isLoading } = useAnalytics(period);
+
+  const analytics = data || {
     visitors: 0,
     pageViews: 0,
-    orders: 0,
-    revenue: 0,
+    totalOrders: 0,
+    totalRevenue: 0,
     bounceRate: 0,
     avgSessionDuration: "0m 0s",
     conversionRate: "0.0",
     returningVisitors: 0,
+    topPages: [],
+    trafficSources: [],
+    deviceBreakdown: [],
+    recentActivity: [],
   };
-};
 
-const topPages: { path: string; name: string; views: number; percentage: number }[] = [];
-
-const trafficSources: { name: string; visits: number; percentage: number; color: string }[] = [];
-
-const deviceBreakdown: { name: string; percentage: number; icon: typeof Smartphone }[] = [];
-
-const recentActivity: { type: string; message: string; time: string }[] = [];
-
-const AdminAnalytics = () => {
-  const [period, setPeriod] = useState<Period>("30days");
-  const data = generateData(period);
+  const deviceIconMap: Record<string, typeof Smartphone> = {
+    Mobile: Smartphone,
+    Tablet: Tablet,
+    Desktop: Monitor,
+    Other: Monitor,
+  };
+  const trafficColors = ["bg-black", "bg-[hsl(var(--gold))]", "bg-gray-400", "bg-blue-500", "bg-emerald-500"];
 
   const statCards = [
-    { label: "Total Visitors", value: data.visitors.toLocaleString(), change: "—", up: true, icon: Users },
-    { label: "Page Views", value: data.pageViews.toLocaleString(), change: "—", up: true, icon: Eye },
-    { label: "Total Orders", value: data.orders.toLocaleString(), change: "—", up: true, icon: ShoppingCart },
-    { label: "Revenue", value: `KSh ${data.revenue.toLocaleString()}`, change: "—", up: true, icon: TrendingUp },
-    { label: "Bounce Rate", value: `${data.bounceRate}%`, change: "—", up: true, icon: MousePointer },
-    { label: "Avg Session", value: data.avgSessionDuration, change: "—", up: true, icon: Clock },
-    { label: "Conversion Rate", value: `${data.conversionRate}%`, change: "—", up: true, icon: BarChart3 },
-    { label: "Returning Visitors", value: `${data.returningVisitors}%`, change: "—", up: true, icon: Globe },
+    { label: "Total Visitors", value: analytics.visitors.toLocaleString(), change: "Live", up: true, icon: Users },
+    { label: "Page Views", value: analytics.pageViews.toLocaleString(), change: "Live", up: true, icon: Eye },
+    { label: "Total Orders", value: analytics.totalOrders.toLocaleString(), change: "Live", up: true, icon: ShoppingCart },
+    { label: "Revenue", value: `KSh ${analytics.totalRevenue.toLocaleString()}`, change: "Live", up: true, icon: TrendingUp },
+    { label: "Bounce Rate", value: `${analytics.bounceRate}%`, change: "Live", up: false, icon: MousePointer },
+    { label: "Avg Session", value: analytics.avgSessionDuration, change: "Live", up: true, icon: Clock },
+    { label: "Conversion Rate", value: `${analytics.conversionRate}%`, change: "Live", up: true, icon: BarChart3 },
+    { label: "Returning Visitors", value: `${analytics.returningVisitors}%`, change: "Live", up: true, icon: Globe },
   ];
 
   return (
@@ -89,7 +94,11 @@ const AdminAnalytics = () => {
                   {stat.change}
                 </span>
               </div>
-              <p className="font-display text-xl font-bold text-black">{stat.value}</p>
+              {isLoading ? (
+                <Loader2 className="w-4 h-4 text-gray-300 animate-spin" />
+              ) : (
+                <p className="font-display text-xl font-bold text-black">{stat.value}</p>
+              )}
               <p className="font-body text-[11px] text-gray-400">{stat.label}</p>
             </div>
           );
@@ -105,7 +114,15 @@ const AdminAnalytics = () => {
           </div>
           <div className="p-5">
             <div className="space-y-3">
-              {topPages.map((page, idx) => (
+              {isLoading && (
+                <div className="py-8 flex justify-center">
+                  <Loader2 className="w-5 h-5 text-gray-300 animate-spin" />
+                </div>
+              )}
+              {!isLoading && analytics.topPages.length === 0 && (
+                <p className="font-body text-sm text-gray-400">No page views yet.</p>
+              )}
+              {!isLoading && analytics.topPages.map((page, idx) => (
                 <div key={page.path} className="flex items-center gap-3">
                   <span className="font-body text-xs text-gray-400 w-5 text-right">{idx + 1}</span>
                   <div className="flex-1">
@@ -130,20 +147,31 @@ const AdminAnalytics = () => {
             <h2 className="font-display text-sm font-bold text-black">Traffic Sources</h2>
           </div>
           <div className="p-5 space-y-4">
-            {trafficSources.map((source) => (
-              <div key={source.name}>
-                <div className="flex items-center justify-between mb-1">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-2.5 h-2.5 rounded-full ${source.color}`} />
-                    <p className="font-body text-sm text-black">{source.name}</p>
-                  </div>
-                  <p className="font-body text-xs text-gray-500">{source.percentage}%</p>
-                </div>
-                <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden ml-4">
-                  <div className={`h-full rounded-full ${source.color}`} style={{ width: `${source.percentage}%` }} />
-                </div>
+            {isLoading && (
+              <div className="py-8 flex justify-center">
+                <Loader2 className="w-5 h-5 text-gray-300 animate-spin" />
               </div>
-            ))}
+            )}
+            {!isLoading && analytics.trafficSources.length === 0 && (
+              <p className="font-body text-sm text-gray-400">No traffic sources yet.</p>
+            )}
+            {!isLoading && analytics.trafficSources.map((source, idx) => {
+              const color = trafficColors[idx % trafficColors.length];
+              return (
+                <div key={source.name}>
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-2">
+                      <div className={`w-2.5 h-2.5 rounded-full ${color}`} />
+                      <p className="font-body text-sm text-black">{source.name}</p>
+                    </div>
+                    <p className="font-body text-xs text-gray-500">{source.percentage}%</p>
+                  </div>
+                  <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden ml-4">
+                    <div className={`h-full rounded-full ${color}`} style={{ width: `${source.percentage}%` }} />
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -155,8 +183,16 @@ const AdminAnalytics = () => {
             <h2 className="font-display text-sm font-bold text-black">Devices</h2>
           </div>
           <div className="p-5 space-y-4">
-            {deviceBreakdown.map((device) => {
-              const Icon = device.icon;
+            {isLoading && (
+              <div className="py-8 flex justify-center">
+                <Loader2 className="w-5 h-5 text-gray-300 animate-spin" />
+              </div>
+            )}
+            {!isLoading && analytics.deviceBreakdown.length === 0 && (
+              <p className="font-body text-sm text-gray-400">No device data yet.</p>
+            )}
+            {!isLoading && analytics.deviceBreakdown.map((device) => {
+              const Icon = deviceIconMap[device.name] || Monitor;
               return (
                 <div key={device.name} className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -187,21 +223,25 @@ const AdminAnalytics = () => {
             </span>
           </div>
           <div className="divide-y divide-gray-50">
-            {recentActivity.map((activity, idx) => (
+            {isLoading && (
+              <div className="py-8 flex justify-center">
+                <Loader2 className="w-5 h-5 text-gray-300 animate-spin" />
+              </div>
+            )}
+            {!isLoading && analytics.recentActivity.length === 0 && (
+              <p className="px-5 py-6 font-body text-sm text-gray-400">No recent activity yet.</p>
+            )}
+            {!isLoading && analytics.recentActivity.map((activity, idx) => (
               <div key={idx} className="px-5 py-3 flex items-center gap-3">
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                     activity.type === "order"
                       ? "bg-green-50"
-                      : activity.type === "signup"
-                      ? "bg-blue-50"
                       : "bg-gray-100"
                   }`}
                 >
                   {activity.type === "order" ? (
                     <ShoppingCart className="w-3.5 h-3.5 text-green-600" />
-                  ) : activity.type === "signup" ? (
-                    <Users className="w-3.5 h-3.5 text-blue-600" />
                   ) : (
                     <Eye className="w-3.5 h-3.5 text-gray-500" />
                   )}
