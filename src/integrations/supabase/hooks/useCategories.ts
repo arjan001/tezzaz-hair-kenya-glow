@@ -30,9 +30,10 @@ export function useCreateCategory() {
   return useMutation({
     mutationFn: async (cat: Record<string, unknown>) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error } = await supabase.from("categories").insert([cat as any]).select().single();
+      const { data, error } = await supabase.from("categories").insert([cat as any]).select();
       if (error) throw error;
-      return data;
+      if (!data || data.length === 0) throw new Error("Failed to create category — check admin permissions");
+      return data[0];
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["categories"] }); toast({ title: "Category added!" }); },
     onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
@@ -44,9 +45,10 @@ export function useUpdateCategory() {
   const { toast } = useToast();
   return useMutation({
     mutationFn: async ({ id, ...update }: Partial<DbCategory> & { id: string }) => {
-      const { data, error } = await supabase.from("categories").update(update).eq("id", id).select().single();
+      const { data, error } = await supabase.from("categories").update(update).eq("id", id).select();
       if (error) throw error;
-      return data;
+      if (!data || data.length === 0) throw new Error("Failed to update category — check admin permissions");
+      return data[0];
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["categories"] }); toast({ title: "Category updated!" }); },
     onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),

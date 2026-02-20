@@ -42,9 +42,10 @@ export function useCreateProduct() {
   return useMutation({
     mutationFn: async (product: Record<string, unknown>) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error } = await supabase.from("products").insert([product as any]).select().single();
+      const { data, error } = await supabase.from("products").insert([product as any]).select();
       if (error) throw error;
-      return data;
+      if (!data || data.length === 0) throw new Error("Failed to create product — check admin permissions");
+      return data[0];
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["products"] }); toast({ title: "Product added!" }); },
     onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
@@ -56,9 +57,10 @@ export function useUpdateProduct() {
   const { toast } = useToast();
   return useMutation({
     mutationFn: async ({ id, ...update }: Partial<DbProduct> & { id: string }) => {
-      const { data, error } = await supabase.from("products").update(update).eq("id", id).select().single();
+      const { data, error } = await supabase.from("products").update(update).eq("id", id).select();
       if (error) throw error;
-      return data;
+      if (!data || data.length === 0) throw new Error("Failed to update product — check admin permissions");
+      return data[0];
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["products"] }); toast({ title: "Product updated!" }); },
     onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
