@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -11,14 +11,16 @@ import {
   Eye,
   Scissors,
   Menu,
-  X,
   Palette,
   Mail,
   Truck,
   BarChart3,
   FileText,
   Image,
+  Loader2,
+  Shield,
 } from "lucide-react";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 
 const sidebarLinks = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
@@ -39,6 +41,18 @@ const AdminLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { user, loading, signOut, hasAdminAccess } = useAdminAuth();
+
+  useEffect(() => {
+    if (!loading && (!user || !hasAdminAccess)) {
+      navigate("/admin/login");
+    }
+  }, [user, loading, hasAdminAccess, navigate]);
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/admin/login");
+  };
 
   const isActive = (href: string) => {
     if (href === "/admin") return location.pathname === "/admin";
@@ -46,6 +60,18 @@ const AdminLayout = () => {
   };
 
   const currentPage = sidebarLinks.find((l) => isActive(l.href))?.label || "Dashboard";
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-gray-300 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!user || !hasAdminAccess) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] flex">
@@ -100,16 +126,18 @@ const AdminLayout = () => {
         <div className="border-t border-gray-200 px-4 py-4">
           <div className="flex items-center gap-2.5 mb-4">
             <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-              <Users className="w-4 h-4 text-gray-500" />
+              <Shield className="w-4 h-4 text-gray-500" />
             </div>
             <div>
-              <p className="font-body text-xs font-bold text-black leading-tight">TEZZAZ HAIR</p>
-              <p className="font-body text-[10px] text-gray-400">Super Admin</p>
+              <p className="font-body text-xs font-bold text-black leading-tight truncate max-w-[150px]">
+                {user.full_name || user.email}
+              </p>
+              <p className="font-body text-[10px] text-gray-400 capitalize">{user.role}</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
             <button
-              onClick={() => navigate("/")}
+              onClick={handleSignOut}
               className="flex items-center gap-1.5 font-body text-[11px] text-gray-500 hover:text-black transition-colors"
             >
               <LogOut className="w-3.5 h-3.5" /> Sign Out
@@ -134,13 +162,14 @@ const AdminLayout = () => {
             </button>
             <nav className="flex items-center gap-1.5 font-body text-xs text-gray-400">
               <span>Admin</span>
-              <span>›</span>
+              <span>&rsaquo;</span>
               <span className="text-black font-medium">{currentPage}</span>
             </nav>
           </div>
           <div className="flex items-center gap-3">
+            <span className="font-body text-xs text-gray-400 hidden sm:inline">{user.email}</span>
             <button
-              onClick={() => navigate("/")}
+              onClick={handleSignOut}
               className="font-body text-xs text-gray-500 hover:text-black transition-colors"
             >
               Sign Out

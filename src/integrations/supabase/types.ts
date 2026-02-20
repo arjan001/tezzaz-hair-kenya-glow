@@ -486,6 +486,72 @@ export type Database = {
           },
         ]
       }
+      permissions: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          resource: string
+          can_create: boolean
+          can_read: boolean
+          can_update: boolean
+          can_delete: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          resource: string
+          can_create?: boolean
+          can_read?: boolean
+          can_update?: boolean
+          can_delete?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          resource?: string
+          can_create?: boolean
+          can_read?: boolean
+          can_update?: boolean
+          can_delete?: boolean
+          created_at?: string
+        }
+        Relationships: []
+      }
+      admin_activity_log: {
+        Row: {
+          id: string
+          user_id: string
+          action: string
+          resource: string | null
+          resource_id: string | null
+          details: Json | null
+          ip_address: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          action: string
+          resource?: string | null
+          resource_id?: string | null
+          details?: Json | null
+          ip_address?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          action?: string
+          resource?: string | null
+          resource_id?: string | null
+          details?: Json | null
+          ip_address?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -499,6 +565,15 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      admin_exists: { Args: Record<string, never>; Returns: boolean }
+      check_permission: {
+        Args: { _resource: string; _action: string }
+        Returns: boolean
+      }
+      promote_to_admin: {
+        Args: { _user_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "manager" | "staff" | "customer"

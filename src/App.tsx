@@ -31,6 +31,8 @@ import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminPolicies from "./pages/admin/AdminPolicies";
 import AdminTheme from "./pages/admin/AdminTheme";
 import AdminGallery from "./pages/admin/AdminGallery";
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminRegister from "./pages/admin/AdminRegister";
 import Gallery from "./pages/Gallery";
 
 const queryClient = new QueryClient();
@@ -63,6 +65,8 @@ const App = () => (
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/refund-policy" element={<RefundPolicy />} />
             <Route path="/policies" element={<Policies />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/register" element={<AdminRegister />} />
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboard />} />
               <Route path="products" element={<AdminProducts />} />
