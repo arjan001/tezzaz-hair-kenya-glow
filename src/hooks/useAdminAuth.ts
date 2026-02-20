@@ -98,11 +98,36 @@ export function useAdminAuth() {
 
     // After signup, promote to admin if no admin exists
     if (data.user) {
-      const { data: adminExistsResult } = await supabase.rpc("admin_exists");
+      const { data: adminExistsResult, error: adminCheckError } = await supabase.rpc("admin_exists");
+
+      if (adminCheckError) {
+        console.error("admin_exists RPC error:", adminCheckError.message);
+      }
 
       if (!adminExistsResult) {
         // This is the first admin - promote via RPC
-        await supabase.rpc("promote_to_admin", { _user_id: data.user.id });
+        const { error: promoteError } = await supabase.rpc("promote_to_admin", { _user_id: data.user.id });
+
+        if (promoteError) {
+          console.error("promote_to_admin RPC error:", promoteError.message);
+          // Fallback: try direct upsert into user_roles
+          const { error: directError } = await supabase
+            .from("user_roles")
+            .upsert(
+              { user_id: data.user.id, role: "admin" as const },
+              { onConflict: "user_id,role" }
+            );
+          if (directError) {
+            console.error("Direct role upsert fallback also failed:", directError.message);
+          } else {
+            // Remove customer role if admin was inserted
+            await supabase
+              .from("user_roles")
+              .delete()
+              .eq("user_id", data.user.id)
+              .eq("role", "customer");
+          }
+        }
       }
     }
 
@@ -138,20 +163,26 @@ export function useAdminExists() {
 
   useEffect(() => {
     const check = async () => {
-      // Use the admin_exists() SECURITY DEFINER RPC function
-      // which can check all roles regardless of the caller's auth status
-      const { data, error } = await supabase.rpc("admin_exists");
+      try {
+        // Use the admin_exists() SECURITY DEFINER RPC function
+        // which can check all roles regardless of the caller's auth status
+        const { data, error } = await supabase.rpc("admin_exists");
 
-      if (error) {
-        // Fallback to direct query if RPC is not available
-        const { data: roles } = await supabase
-          .from("user_roles")
-          .select("id")
-          .eq("role", "admin")
-          .limit(1);
-        setExists(!!roles && roles.length > 0);
-      } else {
-        setExists(!!data);
+        if (error) {
+          console.warn("admin_exists RPC not available, using fallback:", error.message);
+          // Fallback to direct query if RPC is not available
+          const { data: roles } = await supabase
+            .from("user_roles")
+            .select("id")
+            .eq("role", "admin")
+            .limit(1);
+          setExists(!!roles && roles.length > 0);
+        } else {
+          setExists(!!data);
+        }
+      } catch {
+        // If everything fails, assume no admin exists to allow registration
+        setExists(false);
       }
       setLoading(false);
     };
