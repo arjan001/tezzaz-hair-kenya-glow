@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { Scissors, Loader2, Eye, EyeOff } from "lucide-react";
 
 const AdminLogin = () => {
-  const { signIn, user, isAdmin, loading: authLoading, adminLoading } = useAuth();
+  const { user, isAdmin, loading: authLoading, adminLoading } = useAuth();
+  const { signIn: adminSignIn } = useAdminAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,14 +27,15 @@ const AdminLogin = () => {
     setError("");
     setLoading(true);
     try {
-      const { error: authError } = await signIn(email, password);
-      if (authError) {
-        setError(authError.message);
-      } else {
+      // Use adminSignIn which validates the user has admin/manager/staff role
+      await adminSignIn(email, password);
+      // Force a small delay to let the auth context pick up the session
+      setTimeout(() => {
         navigate("/admin");
-      }
-    } catch {
-      setError("An unexpected error occurred.");
+      }, 100);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "An unexpected error occurred.";
+      setError(message);
     } finally {
       setLoading(false);
     }
