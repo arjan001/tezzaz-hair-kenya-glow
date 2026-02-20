@@ -27,9 +27,7 @@ const AdminLogin = () => {
     setError("");
     setLoading(true);
     try {
-      // Use adminSignIn which validates the user has admin/manager/staff role
       await adminSignIn(email, password);
-      // Force a small delay to let the auth context pick up the session
       setTimeout(() => {
         navigate("/admin");
       }, 100);

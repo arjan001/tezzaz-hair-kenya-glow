@@ -1,6 +1,5 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 
 export interface DbProfile {
   id: string;
@@ -26,24 +25,7 @@ export function useUsers() {
       const roleMap: Record<string, string> = {};
       (roles || []).forEach((r: { user_id: string; role: string }) => { roleMap[r.user_id] = r.role; });
 
-      return (profiles || []).map((p: DbProfile) => ({ ...p, role: roleMap[p.id] || "customer" }));
+      return (profiles || []).map((p: DbProfile) => ({ ...p, role: roleMap[p.id] || "admin" }));
     },
-  });
-}
-
-type AppRole = "admin" | "manager" | "staff" | "customer";
-
-export function useUpdateUserRole() {
-  const qc = useQueryClient();
-  const { toast } = useToast();
-  return useMutation({
-    mutationFn: async ({ userId, role }: { userId: string; role: AppRole }) => {
-      // Delete existing role first, then insert new one
-      await supabase.from("user_roles").delete().eq("user_id", userId);
-      const { error } = await supabase.from("user_roles").insert([{ user_id: userId, role }]);
-      if (error) throw error;
-    },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["users"] }); toast({ title: "Role updated!" }); },
-    onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
   });
 }

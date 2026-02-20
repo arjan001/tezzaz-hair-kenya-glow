@@ -6,7 +6,6 @@ export interface AdminUser {
   id: string;
   email: string;
   full_name: string | null;
-  role: "admin" | "manager" | "staff" | "customer";
 }
 
 export function useAdminAuth() {
@@ -22,20 +21,10 @@ export function useAdminAuth() {
       .eq("id", authUser.id)
       .single();
 
-    // Get role
-    const { data: roleData } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", authUser.id)
-      .single();
-
-    const role = (roleData?.role || "customer") as AdminUser["role"];
-
     setUser({
       id: authUser.id,
       email: authUser.email || profile?.email || "",
       full_name: profile?.full_name || null,
-      role,
     });
   }, []);
 
@@ -70,17 +59,16 @@ export function useAdminAuth() {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
 
-    // Check if user has admin/manager/staff role
+    // Verify user exists in user_roles (is a registered admin)
     const { data: roleData } = await supabase
       .from("user_roles")
       .select("role")
       .eq("user_id", data.user.id)
       .single();
 
-    const role = roleData?.role as string;
-    if (!role || role === "customer") {
+    if (!roleData) {
       await supabase.auth.signOut();
-      throw new Error("You do not have admin access. Contact a super admin.");
+      throw new Error("You do not have admin access. Contact the store owner.");
     }
 
     return data;
@@ -96,37 +84,28 @@ export function useAdminAuth() {
     });
     if (error) throw error;
 
-    // After signup, promote to admin if no admin exists
+    // The handle_new_user trigger auto-assigns admin role.
+    // As a safety fallback, ensure admin role exists.
     if (data.user) {
-      const { data: adminExistsResult, error: adminCheckError } = await supabase.rpc("admin_exists");
+      const { data: roleData } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", data.user.id)
+        .single();
 
-      if (adminCheckError) {
-        console.error("admin_exists RPC error:", adminCheckError.message);
-      }
-
-      if (!adminExistsResult) {
-        // This is the first admin - promote via RPC
+      if (!roleData || roleData.role !== "admin") {
+        // Fallback: try promote_to_admin RPC
         const { error: promoteError } = await supabase.rpc("promote_to_admin", { _user_id: data.user.id });
 
         if (promoteError) {
           console.error("promote_to_admin RPC error:", promoteError.message);
-          // Fallback: try direct upsert into user_roles
-          const { error: directError } = await supabase
+          // Last resort: direct upsert
+          await supabase
             .from("user_roles")
             .upsert(
               { user_id: data.user.id, role: "admin" as const },
               { onConflict: "user_id,role" }
             );
-          if (directError) {
-            console.error("Direct role upsert fallback also failed:", directError.message);
-          } else {
-            // Remove customer role if admin was inserted
-            await supabase
-              .from("user_roles")
-              .delete()
-              .eq("user_id", data.user.id)
-              .eq("role", "customer");
-          }
         }
       }
     }
@@ -140,9 +119,9 @@ export function useAdminAuth() {
     setSession(null);
   };
 
-  const isAdmin = user?.role === "admin" || user?.role === "manager";
-  const isStaff = user?.role === "staff";
-  const hasAdminAccess = isAdmin || isStaff;
+  // All registered users are admins - no role restrictions
+  const isAdmin = !!user;
+  const hasAdminAccess = !!user;
 
   return {
     user,
@@ -152,7 +131,7 @@ export function useAdminAuth() {
     signUp,
     signOut,
     isAdmin,
-    isStaff,
+    isStaff: false,
     hasAdminAccess,
   };
 }
@@ -164,13 +143,10 @@ export function useAdminExists() {
   useEffect(() => {
     const check = async () => {
       try {
-        // Use the admin_exists() SECURITY DEFINER RPC function
-        // which can check all roles regardless of the caller's auth status
         const { data, error } = await supabase.rpc("admin_exists");
 
         if (error) {
           console.warn("admin_exists RPC not available, using fallback:", error.message);
-          // Fallback to direct query if RPC is not available
           const { data: roles } = await supabase
             .from("user_roles")
             .select("id")
@@ -181,7 +157,6 @@ export function useAdminExists() {
           setExists(!!data);
         }
       } catch {
-        // If everything fails, assume no admin exists to allow registration
         setExists(false);
       }
       setLoading(false);
