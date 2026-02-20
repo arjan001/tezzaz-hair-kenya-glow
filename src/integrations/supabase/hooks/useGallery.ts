@@ -30,9 +30,10 @@ export function useCreateGalleryItem() {
   return useMutation({
     mutationFn: async (item: Record<string, unknown>) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error } = await supabase.from("gallery_items").insert([item as any]).select().single();
+      const { data, error } = await supabase.from("gallery_items").insert([item as any]).select();
       if (error) throw error;
-      return data;
+      if (!data || data.length === 0) throw new Error("Failed to create gallery item — check admin permissions");
+      return data[0];
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["gallery"] }); toast({ title: "Gallery item added!" }); },
     onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
@@ -44,9 +45,10 @@ export function useUpdateGalleryItem() {
   const { toast } = useToast();
   return useMutation({
     mutationFn: async ({ id, ...update }: Partial<DbGalleryItem> & { id: string }) => {
-      const { data, error } = await supabase.from("gallery_items").update(update).eq("id", id).select().single();
+      const { data, error } = await supabase.from("gallery_items").update(update).eq("id", id).select();
       if (error) throw error;
-      return data;
+      if (!data || data.length === 0) throw new Error("Failed to update gallery item — check admin permissions");
+      return data[0];
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["gallery"] }); toast({ title: "Gallery item updated!" }); },
     onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),

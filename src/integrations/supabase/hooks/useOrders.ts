@@ -52,9 +52,10 @@ export function useCreateOrder() {
   const { toast } = useToast();
   return useMutation({
     mutationFn: async (order: Omit<DbOrder, "id" | "created_at" | "updated_at">) => {
-      const { data, error } = await supabase.from("orders").insert([order]).select().single();
+      const { data, error } = await supabase.from("orders").insert([order]).select();
       if (error) throw error;
-      return data as DbOrder;
+      if (!data || data.length === 0) throw new Error("Failed to create order");
+      return data[0] as DbOrder;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["orders"] }); },
     onError: (e: Error) => toast({ title: "Error placing order", description: e.message, variant: "destructive" }),

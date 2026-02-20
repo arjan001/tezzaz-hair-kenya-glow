@@ -31,9 +31,10 @@ export function useCreateDeliveryZone() {
   return useMutation({
     mutationFn: async (zone: Record<string, unknown>) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error } = await supabase.from("delivery_zones").insert([zone as any]).select().single();
+      const { data, error } = await supabase.from("delivery_zones").insert([zone as any]).select();
       if (error) throw error;
-      return data;
+      if (!data || data.length === 0) throw new Error("Failed to create delivery zone — check admin permissions");
+      return data[0];
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["delivery_zones"] }); toast({ title: "Zone added!" }); },
     onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),
@@ -45,9 +46,10 @@ export function useUpdateDeliveryZone() {
   const { toast } = useToast();
   return useMutation({
     mutationFn: async ({ id, ...update }: Partial<DbDeliveryZone> & { id: string }) => {
-      const { data, error } = await supabase.from("delivery_zones").update(update).eq("id", id).select().single();
+      const { data, error } = await supabase.from("delivery_zones").update(update).eq("id", id).select();
       if (error) throw error;
-      return data;
+      if (!data || data.length === 0) throw new Error("Failed to update delivery zone — check admin permissions");
+      return data[0];
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["delivery_zones"] }); toast({ title: "Zone updated!" }); },
     onError: (e: Error) => toast({ title: "Error", description: e.message, variant: "destructive" }),

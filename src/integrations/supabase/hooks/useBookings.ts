@@ -33,9 +33,10 @@ export function useCreateBooking() {
   return useMutation({
     mutationFn: async (booking: Record<string, unknown>) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error } = await supabase.from("bookings").insert([booking as any]).select().single();
+      const { data, error } = await supabase.from("bookings").insert([booking as any]).select();
       if (error) throw error;
-      return data;
+      if (!data || data.length === 0) throw new Error("Failed to create booking");
+      return data[0];
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["bookings"] });
