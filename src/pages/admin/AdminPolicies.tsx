@@ -24,6 +24,18 @@ const initialPolicies: Policy[] = [];
 
 const ITEMS_PER_PAGE = 5;
 
+const Modal = ({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) => (
+  <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
+    <div className="bg-white w-full max-w-lg rounded-lg">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h2 className="font-display text-lg font-bold">{title}</h2>
+        <button onClick={onClose} className="text-gray-400 hover:text-black"><X className="w-5 h-5" /></button>
+      </div>
+      <div className="p-6">{children}</div>
+    </div>
+  </div>
+);
+
 const AdminPolicies = () => {
   const [policies, setPolicies] = useState<Policy[]>(initialPolicies);
   const [searchQuery, setSearchQuery] = useState("");
@@ -94,18 +106,6 @@ const AdminPolicies = () => {
   const togglePublish = (id: string) => {
     setPolicies((prev) => prev.map((p) => (p.id === id ? { ...p, isPublished: !p.isPublished } : p)));
   };
-
-  const Modal = ({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) => (
-    <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
-      <div className="bg-white w-full max-w-lg rounded-lg">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="font-display text-lg font-bold">{title}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-black"><X className="w-5 h-5" /></button>
-        </div>
-        <div className="p-6">{children}</div>
-      </div>
-    </div>
-  );
 
   return (
     <div>

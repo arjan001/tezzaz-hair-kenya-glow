@@ -5,6 +5,76 @@ import { useToast } from "@/hooks/use-toast";
 
 const ITEMS_PER_PAGE = 8;
 
+const GalleryFormModal = ({ title, onSubmit, submitLabel, onClose, formData, setFormData, imagePreview, setImagePreview, uploading, handleImageUpload, isSubmitting }: {
+  title: string; onSubmit: () => void; submitLabel: string; onClose: () => void;
+  formData: { styleName: string; description: string; price: string; image: string }; setFormData: (data: { styleName: string; description: string; price: string; image: string }) => void;
+  imagePreview: string; setImagePreview: (val: string) => void;
+  uploading: boolean; handleImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void; isSubmitting: boolean;
+}) => (
+  <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
+    <div className="bg-white w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-lg">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h2 className="font-display text-lg font-bold">{title}</h2>
+        <button onClick={onClose} className="text-gray-400 hover:text-black"><X className="w-5 h-5" /></button>
+      </div>
+      <div className="p-6 space-y-4">
+        <div>
+          <label className="font-body text-xs font-medium text-black block mb-1">Hair Style Name *</label>
+          <input type="text" value={formData.styleName} onChange={(e) => setFormData({ ...formData, styleName: e.target.value })}
+            placeholder="e.g. Goddess Locs, Box Braids"
+            className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black" />
+        </div>
+        <div>
+          <label className="font-body text-xs font-medium text-black block mb-1">Description</label>
+          <textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            rows={3} placeholder="Describe the style..." className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black resize-none" />
+        </div>
+        <div>
+          <label className="font-body text-xs font-medium text-black block mb-1">Price (KSh)</label>
+          <input type="number" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+            placeholder="e.g. 3500"
+            className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black" />
+        </div>
+        <div>
+          <label className="font-body text-xs font-medium text-black block mb-1">Upload Image *</label>
+          <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center hover:border-gray-400 transition-colors">
+            {imagePreview ? (
+              <div className="relative">
+                <img src={imagePreview} alt="Preview" className="w-full h-48 object-cover rounded" />
+                <button onClick={() => { setImagePreview(""); setFormData({ ...formData, image: "" }); }} className="absolute top-2 right-2 bg-white rounded-full p-1 shadow">
+                  <X className="w-4 h-4 text-gray-600" />
+                </button>
+              </div>
+            ) : (
+              <label className="cursor-pointer block">
+                {uploading ? <Loader2 className="w-8 h-8 text-gray-300 mx-auto animate-spin" /> : <Upload className="w-8 h-8 text-gray-300 mx-auto mb-2" />}
+                <p className="font-body text-sm text-gray-500">{uploading ? "Uploading..." : "Click to upload image"}</p>
+                <p className="font-body text-xs text-gray-400 mt-1">JPG, PNG, WebP up to 5MB</p>
+                <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" disabled={uploading} />
+              </label>
+            )}
+          </div>
+        </div>
+        <div>
+          <label className="font-body text-xs font-medium text-black block mb-1">Or paste Image URL</label>
+          <input type="text" value={formData.image.startsWith("http") ? formData.image : ""}
+            onChange={(e) => { setFormData({ ...formData, image: e.target.value }); setImagePreview(e.target.value); }}
+            placeholder="https://example.com/image.jpg"
+            className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black" />
+        </div>
+        <div className="flex justify-end gap-3 pt-3 border-t border-gray-100">
+          <button onClick={onClose} className="px-5 py-2.5 border border-gray-200 rounded font-body text-xs hover:bg-gray-50">Cancel</button>
+          <button onClick={onSubmit} disabled={!formData.styleName || !formData.image || isSubmitting}
+            className="px-5 py-2.5 bg-black text-white rounded font-body text-xs hover:bg-gray-800 disabled:bg-gray-300 flex items-center gap-2">
+            {isSubmitting && <Loader2 className="w-3 h-3 animate-spin" />}
+            {submitLabel}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 const AdminGallery = () => {
   const { data: galleryItems = [], isLoading } = useGallery();
   const createItem = useCreateGalleryItem();
@@ -82,71 +152,6 @@ const AdminGallery = () => {
     setShowEditModal(true);
   };
 
-  const GalleryFormModal = ({ title, onSubmit, submitLabel, onClose }: { title: string; onSubmit: () => void; submitLabel: string; onClose: () => void }) => (
-    <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
-      <div className="bg-white w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-lg">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="font-display text-lg font-bold">{title}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-black"><X className="w-5 h-5" /></button>
-        </div>
-        <div className="p-6 space-y-4">
-          <div>
-            <label className="font-body text-xs font-medium text-black block mb-1">Hair Style Name *</label>
-            <input type="text" value={formData.styleName} onChange={(e) => setFormData({ ...formData, styleName: e.target.value })}
-              placeholder="e.g. Goddess Locs, Box Braids"
-              className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black" />
-          </div>
-          <div>
-            <label className="font-body text-xs font-medium text-black block mb-1">Description</label>
-            <textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              rows={3} placeholder="Describe the style..." className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black resize-none" />
-          </div>
-          <div>
-            <label className="font-body text-xs font-medium text-black block mb-1">Price (KSh)</label>
-            <input type="number" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-              placeholder="e.g. 3500"
-              className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black" />
-          </div>
-          <div>
-            <label className="font-body text-xs font-medium text-black block mb-1">Upload Image *</label>
-            <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center hover:border-gray-400 transition-colors">
-              {imagePreview ? (
-                <div className="relative">
-                  <img src={imagePreview} alt="Preview" className="w-full h-48 object-cover rounded" />
-                  <button onClick={() => { setImagePreview(""); setFormData({ ...formData, image: "" }); }} className="absolute top-2 right-2 bg-white rounded-full p-1 shadow">
-                    <X className="w-4 h-4 text-gray-600" />
-                  </button>
-                </div>
-              ) : (
-                <label className="cursor-pointer block">
-                  {uploading ? <Loader2 className="w-8 h-8 text-gray-300 mx-auto animate-spin" /> : <Upload className="w-8 h-8 text-gray-300 mx-auto mb-2" />}
-                  <p className="font-body text-sm text-gray-500">{uploading ? "Uploading..." : "Click to upload image"}</p>
-                  <p className="font-body text-xs text-gray-400 mt-1">JPG, PNG, WebP up to 5MB</p>
-                  <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" disabled={uploading} />
-                </label>
-              )}
-            </div>
-          </div>
-          <div>
-            <label className="font-body text-xs font-medium text-black block mb-1">Or paste Image URL</label>
-            <input type="text" value={formData.image.startsWith("http") ? formData.image : ""}
-              onChange={(e) => { setFormData({ ...formData, image: e.target.value }); setImagePreview(e.target.value); }}
-              placeholder="https://example.com/image.jpg"
-              className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black" />
-          </div>
-          <div className="flex justify-end gap-3 pt-3 border-t border-gray-100">
-            <button onClick={onClose} className="px-5 py-2.5 border border-gray-200 rounded font-body text-xs hover:bg-gray-50">Cancel</button>
-            <button onClick={onSubmit} disabled={!formData.styleName || !formData.image || createItem.isPending || updateItem.isPending}
-              className="px-5 py-2.5 bg-black text-white rounded font-body text-xs hover:bg-gray-800 disabled:bg-gray-300 flex items-center gap-2">
-              {(createItem.isPending || updateItem.isPending) && <Loader2 className="w-3 h-3 animate-spin" />}
-              {submitLabel}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -199,8 +204,8 @@ const AdminGallery = () => {
                 <tr key={item.id} className="border-b border-gray-50 hover:bg-gray-50/50">
                   <td className="px-4 py-3"><img src={item.image_url} alt={item.style_name} className="w-12 h-12 object-cover rounded border border-gray-100" /></td>
                   <td className="px-4 py-3"><span className="font-body text-sm font-medium text-black">{item.style_name}</span></td>
-                  <td className="px-4 py-3"><span className="font-body text-xs text-gray-500 line-clamp-2 max-w-[200px] block">{item.description || "—"}</span></td>
-                  <td className="px-4 py-3"><span className="font-body text-sm font-bold text-black">{item.price ? `KSh ${Number(item.price).toLocaleString()}` : "—"}</span></td>
+                  <td className="px-4 py-3"><span className="font-body text-xs text-gray-500 line-clamp-2 max-w-[200px] block">{item.description || "\u2014"}</span></td>
+                  <td className="px-4 py-3"><span className="font-body text-sm font-bold text-black">{item.price ? `KSh ${Number(item.price).toLocaleString()}` : "\u2014"}</span></td>
                   <td className="px-4 py-3"><span className="font-body text-xs text-gray-500">{new Date(item.created_at).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}</span></td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-1">
@@ -234,8 +239,8 @@ const AdminGallery = () => {
         )}
       </div>
 
-      {showAddModal && <GalleryFormModal title="Add Hair Style" onSubmit={handleAdd} submitLabel="Add Style" onClose={() => { setShowAddModal(false); resetForm(); }} />}
-      {showEditModal && <GalleryFormModal title="Edit Hair Style" onSubmit={handleEdit} submitLabel="Save Changes" onClose={() => { setShowEditModal(false); setSelectedId(null); resetForm(); }} />}
+      {showAddModal && <GalleryFormModal title="Add Hair Style" onSubmit={handleAdd} submitLabel="Add Style" onClose={() => { setShowAddModal(false); resetForm(); }} formData={formData} setFormData={setFormData} imagePreview={imagePreview} setImagePreview={setImagePreview} uploading={uploading} handleImageUpload={handleImageUpload} isSubmitting={createItem.isPending || updateItem.isPending} />}
+      {showEditModal && <GalleryFormModal title="Edit Hair Style" onSubmit={handleEdit} submitLabel="Save Changes" onClose={() => { setShowEditModal(false); setSelectedId(null); resetForm(); }} formData={formData} setFormData={setFormData} imagePreview={imagePreview} setImagePreview={setImagePreview} uploading={uploading} handleImageUpload={handleImageUpload} isSubmitting={createItem.isPending || updateItem.isPending} />}
 
       {showPreviewModal && selectedItem && (
         <div className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4" onClick={() => { setShowPreviewModal(false); setSelectedId(null); }}>

@@ -2,6 +2,50 @@ import { useState } from "react";
 import { Plus, Search, Pencil, Trash2, X, Tag, Loader2 } from "lucide-react";
 import { useCategories, useCreateCategory, useUpdateCategory, useDeleteCategory } from "@/integrations/supabase/hooks/useCategories";
 
+const CategoryFormModal = ({ title, onSubmit, submitLabel, onClose, formData, setFormData, isSubmitting }: {
+  title: string; onSubmit: () => void; submitLabel: string; onClose: () => void;
+  formData: { name: string; slug: string; image: string }; setFormData: (data: { name: string; slug: string; image: string }) => void;
+  isSubmitting: boolean;
+}) => (
+  <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
+    <div className="bg-white w-full max-w-md rounded-lg">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h2 className="font-display text-lg font-bold">{title}</h2>
+        <button onClick={onClose} className="text-gray-400 hover:text-black"><X className="w-5 h-5" /></button>
+      </div>
+      <div className="p-6 space-y-4">
+        <div>
+          <label className="font-body text-xs font-medium text-black block mb-1">Category Name *</label>
+          <input type="text" value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value, slug: e.target.value.toLowerCase().replace(/\s+/g, "-") })}
+            placeholder="e.g. Hair Care"
+            className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black" />
+        </div>
+        <div>
+          <label className="font-body text-xs font-medium text-black block mb-1">Slug</label>
+          <input type="text" value={formData.slug} onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+            placeholder="auto-generated"
+            className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black" />
+        </div>
+        <div>
+          <label className="font-body text-xs font-medium text-black block mb-1">Image URL</label>
+          <input type="text" value={formData.image} onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+            placeholder="https://..."
+            className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black" />
+        </div>
+        <div className="flex justify-end gap-3 pt-3 border-t border-gray-100">
+          <button onClick={onClose} className="px-5 py-2.5 border border-gray-200 rounded font-body text-xs hover:bg-gray-50">Cancel</button>
+          <button onClick={onSubmit} disabled={!formData.name || isSubmitting}
+            className="px-5 py-2.5 bg-black text-white rounded font-body text-xs hover:bg-gray-800 disabled:bg-gray-300 flex items-center gap-2">
+            {isSubmitting && <Loader2 className="w-3 h-3 animate-spin" />}
+            {submitLabel}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 const AdminCategories = () => {
   const { data: categoryList = [], isLoading } = useCategories();
   const createCategory = useCreateCategory();
@@ -45,46 +89,6 @@ const AdminCategories = () => {
     if (!selectedId) return;
     deleteCategory.mutate(selectedId, { onSuccess: () => { setShowDeleteModal(false); setSelectedId(null); } });
   };
-
-  const CategoryFormModal = ({ title, onSubmit, submitLabel, onClose }: { title: string; onSubmit: () => void; submitLabel: string; onClose: () => void }) => (
-    <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
-      <div className="bg-white w-full max-w-md rounded-lg">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="font-display text-lg font-bold">{title}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-black"><X className="w-5 h-5" /></button>
-        </div>
-        <div className="p-6 space-y-4">
-          <div>
-            <label className="font-body text-xs font-medium text-black block mb-1">Category Name *</label>
-            <input type="text" value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value, slug: e.target.value.toLowerCase().replace(/\s+/g, "-") })}
-              placeholder="e.g. Hair Care"
-              className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black" />
-          </div>
-          <div>
-            <label className="font-body text-xs font-medium text-black block mb-1">Slug</label>
-            <input type="text" value={formData.slug} onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-              placeholder="auto-generated"
-              className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black" />
-          </div>
-          <div>
-            <label className="font-body text-xs font-medium text-black block mb-1">Image URL</label>
-            <input type="text" value={formData.image} onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-              placeholder="https://..."
-              className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black" />
-          </div>
-          <div className="flex justify-end gap-3 pt-3 border-t border-gray-100">
-            <button onClick={onClose} className="px-5 py-2.5 border border-gray-200 rounded font-body text-xs hover:bg-gray-50">Cancel</button>
-            <button onClick={onSubmit} disabled={!formData.name || createCategory.isPending || updateCategory.isPending}
-              className="px-5 py-2.5 bg-black text-white rounded font-body text-xs hover:bg-gray-800 disabled:bg-gray-300 flex items-center gap-2">
-              {(createCategory.isPending || updateCategory.isPending) && <Loader2 className="w-3 h-3 animate-spin" />}
-              {submitLabel}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <div>
@@ -149,8 +153,8 @@ const AdminCategories = () => {
         </div>
       )}
 
-      {showAddModal && <CategoryFormModal title="Add Category" onSubmit={handleAdd} submitLabel="Add Category" onClose={() => { setShowAddModal(false); resetForm(); }} />}
-      {showEditModal && <CategoryFormModal title="Edit Category" onSubmit={handleEdit} submitLabel="Save Changes" onClose={() => { setShowEditModal(false); setSelectedId(null); resetForm(); }} />}
+      {showAddModal && <CategoryFormModal title="Add Category" onSubmit={handleAdd} submitLabel="Add Category" onClose={() => { setShowAddModal(false); resetForm(); }} formData={formData} setFormData={setFormData} isSubmitting={createCategory.isPending || updateCategory.isPending} />}
+      {showEditModal && <CategoryFormModal title="Edit Category" onSubmit={handleEdit} submitLabel="Save Changes" onClose={() => { setShowEditModal(false); setSelectedId(null); resetForm(); }} formData={formData} setFormData={setFormData} isSubmitting={createCategory.isPending || updateCategory.isPending} />}
 
       {showDeleteModal && selectedCategory && (
         <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
