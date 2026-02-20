@@ -18,7 +18,9 @@ import {
   BarChart3,
   FileText,
   Image,
+  Loader2,
 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 const sidebarLinks = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
@@ -38,7 +40,9 @@ const sidebarLinks = [
 const AdminLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
 
   const isActive = (href: string) => {
     if (href === "/admin") return location.pathname === "/admin";
@@ -46,6 +50,15 @@ const AdminLayout = () => {
   };
 
   const currentPage = sidebarLinks.find((l) => isActive(l.href))?.label || "Dashboard";
+
+  const handleSignOut = async () => {
+    setSigningOut(true);
+    await signOut();
+    navigate("/admin/login");
+  };
+
+  const displayName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Admin";
+  const displayEmail = user?.email || "";
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] flex">
@@ -102,17 +115,18 @@ const AdminLayout = () => {
             <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
               <Users className="w-4 h-4 text-gray-500" />
             </div>
-            <div>
-              <p className="font-body text-xs font-bold text-black leading-tight">TEZZAZ HAIR</p>
-              <p className="font-body text-[10px] text-gray-400">Super Admin</p>
+            <div className="min-w-0">
+              <p className="font-body text-xs font-bold text-black leading-tight truncate">{displayName}</p>
+              <p className="font-body text-[10px] text-gray-400 truncate">{displayEmail}</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
             <button
-              onClick={() => navigate("/")}
-              className="flex items-center gap-1.5 font-body text-[11px] text-gray-500 hover:text-black transition-colors"
+              onClick={handleSignOut}
+              disabled={signingOut}
+              className="flex items-center gap-1.5 font-body text-[11px] text-gray-500 hover:text-black transition-colors disabled:opacity-50"
             >
-              <LogOut className="w-3.5 h-3.5" /> Sign Out
+              {signingOut ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <LogOut className="w-3.5 h-3.5" />} Sign Out
             </button>
             <button
               onClick={() => navigate("/")}
@@ -140,10 +154,11 @@ const AdminLayout = () => {
           </div>
           <div className="flex items-center gap-3">
             <button
-              onClick={() => navigate("/")}
-              className="font-body text-xs text-gray-500 hover:text-black transition-colors"
+              onClick={handleSignOut}
+              disabled={signingOut}
+              className="font-body text-xs text-gray-500 hover:text-black transition-colors disabled:opacity-50"
             >
-              Sign Out
+              {signingOut ? "Signing out..." : "Sign Out"}
             </button>
           </div>
         </header>

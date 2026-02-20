@@ -64,13 +64,13 @@ const GalleryFormModal = ({ title, onSubmit, submitLabel, onClose, formData, set
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
-      <div className="bg-white w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-lg">
+    <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-white w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-lg" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <h2 className="font-display text-lg font-bold">{title}</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-black"><X className="w-5 h-5" /></button>
         </div>
-        <div className="p-6 space-y-4">
+        <form onSubmit={(e) => { e.preventDefault(); onSubmit(); }} className="p-6 space-y-4">
           <div>
             <label className="font-body text-xs font-medium text-black block mb-1">Hair Style Name *</label>
             <input type="text" value={formData.styleName} onChange={(e) => setFormData((f) => ({ ...f, styleName: e.target.value }))}
@@ -94,7 +94,7 @@ const GalleryFormModal = ({ title, onSubmit, submitLabel, onClose, formData, set
               {imagePreview ? (
                 <div className="relative">
                   <img src={imagePreview} alt="Preview" className="w-full h-48 object-cover rounded" />
-                  <button onClick={handleClearImage} className="absolute top-2 right-2 bg-white rounded-full p-1 shadow">
+                  <button type="button" onClick={handleClearImage} className="absolute top-2 right-2 bg-white rounded-full p-1 shadow">
                     <X className="w-4 h-4 text-gray-600" />
                   </button>
                 </div>
@@ -116,14 +116,14 @@ const GalleryFormModal = ({ title, onSubmit, submitLabel, onClose, formData, set
               className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black" />
           </div>
           <div className="flex justify-end gap-3 pt-3 border-t border-gray-100">
-            <button onClick={onClose} className="px-5 py-2.5 border border-gray-200 rounded font-body text-xs hover:bg-gray-50">Cancel</button>
-            <button onClick={onSubmit} disabled={!formData.styleName || !formData.image || isPending}
+            <button type="button" onClick={onClose} className="px-5 py-2.5 border border-gray-200 rounded font-body text-xs hover:bg-gray-50">Cancel</button>
+            <button type="submit" disabled={!formData.styleName || !formData.image || isPending}
               className="px-5 py-2.5 bg-black text-white rounded font-body text-xs hover:bg-gray-800 disabled:bg-gray-300 flex items-center gap-2">
               {isPending && <Loader2 className="w-3 h-3 animate-spin" />}
               {submitLabel}
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );
