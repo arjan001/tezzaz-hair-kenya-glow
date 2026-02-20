@@ -18,6 +18,7 @@ import {
   FileText,
   Image,
   Loader2,
+  Shield,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
@@ -152,7 +153,7 @@ const AdminLayout = () => {
             </nav>
           </div>
           <div className="flex items-center gap-3">
-            <span className="font-body text-xs text-gray-400 hidden sm:inline">{user.email}</span>
+            <span className="font-body text-xs text-gray-400 hidden sm:inline">{user?.email}</span>
             <button
               onClick={handleSignOut}
               disabled={signingOut}
