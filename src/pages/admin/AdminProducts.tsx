@@ -15,13 +15,13 @@ const ProductFormModal = ({ title, onSubmit, submitLabel, onClose, formData, set
   formData: typeof emptyForm; setFormData: (data: typeof emptyForm) => void;
   categories: any[]; uploading: boolean; handleImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void; isSubmitting: boolean;
 }) => (
-  <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
-    <div className="bg-white w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-lg">
+  <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4" onClick={onClose}>
+    <div className="bg-white w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-lg" onClick={(e) => e.stopPropagation()}>
       <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
         <h2 className="font-display text-lg font-bold">{title}</h2>
         <button onClick={onClose} className="text-gray-400 hover:text-black"><X className="w-5 h-5" /></button>
       </div>
-      <div className="p-6 space-y-4">
+      <form onSubmit={(e) => { e.preventDefault(); onSubmit(); }} className="p-6 space-y-4">
         <div>
           <label className="font-body text-xs font-medium text-black block mb-1">Product Name *</label>
           <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -51,7 +51,7 @@ const ProductFormModal = ({ title, onSubmit, submitLabel, onClose, formData, set
           </div>
         </div>
         <div>
-          <label className="font-body text-xs font-medium text-black block mb-1">Description *</label>
+          <label className="font-body text-xs font-medium text-black block mb-1">Description</label>
           <textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             rows={2} placeholder="Short product description..."
             className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black resize-none" />
@@ -69,15 +69,15 @@ const ProductFormModal = ({ title, onSubmit, submitLabel, onClose, formData, set
             {formData.img_url ? (
               <div className="relative">
                 <img src={formData.img_url} alt="Preview" className="w-full h-40 object-cover rounded" />
-                <button onClick={() => setFormData({ ...formData, img_url: "" })} className="absolute top-2 right-2 bg-white rounded-full p-1 shadow">
+                <button type="button" onClick={() => setFormData({ ...formData, img_url: "" })} className="absolute top-2 right-2 bg-white rounded-full p-1 shadow">
                   <X className="w-4 h-4 text-gray-600" />
                 </button>
               </div>
             ) : (
               <label className="cursor-pointer block">
                 {uploading ? <Loader2 className="w-6 h-6 text-gray-300 mx-auto animate-spin" /> : <Upload className="w-6 h-6 text-gray-300 mx-auto mb-1" />}
-                <p className="font-body text-xs text-gray-500 mt-1">Click to upload</p>
-                <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                <p className="font-body text-xs text-gray-500 mt-1">{uploading ? "Uploading..." : "Click to upload"}</p>
+                <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" disabled={uploading} />
               </label>
             )}
           </div>
@@ -105,25 +105,30 @@ const ProductFormModal = ({ title, onSubmit, submitLabel, onClose, formData, set
           </div>
         </div>
         <div className="flex items-center gap-6">
-          {[{ key: "in_stock", label: "In Stock" }, { key: "is_active", label: "Active" }].map(({ key, label }) => (
-            <label key={key} className="flex items-center gap-2 cursor-pointer">
-              <div className={`w-9 h-5 rounded-full relative transition-colors ${formData[key as keyof typeof formData] ? "bg-black" : "bg-gray-200"}`}
-                onClick={() => setFormData({ ...formData, [key]: !formData[key as keyof typeof formData] })}>
-                <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${formData[key as keyof typeof formData] ? "left-[18px]" : "left-0.5"}`} />
-              </div>
-              <span className="font-body text-xs text-black">{label}</span>
-            </label>
-          ))}
+          <label className="flex items-center gap-2 cursor-pointer">
+            <div className={`w-9 h-5 rounded-full relative transition-colors ${formData.in_stock ? "bg-black" : "bg-gray-200"}`}
+              onClick={() => setFormData({ ...formData, in_stock: !formData.in_stock })}>
+              <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${formData.in_stock ? "left-[18px]" : "left-0.5"}`} />
+            </div>
+            <span className="font-body text-xs text-black">In Stock</span>
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <div className={`w-9 h-5 rounded-full relative transition-colors ${formData.is_active ? "bg-black" : "bg-gray-200"}`}
+              onClick={() => setFormData({ ...formData, is_active: !formData.is_active })}>
+              <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${formData.is_active ? "left-[18px]" : "left-0.5"}`} />
+            </div>
+            <span className="font-body text-xs text-black">Active</span>
+          </label>
         </div>
         <div className="flex justify-end gap-3 pt-3 border-t border-gray-100">
-          <button onClick={onClose} className="px-5 py-2.5 border border-gray-200 rounded font-body text-xs hover:bg-gray-50 transition-colors">Cancel</button>
-          <button onClick={onSubmit} disabled={!formData.name || !formData.price || isSubmitting}
+          <button type="button" onClick={onClose} className="px-5 py-2.5 border border-gray-200 rounded font-body text-xs hover:bg-gray-50 transition-colors">Cancel</button>
+          <button type="submit" disabled={!formData.name || !formData.price || isSubmitting}
             className="px-5 py-2.5 bg-black text-white rounded font-body text-xs hover:bg-gray-800 transition-colors disabled:bg-gray-300 flex items-center gap-2">
             {isSubmitting && <Loader2 className="w-3 h-3 animate-spin" />}
             {submitLabel}
           </button>
         </div>
-      </div>
+      </form>
     </div>
   </div>
 );

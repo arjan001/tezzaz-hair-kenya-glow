@@ -18,9 +18,8 @@ import {
   FileText,
   Image,
   Loader2,
-  Shield,
 } from "lucide-react";
-import { useAdminAuth } from "@/hooks/useAdminAuth";
+import { useAuth } from "@/context/AuthContext";
 
 const sidebarLinks = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
@@ -40,19 +39,9 @@ const sidebarLinks = [
 const AdminLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { user, loading, signOut, hasAdminAccess } = useAdminAuth();
-
-  useEffect(() => {
-    if (!loading && (!user || !hasAdminAccess)) {
-      navigate("/admin/login");
-    }
-  }, [user, loading, hasAdminAccess, navigate]);
-
-  const handleSignOut = async () => {
-    await signOut();
-    navigate("/admin/login");
-  };
+  const [signingOut, setSigningOut] = useState(false);
 
   const isActive = (href: string) => {
     if (href === "/admin") return location.pathname === "/admin";
@@ -61,17 +50,14 @@ const AdminLayout = () => {
 
   const currentPage = sidebarLinks.find((l) => isActive(l.href))?.label || "Dashboard";
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-gray-300 animate-spin" />
-      </div>
-    );
-  }
+  const handleSignOut = async () => {
+    setSigningOut(true);
+    await signOut();
+    navigate("/admin/login");
+  };
 
-  if (!user || !hasAdminAccess) {
-    return null;
-  }
+  const displayName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Admin";
+  const displayEmail = user?.email || "";
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] flex">
@@ -128,19 +114,18 @@ const AdminLayout = () => {
             <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
               <Shield className="w-4 h-4 text-gray-500" />
             </div>
-            <div>
-              <p className="font-body text-xs font-bold text-black leading-tight truncate max-w-[150px]">
-                {user.full_name || user.email}
-              </p>
-              <p className="font-body text-[10px] text-gray-400 capitalize">{user.role}</p>
+            <div className="min-w-0">
+              <p className="font-body text-xs font-bold text-black leading-tight truncate">{displayName}</p>
+              <p className="font-body text-[10px] text-gray-400 truncate">{displayEmail}</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
             <button
               onClick={handleSignOut}
-              className="flex items-center gap-1.5 font-body text-[11px] text-gray-500 hover:text-black transition-colors"
+              disabled={signingOut}
+              className="flex items-center gap-1.5 font-body text-[11px] text-gray-500 hover:text-black transition-colors disabled:opacity-50"
             >
-              <LogOut className="w-3.5 h-3.5" /> Sign Out
+              {signingOut ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <LogOut className="w-3.5 h-3.5" />} Sign Out
             </button>
             <button
               onClick={() => navigate("/")}
@@ -170,9 +155,10 @@ const AdminLayout = () => {
             <span className="font-body text-xs text-gray-400 hidden sm:inline">{user.email}</span>
             <button
               onClick={handleSignOut}
-              className="font-body text-xs text-gray-500 hover:text-black transition-colors"
+              disabled={signingOut}
+              className="font-body text-xs text-gray-500 hover:text-black transition-colors disabled:opacity-50"
             >
-              Sign Out
+              {signingOut ? "Signing out..." : "Sign Out"}
             </button>
           </div>
         </header>

@@ -387,10 +387,27 @@ const AdminSettings = () => {
         {activeTab === "security" && (
           <div className="space-y-5">
             <h2 className="font-display text-base font-bold text-black mb-4">Security Settings</h2>
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-5">
-              <p className="font-body text-sm text-gray-500">
-                Security settings will be available after Supabase integration. This will include authentication, role-based access control, and session management.
-              </p>
+            <div className="space-y-4">
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <p className="font-body text-sm text-green-700 font-medium mb-1">Supabase Authentication Active</p>
+                <p className="font-body text-xs text-green-600">
+                  Authentication, role-based access control, and session management are fully integrated via Supabase. Admin routes are protected and require sign-in with an admin or manager role.
+                </p>
+              </div>
+              <div className="bg-white border border-gray-200 rounded-lg p-4">
+                <p className="font-body text-xs font-medium text-black mb-2">Security Features</p>
+                <ul className="space-y-2 font-body text-xs text-gray-600">
+                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-green-500 rounded-full" /> Row Level Security (RLS) on all database tables</li>
+                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-green-500 rounded-full" /> Role-based access control (admin, manager, staff, customer)</li>
+                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-green-500 rounded-full" /> Protected admin routes with authentication checks</li>
+                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-green-500 rounded-full" /> Secure file uploads restricted to admin users</li>
+                  <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-green-500 rounded-full" /> Auto session refresh with persistent login</li>
+                </ul>
+              </div>
+              <div className="bg-white border border-gray-200 rounded-lg p-4">
+                <p className="font-body text-xs font-medium text-black mb-1">Manage User Roles</p>
+                <p className="font-body text-xs text-gray-500">Go to <a href="/admin/users" className="text-black underline">Users &amp; Roles</a> to manage who has admin access.</p>
+              </div>
             </div>
           </div>
         )}
