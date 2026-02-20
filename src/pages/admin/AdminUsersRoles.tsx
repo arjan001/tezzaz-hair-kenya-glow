@@ -40,29 +40,29 @@ const AddUserModal = ({
 
     setLoading(true);
     try {
-      // Sign up the new user via Supabase Auth
-      const { data, error: signUpErr } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: { full_name: fullName } },
+      // Get the current admin's auth token
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
+        throw new Error("You must be logged in to add team members.");
+      }
+
+      // Call the serverless function to create the user server-side.
+      // This uses the Supabase Admin API and avoids disrupting the
+      // current admin's session (which was the root cause of newly
+      // created users not appearing in the list).
+      const response = await fetch("/.netlify/functions/create-admin-user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ email, password, full_name: fullName }),
       });
-      if (signUpErr) throw signUpErr;
-      if (!data.user) throw new Error("Failed to create user");
 
-      // The handle_new_user trigger should auto-assign admin role.
-      // As a safety measure, ensure admin role is set:
-      // Remove any non-admin role first
-      await supabase.from("user_roles").delete().eq("user_id", data.user.id).neq("role", "admin");
+      const result = await response.json();
 
-      // Ensure admin role exists
-      const { error: roleErr } = await supabase
-        .from("user_roles")
-        .upsert(
-          [{ user_id: data.user.id, role: "admin" as const }],
-          { onConflict: "user_id,role" }
-        );
-      if (roleErr) {
-        console.error("Role upsert error:", roleErr.message);
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to create user");
       }
 
       toast({ title: "Team member added!", description: `${fullName} has been registered as an admin.` });
