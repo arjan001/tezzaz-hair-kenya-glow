@@ -29,7 +29,7 @@ DELETE FROM public.wishlists;
 -- Delete all users from Supabase auth
 DELETE FROM auth.users;
 
-RAISE NOTICE 'All users deleted successfully.';
+DO $msg$ BEGIN RAISE NOTICE 'All users deleted successfully.'; END $msg$;
 
 -- ============================================================
 -- STEP 2: DROP THE PERMISSIONS TABLE & RELATED OBJECTS
@@ -47,7 +47,7 @@ DROP FUNCTION IF EXISTS public.check_permission(TEXT, TEXT);
 -- Drop the permissions index
 DROP INDEX IF EXISTS idx_permissions_role;
 
-RAISE NOTICE 'Permissions table and check_permission function removed.';
+DO $msg$ BEGIN RAISE NOTICE 'Permissions table and check_permission function removed.'; END $msg$;
 
 -- ============================================================
 -- STEP 3: SIMPLIFY HANDLE_NEW_USER TRIGGER
@@ -70,7 +70,7 @@ BEGIN
 END;
 $$;
 
-RAISE NOTICE 'handle_new_user trigger updated to auto-assign admin role.';
+DO $msg$ BEGIN RAISE NOTICE 'handle_new_user trigger updated to auto-assign admin role.'; END $msg$;
 
 -- ============================================================
 -- STEP 4: UPDATE admin_exists FUNCTION
@@ -96,7 +96,7 @@ BEGIN
 END;
 $$;
 
-RAISE NOTICE 'RPC functions updated.';
+DO $msg$ BEGIN RAISE NOTICE 'RPC functions updated.'; END $msg$;
 
 -- ============================================================
 -- DONE!
