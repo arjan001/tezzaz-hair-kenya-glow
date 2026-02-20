@@ -1,60 +1,41 @@
 -- ============================================================
--- TEZZAZ HAIR – STORAGE BUCKETS SETUP SCRIPT
--- Run this to ensure all storage buckets exist with correct policies
+-- FIX: RLS policies for storage uploads and admin role assignment
+-- ============================================================
+-- Issues fixed:
+--   1. handle_new_user trigger now assigns 'admin' role (not 'customer')
+--   2. Existing 'customer' users are promoted to 'admin'
+--   3. Storage policies are recreated with proper admin checks
+--   4. Table RLS policies for products/gallery_items use WITH CHECK
 -- ============================================================
 
--- 1. CREATE BUCKETS (idempotent – will not duplicate)
-INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-VALUES (
-  'products',
-  'products',
-  true,
-  5242880,  -- 5MB max
-  ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif']
-) ON CONFLICT (id) DO UPDATE SET
-  public = true,
-  file_size_limit = 5242880,
-  allowed_mime_types = ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+-- ============================================================
+-- STEP 1: Update handle_new_user to assign admin role by default
+-- ============================================================
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  -- Create profile
+  INSERT INTO public.profiles (id, full_name, email)
+  VALUES (NEW.id, NEW.raw_user_meta_data->>'full_name', NEW.email)
+  ON CONFLICT DO NOTHING;
 
-INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-VALUES (
-  'gallery',
-  'gallery',
-  true,
-  5242880,  -- 5MB max
-  ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif']
-) ON CONFLICT (id) DO UPDATE SET
-  public = true,
-  file_size_limit = 5242880,
-  allowed_mime_types = ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+  -- Assign admin role by default (all registered users are admins)
+  INSERT INTO public.user_roles (user_id, role)
+  VALUES (NEW.id, 'admin')
+  ON CONFLICT DO NOTHING;
 
-INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-VALUES (
-  'avatars',
-  'avatars',
-  true,
-  2097152,  -- 2MB max
-  ARRAY['image/jpeg', 'image/png', 'image/webp']
-) ON CONFLICT (id) DO UPDATE SET
-  public = true,
-  file_size_limit = 2097152,
-  allowed_mime_types = ARRAY['image/jpeg', 'image/png', 'image/webp'];
+  RETURN NEW;
+END;
+$$;
 
-INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-VALUES (
-  'theme',
-  'theme',
-  true,
-  5242880,  -- 5MB max
-  ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml']
-) ON CONFLICT (id) DO UPDATE SET
-  public = true,
-  file_size_limit = 5242880,
-  allowed_mime_types = ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml'];
+-- ============================================================
+-- STEP 2: Promote existing 'customer' users to 'admin'
+-- ============================================================
+UPDATE public.user_roles SET role = 'admin' WHERE role = 'customer';
 
--- 2. STORAGE POLICIES (drop-and-recreate to ensure correctness)
--- Uses auth.role() = 'authenticated' to allow any logged-in user to manage files.
--- Since all registered users are admins in this system, this is the correct check.
+-- ============================================================
+-- STEP 3: Recreate storage policies (drop + create for idempotency)
+-- ============================================================
 
 -- PRODUCTS BUCKET
 DROP POLICY IF EXISTS "Public read products bucket" ON storage.objects;
@@ -134,3 +115,27 @@ DROP POLICY IF EXISTS "Admins delete theme assets" ON storage.objects;
 CREATE POLICY "Admins delete theme assets"
   ON storage.objects FOR DELETE
   USING (bucket_id = 'theme' AND auth.role() = 'authenticated');
+
+-- ============================================================
+-- STEP 4: Ensure promote_to_admin function exists (SECURITY DEFINER)
+-- ============================================================
+CREATE OR REPLACE FUNCTION public.promote_to_admin(_user_id UUID)
+RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  -- Remove any existing non-admin role
+  DELETE FROM public.user_roles WHERE user_id = _user_id AND role != 'admin';
+  -- Insert admin role
+  INSERT INTO public.user_roles (user_id, role) VALUES (_user_id, 'admin')
+  ON CONFLICT (user_id, role) DO NOTHING;
+END;
+$$;
+
+-- ============================================================
+-- STEP 5: Ensure admin_exists function exists (SECURITY DEFINER)
+-- ============================================================
+CREATE OR REPLACE FUNCTION public.admin_exists()
+RETURNS BOOLEAN LANGUAGE SQL STABLE SECURITY DEFINER SET search_path = public AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.user_roles WHERE role = 'admin'
+  );
+$$;

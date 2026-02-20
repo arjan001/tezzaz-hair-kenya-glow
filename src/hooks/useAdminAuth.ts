@@ -55,6 +55,30 @@ export function useAdminAuth() {
     return () => subscription.unsubscribe();
   }, [fetchAdminUser]);
 
+  const ensureAdminRole = async (userId: string) => {
+    const { data: roleData } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId)
+      .single();
+
+    if (!roleData || roleData.role !== "admin") {
+      // Try promote_to_admin RPC (SECURITY DEFINER, bypasses RLS)
+      const { error: promoteError } = await supabase.rpc("promote_to_admin", { _user_id: userId });
+
+      if (promoteError) {
+        console.error("promote_to_admin RPC error:", promoteError.message);
+        // Last resort: direct upsert
+        await supabase
+          .from("user_roles")
+          .upsert(
+            { user_id: userId, role: "admin" as const },
+            { onConflict: "user_id,role" }
+          );
+      }
+    }
+  };
+
   const signIn = async (email: string, password: string) => {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
@@ -69,6 +93,11 @@ export function useAdminAuth() {
     if (!roleData) {
       await supabase.auth.signOut();
       throw new Error("You do not have admin access. Contact the store owner.");
+    }
+
+    // Ensure user has admin role (not just customer)
+    if (roleData.role !== "admin") {
+      await ensureAdminRole(data.user.id);
     }
 
     return data;
@@ -87,27 +116,7 @@ export function useAdminAuth() {
     // The handle_new_user trigger auto-assigns admin role.
     // As a safety fallback, ensure admin role exists.
     if (data.user) {
-      const { data: roleData } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", data.user.id)
-        .single();
-
-      if (!roleData || roleData.role !== "admin") {
-        // Fallback: try promote_to_admin RPC
-        const { error: promoteError } = await supabase.rpc("promote_to_admin", { _user_id: data.user.id });
-
-        if (promoteError) {
-          console.error("promote_to_admin RPC error:", promoteError.message);
-          // Last resort: direct upsert
-          await supabase
-            .from("user_roles")
-            .upsert(
-              { user_id: data.user.id, role: "admin" as const },
-              { onConflict: "user_id,role" }
-            );
-        }
-      }
+      await ensureAdminRole(data.user.id);
     }
 
     return data;
