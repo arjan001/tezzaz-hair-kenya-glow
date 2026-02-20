@@ -1,13 +1,31 @@
 import { useNavigate } from "react-router-dom";
-import { Heart, ShoppingBag, Trash2, ArrowLeft } from "lucide-react";
+import { Heart, ShoppingBag, Trash2, ArrowLeft, Loader2 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { products } from "@/data/products";
+import { useProducts } from "@/integrations/supabase/hooks/useProducts";
 import Navbar from "@/components/Navbar";
 import FooterSection from "@/components/FooterSection";
+import type { Product } from "@/context/CartContext";
 
 const WishlistPage = () => {
   const navigate = useNavigate();
   const { wishlist, toggleWishlist, addToCart } = useCart();
+
+  const { data: dbProducts = [], isLoading } = useProducts(true);
+
+  // Convert DB products to cart-compatible format
+  const products: (Product & { dbId: string })[] = dbProducts.map((p) => ({
+    id: parseInt(p.id.replace(/-/g, "").slice(0, 8), 16) || Math.random(),
+    dbId: p.id,
+    name: p.name,
+    category: p.category_name || "general",
+    price: `KSh ${Number(p.price_num).toLocaleString()}`,
+    priceNum: Number(p.price_num),
+    badge: p.badge,
+    img: p.img_url || "/placeholder.svg",
+    desc: p.description,
+    details: p.details || undefined,
+    shippingInfo: p.shipping_info || undefined,
+  }));
 
   const wishlistProducts = products.filter((p) => wishlist.includes(p.id));
 
@@ -27,7 +45,11 @@ const WishlistPage = () => {
           {wishlistProducts.length} {wishlistProducts.length === 1 ? "item" : "items"} saved
         </p>
 
-        {wishlistProducts.length === 0 ? (
+        {isLoading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-8 h-8 text-gray-300 animate-spin" />
+          </div>
+        ) : wishlistProducts.length === 0 ? (
           <div className="text-center py-20 border-2 border-dashed border-gray-200">
             <Heart className="w-12 h-12 text-gray-300 mx-auto mb-4" />
             <p className="font-body text-gray-400 text-sm mb-4">Your wishlist is empty</p>
@@ -47,7 +69,7 @@ const WishlistPage = () => {
               >
                 <div
                   className="relative overflow-hidden aspect-square cursor-pointer"
-                  onClick={() => navigate(`/product/${product.id}`)}
+                  onClick={() => navigate(`/product/${product.dbId}`)}
                 >
                   <img
                     src={product.img}

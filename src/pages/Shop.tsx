@@ -33,7 +33,7 @@ const ShopPage = () => {
   const { data: dbCategories = [] } = useCategories();
 
   // Convert DB products to cart-compatible format
-  const products: Product[] = dbProducts.map((p) => ({
+  const products: (Product & { dbId: string })[] = dbProducts.map((p) => ({
     id: parseInt(p.id.replace(/-/g, "").slice(0, 8), 16) || Math.random(),
     dbId: p.id,
     name: p.name,
@@ -140,7 +140,7 @@ const ShopPage = () => {
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
                 {paginatedProducts.map((product) => (
                   <div key={product.id} className="group border-2 border-gray-100 hover:border-black transition-all duration-300 bg-white cursor-pointer">
-                    <div className="relative overflow-hidden aspect-square" onClick={() => navigate(`/product/${product.id}`)}>
+                    <div className="relative overflow-hidden aspect-square" onClick={() => navigate(`/product/${product.dbId}`)}>
                       <img src={product.img} alt={product.name} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" />
                       {product.badge && (
                         <div className={`absolute top-3 left-3 font-body text-[9px] uppercase tracking-widest px-2.5 py-1 font-bold ${product.badge === "On Offer" ? "bg-[hsl(var(--gold))] text-white" : product.badge === "New In" ? "bg-black text-white" : product.badge === "Limited" ? "bg-red-600 text-white" : "bg-gray-800 text-white"}`}>
@@ -160,7 +160,7 @@ const ShopPage = () => {
                     </div>
                     <div className="p-4">
                       <div className="flex items-start justify-between gap-2 mb-1">
-                        <h3 className="font-display text-sm text-black font-bold leading-tight cursor-pointer" onClick={() => navigate(`/product/${product.id}`)}>{product.name}</h3>
+                        <h3 className="font-display text-sm text-black font-bold leading-tight cursor-pointer" onClick={() => navigate(`/product/${product.dbId}`)}>{product.name}</h3>
                         <p className="font-body text-sm text-black font-bold flex-shrink-0">{product.price}</p>
                       </div>
                       <p className="font-body text-gray-500 text-xs mb-3">{product.desc}</p>

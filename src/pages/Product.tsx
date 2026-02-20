@@ -1,16 +1,47 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { Heart, ShoppingBag, ArrowLeft, Truck, Shield, RefreshCw } from "lucide-react";
+import { Heart, ShoppingBag, ArrowLeft, Truck, Shield, RefreshCw, Loader2 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { products } from "@/data/products";
+import { useProducts } from "@/integrations/supabase/hooks/useProducts";
 import Navbar from "@/components/Navbar";
 import FooterSection from "@/components/FooterSection";
+import type { Product } from "@/context/CartContext";
 
 const ProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart, toggleWishlist, isInWishlist } = useCart();
 
-  const product = products.find((p) => p.id === Number(id));
+  const { data: dbProducts = [], isLoading } = useProducts(true);
+
+  // Convert DB products to cart-compatible format
+  const products: (Product & { dbId: string })[] = dbProducts.map((p) => ({
+    id: parseInt(p.id.replace(/-/g, "").slice(0, 8), 16) || Math.random(),
+    dbId: p.id,
+    name: p.name,
+    category: p.category_name || "general",
+    price: `KSh ${Number(p.price_num).toLocaleString()}`,
+    priceNum: Number(p.price_num),
+    badge: p.badge,
+    img: p.img_url || "/placeholder.svg",
+    desc: p.description,
+    details: p.details || undefined,
+    shippingInfo: p.shipping_info || undefined,
+  }));
+
+  // Find product by UUID (dbId) or by numeric id
+  const product = products.find((p) => p.dbId === id || String(p.id) === id);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Navbar />
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="w-8 h-8 text-gray-300 animate-spin" />
+        </div>
+        <FooterSection />
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -27,7 +58,7 @@ const ProductPage = () => {
     );
   }
 
-  const similar = products.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 3);
+  const similar = products.filter((p) => p.category === product.category && p.dbId !== product.dbId).slice(0, 3);
 
   return (
     <div className="min-h-screen bg-white">
@@ -130,7 +161,7 @@ const ProductPage = () => {
                 <div
                   key={p.id}
                   className="group border-2 border-gray-100 hover:border-black transition-all duration-300 bg-white cursor-pointer"
-                  onClick={() => navigate(`/product/${p.id}`)}
+                  onClick={() => navigate(`/product/${p.dbId}`)}
                 >
                   <div className="relative overflow-hidden aspect-square">
                     <img
