@@ -25,11 +25,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const checkAdminRole = async (userId: string) => {
     setAdminLoading(true);
     try {
+      // Any user in user_roles table is an admin (no role restrictions)
       const { data, error } = await supabase
         .from("user_roles")
         .select("role")
-        .eq("user_id", userId)
-        .in("role", ["admin", "manager"]);
+        .eq("user_id", userId);
       if (error) {
         console.error("Role check error:", error.message);
         setIsAdmin(false);
