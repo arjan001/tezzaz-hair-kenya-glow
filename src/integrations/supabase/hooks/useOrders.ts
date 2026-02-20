@@ -52,10 +52,12 @@ export function useCreateOrder() {
   const { toast } = useToast();
   return useMutation({
     mutationFn: async (order: Omit<DbOrder, "id" | "created_at" | "updated_at">) => {
-      const { data, error } = await supabase.from("orders").insert([order]).select();
+      // Use insert without .select() so that unauthenticated/guest checkout
+      // works correctly. The RLS INSERT policy allows anyone to create orders,
+      // but the SELECT policy restricts who can read them back. Using .select()
+      // after insert would fail for guests and cause a false "order failed" error.
+      const { error } = await supabase.from("orders").insert([order]);
       if (error) throw error;
-      if (!data || data.length === 0) throw new Error("Failed to create order");
-      return data[0] as DbOrder;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["orders"] }); },
     onError: (e: Error) => toast({ title: "Error placing order", description: e.message, variant: "destructive" }),

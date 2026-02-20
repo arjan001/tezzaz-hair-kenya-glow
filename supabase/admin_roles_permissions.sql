@@ -1,6 +1,0 @@
--- ============================================================
--- DEPRECATED: This script is no longer needed.
--- The permissions system has been removed.
--- All admin users now have full access to everything.
--- Use cleanup_and_simplify.sql instead.
--- ============================================================
