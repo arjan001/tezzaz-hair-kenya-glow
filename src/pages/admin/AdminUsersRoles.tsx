@@ -36,6 +36,82 @@ const initialUsers: User[] = [
   { id: "1", name: "Tezzaz Hair", email: "admin@tezzazhair.com", role: "Super Admin", status: "active", lastLogin: "19 Feb 2026" },
 ];
 
+const UserFormModal = ({
+  title,
+  onSubmit,
+  submitLabel,
+  onClose,
+  formData,
+  setFormData,
+}: {
+  title: string;
+  onSubmit: () => void;
+  submitLabel: string;
+  onClose: () => void;
+  formData: { name: string; email: string; role: string };
+  setFormData: React.Dispatch<React.SetStateAction<{ name: string; email: string; role: string }>>;
+}) => (
+  <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
+    <div className="bg-white w-full max-w-md rounded-lg">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h2 className="font-display text-lg font-bold">{title}</h2>
+        <button onClick={onClose} className="text-gray-400 hover:text-black">
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+      <div className="p-6 space-y-4">
+        <div>
+          <label className="font-body text-xs font-medium text-black block mb-1">Full Name *</label>
+          <input
+            type="text"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            placeholder="e.g. Jane Doe"
+            className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black"
+          />
+        </div>
+        <div>
+          <label className="font-body text-xs font-medium text-black block mb-1">Email *</label>
+          <input
+            type="email"
+            value={formData.email}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            placeholder="e.g. jane@example.com"
+            className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black"
+          />
+        </div>
+        <div>
+          <label className="font-body text-xs font-medium text-black block mb-1">Role *</label>
+          <select
+            value={formData.role}
+            onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+            className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black bg-white"
+          >
+            {roles.map((r) => (
+              <option key={r.name} value={r.name}>{r.name}</option>
+            ))}
+          </select>
+        </div>
+        <div className="flex justify-end gap-3 pt-3 border-t border-gray-100">
+          <button
+            onClick={onClose}
+            className="px-5 py-2.5 border border-gray-200 rounded font-body text-xs hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onSubmit}
+            disabled={!formData.name || !formData.email}
+            className="px-5 py-2.5 bg-black text-white rounded font-body text-xs hover:bg-gray-800 transition-colors disabled:bg-gray-300"
+          >
+            {submitLabel}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 const AdminUsersRoles = () => {
   const [users, setUsers] = useState<User[]>(initialUsers);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -97,78 +173,6 @@ const AdminUsersRoles = () => {
       )
     );
   };
-
-  const UserFormModal = ({
-    title,
-    onSubmit,
-    submitLabel,
-    onClose,
-  }: {
-    title: string;
-    onSubmit: () => void;
-    submitLabel: string;
-    onClose: () => void;
-  }) => (
-    <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
-      <div className="bg-white w-full max-w-md rounded-lg">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="font-display text-lg font-bold">{title}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-black">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-        <div className="p-6 space-y-4">
-          <div>
-            <label className="font-body text-xs font-medium text-black block mb-1">Full Name *</label>
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="e.g. Jane Doe"
-              className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black"
-            />
-          </div>
-          <div>
-            <label className="font-body text-xs font-medium text-black block mb-1">Email *</label>
-            <input
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              placeholder="e.g. jane@example.com"
-              className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black"
-            />
-          </div>
-          <div>
-            <label className="font-body text-xs font-medium text-black block mb-1">Role *</label>
-            <select
-              value={formData.role}
-              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-              className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black bg-white"
-            >
-              {roles.map((r) => (
-                <option key={r.name} value={r.name}>{r.name}</option>
-              ))}
-            </select>
-          </div>
-          <div className="flex justify-end gap-3 pt-3 border-t border-gray-100">
-            <button
-              onClick={onClose}
-              className="px-5 py-2.5 border border-gray-200 rounded font-body text-xs hover:bg-gray-50 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={onSubmit}
-              disabled={!formData.name || !formData.email}
-              className="px-5 py-2.5 bg-black text-white rounded font-body text-xs hover:bg-gray-800 transition-colors disabled:bg-gray-300"
-            >
-              {submitLabel}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <div>
@@ -327,6 +331,8 @@ const AdminUsersRoles = () => {
             setShowAddModal(false);
             resetForm();
           }}
+          formData={formData}
+          setFormData={setFormData}
         />
       )}
 
@@ -341,6 +347,8 @@ const AdminUsersRoles = () => {
             setSelectedUser(null);
             resetForm();
           }}
+          formData={formData}
+          setFormData={setFormData}
         />
       )}
 

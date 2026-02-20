@@ -14,6 +14,58 @@ import {
   Navigation,
 } from "lucide-react";
 
+const Toggle = ({ checked, onChange }: { checked: boolean; onChange: () => void }) => (
+  <div
+    className={`w-9 h-5 rounded-full relative cursor-pointer transition-colors ${checked ? "bg-black" : "bg-gray-200"}`}
+    onClick={onChange}
+  >
+    <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${checked ? "left-[18px]" : "left-0.5"}`} />
+  </div>
+);
+
+const InputField = ({ label, value, onChange, type = "text", placeholder = "", note = "" }: {
+  label: string; value: string; onChange: (v: string) => void; type?: string; placeholder?: string; note?: string;
+}) => (
+  <div>
+    <label className="font-body text-xs font-medium text-black block mb-1">{label}</label>
+    <input
+      type={type}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black"
+    />
+    {note && <p className="font-body text-[11px] text-gray-400 mt-1">{note}</p>}
+  </div>
+);
+
+const TextareaField = ({ label, value, onChange, rows = 3, note = "" }: {
+  label: string; value: string; onChange: (v: string) => void; rows?: number; note?: string;
+}) => (
+  <div>
+    <label className="font-body text-xs font-medium text-black block mb-1">{label}</label>
+    <textarea
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      rows={rows}
+      className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black resize-none"
+    />
+    {note && <p className="font-body text-[11px] text-gray-400 mt-1">{note}</p>}
+  </div>
+);
+
+const ToggleRow = ({ label, description, checked, onChange }: {
+  label: string; description: string; checked: boolean; onChange: () => void;
+}) => (
+  <div className="flex items-center justify-between py-3 border-b border-gray-100">
+    <div>
+      <p className="font-body text-sm font-medium text-black">{label}</p>
+      <p className="font-body text-xs text-gray-400">{description}</p>
+    </div>
+    <Toggle checked={checked} onChange={onChange} />
+  </div>
+);
+
 const AdminSettings = () => {
   const [activeTab, setActiveTab] = useState("general");
   const [saved, setSaved] = useState(false);
@@ -107,58 +159,6 @@ const AdminSettings = () => {
     { id: "theme", label: "Theme", icon: Palette },
     { id: "security", label: "Security", icon: Shield },
   ];
-
-  const Toggle = ({ checked, onChange }: { checked: boolean; onChange: () => void }) => (
-    <div
-      className={`w-9 h-5 rounded-full relative cursor-pointer transition-colors ${checked ? "bg-black" : "bg-gray-200"}`}
-      onClick={onChange}
-    >
-      <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${checked ? "left-[18px]" : "left-0.5"}`} />
-    </div>
-  );
-
-  const InputField = ({ label, value, onChange, type = "text", placeholder = "", note = "" }: {
-    label: string; value: string; onChange: (v: string) => void; type?: string; placeholder?: string; note?: string;
-  }) => (
-    <div>
-      <label className="font-body text-xs font-medium text-black block mb-1">{label}</label>
-      <input
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black"
-      />
-      {note && <p className="font-body text-[11px] text-gray-400 mt-1">{note}</p>}
-    </div>
-  );
-
-  const TextareaField = ({ label, value, onChange, rows = 3, note = "" }: {
-    label: string; value: string; onChange: (v: string) => void; rows?: number; note?: string;
-  }) => (
-    <div>
-      <label className="font-body text-xs font-medium text-black block mb-1">{label}</label>
-      <textarea
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        rows={rows}
-        className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black resize-none"
-      />
-      {note && <p className="font-body text-[11px] text-gray-400 mt-1">{note}</p>}
-    </div>
-  );
-
-  const ToggleRow = ({ label, description, checked, onChange }: {
-    label: string; description: string; checked: boolean; onChange: () => void;
-  }) => (
-    <div className="flex items-center justify-between py-3 border-b border-gray-100">
-      <div>
-        <p className="font-body text-sm font-medium text-black">{label}</p>
-        <p className="font-body text-xs text-gray-400">{description}</p>
-      </div>
-      <Toggle checked={checked} onChange={onChange} />
-    </div>
-  );
 
   return (
     <div>

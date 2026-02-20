@@ -57,6 +57,18 @@ const initialBanners: Banner[] = [];
 
 const ITEMS_PER_PAGE = 5;
 
+const Modal = ({ title, onClose, children, wide }: { title: string; onClose: () => void; children: React.ReactNode; wide?: boolean }) => (
+  <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
+    <div className={`bg-white w-full rounded-lg ${wide ? "max-w-xl" : "max-w-md"}`}>
+      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <h2 className="font-display text-lg font-bold">{title}</h2>
+        <button onClick={onClose} className="text-gray-400 hover:text-black"><X className="w-5 h-5" /></button>
+      </div>
+      <div className="p-6 max-h-[70vh] overflow-y-auto">{children}</div>
+    </div>
+  </div>
+);
+
 const AdminTheme = () => {
   const [activeTab, setActiveTab] = useState<"themes" | "banners" | "typography">("themes");
   const [themes, setThemes] = useState<ThemePreset[]>(initialThemes);
@@ -144,18 +156,6 @@ const AdminTheme = () => {
 
   const filteredThemes = themes.filter((t) => t.name.toLowerCase().includes(searchQuery.toLowerCase()));
   const filteredBanners = banners.filter((b) => b.title.toLowerCase().includes(searchQuery.toLowerCase()));
-
-  const Modal = ({ title, onClose, children, wide }: { title: string; onClose: () => void; children: React.ReactNode; wide?: boolean }) => (
-    <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
-      <div className={`bg-white w-full rounded-lg ${wide ? "max-w-xl" : "max-w-md"}`}>
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="font-display text-lg font-bold">{title}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-black"><X className="w-5 h-5" /></button>
-        </div>
-        <div className="p-6 max-h-[70vh] overflow-y-auto">{children}</div>
-      </div>
-    </div>
-  );
 
   return (
     <div>
