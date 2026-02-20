@@ -10,128 +10,154 @@ const emptyForm = {
   img_url: "", tags: "", in_stock: true, badge: "", is_active: true, details: "", shipping_info: "",
 };
 
-const ProductFormModal = ({ title, onSubmit, submitLabel, onClose, formData, setFormData, categories, uploading, handleImageUpload, isSubmitting }: {
-  title: string; onSubmit: () => void; submitLabel: string; onClose: () => void;
-  formData: typeof emptyForm; setFormData: (data: typeof emptyForm) => void;
-  categories: any[]; uploading: boolean; handleImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void; isSubmitting: boolean;
-}) => (
-  <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4" onClick={onClose}>
-    <div className="bg-white w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-lg" onClick={(e) => e.stopPropagation()}>
-      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-        <h2 className="font-display text-lg font-bold">{title}</h2>
-        <button onClick={onClose} className="text-gray-400 hover:text-black"><X className="w-5 h-5" /></button>
-      </div>
-      <form onSubmit={(e) => { e.preventDefault(); onSubmit(); }} className="p-6 space-y-4">
-        <div>
-          <label className="font-body text-xs font-medium text-black block mb-1">Product Name *</label>
-          <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            placeholder="e.g. Castor Oil Hair Serum"
-            className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black" />
+type ProductFormData = typeof emptyForm;
+
+const ProductFormModal = ({ title, onSubmit, submitLabel, onClose, initialData, categories, isSubmitting }: {
+  title: string; onSubmit: (data: ProductFormData) => void; submitLabel: string; onClose: () => void;
+  initialData: ProductFormData; categories: any[]; isSubmitting: boolean;
+}) => {
+  const [formData, setFormData] = useState<ProductFormData>({ ...initialData });
+  const [uploading, setUploading] = useState(false);
+  const { toast } = useToast();
+
+  const handleChange = (field: keyof ProductFormData, value: string | boolean) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const url = await uploadProductImage(file);
+      setFormData(prev => ({ ...prev, img_url: url }));
+      toast({ title: "Image uploaded!" });
+    } catch (err: unknown) {
+      toast({ title: "Upload failed", description: err instanceof Error ? err.message : "Unknown error", variant: "destructive" });
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-white w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-lg" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <h2 className="font-display text-lg font-bold">{title}</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-black"><X className="w-5 h-5" /></button>
         </div>
-        <div className="grid grid-cols-3 gap-3">
+        <form onSubmit={(e) => { e.preventDefault(); onSubmit(formData); }} className="p-6 space-y-4">
           <div>
-            <label className="font-body text-xs font-medium text-black block mb-1">Price (KSh) *</label>
-            <input type="number" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-              placeholder="1200"
+            <label className="font-body text-xs font-medium text-black block mb-1">Product Name *</label>
+            <input type="text" value={formData.name} onChange={(e) => handleChange("name", e.target.value)}
+              placeholder="e.g. Castor Oil Hair Serum"
               className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black" />
           </div>
-          <div>
-            <label className="font-body text-xs font-medium text-black block mb-1">Original Price</label>
-            <input type="number" value={formData.originalPrice} onChange={(e) => setFormData({ ...formData, originalPrice: e.target.value })}
-              placeholder="2000"
-              className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black" />
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <label className="font-body text-xs font-medium text-black block mb-1">Price (KSh) *</label>
+              <input type="number" value={formData.price} onChange={(e) => handleChange("price", e.target.value)}
+                placeholder="1200"
+                className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black" />
+            </div>
+            <div>
+              <label className="font-body text-xs font-medium text-black block mb-1">Original Price</label>
+              <input type="number" value={formData.originalPrice} onChange={(e) => handleChange("originalPrice", e.target.value)}
+                placeholder="2000"
+                className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black" />
+            </div>
+            <div>
+              <label className="font-body text-xs font-medium text-black block mb-1">Category</label>
+              <select value={formData.category_name} onChange={(e) => handleChange("category_name", e.target.value)}
+                className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black bg-white">
+                <option value="">Select...</option>
+                {categories.filter(c => c.slug !== "all").map((c) => <option key={c.id} value={c.name}>{c.name}</option>)}
+              </select>
+            </div>
           </div>
           <div>
-            <label className="font-body text-xs font-medium text-black block mb-1">Category</label>
-            <select value={formData.category_name} onChange={(e) => setFormData({ ...formData, category_name: e.target.value })}
-              className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black bg-white">
-              <option value="">Select...</option>
-              {categories.filter(c => c.slug !== "all").map((c) => <option key={c.id} value={c.name}>{c.name}</option>)}
-            </select>
+            <label className="font-body text-xs font-medium text-black block mb-1">Description</label>
+            <textarea value={formData.description} onChange={(e) => handleChange("description", e.target.value)}
+              rows={2} placeholder="Short product description..."
+              className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black resize-none" />
           </div>
-        </div>
-        <div>
-          <label className="font-body text-xs font-medium text-black block mb-1">Description</label>
-          <textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            rows={2} placeholder="Short product description..."
-            className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black resize-none" />
-        </div>
-        <div>
-          <label className="font-body text-xs font-medium text-black block mb-1">Full Details</label>
-          <textarea value={formData.details} onChange={(e) => setFormData({ ...formData, details: e.target.value })}
-            rows={3} placeholder="Full product description shown on product page..."
-            className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black resize-none" />
-        </div>
-        {/* Image Upload */}
-        <div>
-          <label className="font-body text-xs font-medium text-black block mb-1">Product Image</label>
-          <div className="border-2 border-dashed border-gray-200 rounded-lg p-3 text-center hover:border-gray-400 transition-colors">
-            {formData.img_url ? (
-              <div className="relative">
-                <img src={formData.img_url} alt="Preview" className="w-full h-40 object-cover rounded" />
-                <button type="button" onClick={() => setFormData({ ...formData, img_url: "" })} className="absolute top-2 right-2 bg-white rounded-full p-1 shadow">
-                  <X className="w-4 h-4 text-gray-600" />
-                </button>
+          <div>
+            <label className="font-body text-xs font-medium text-black block mb-1">Full Details</label>
+            <textarea value={formData.details} onChange={(e) => handleChange("details", e.target.value)}
+              rows={3} placeholder="Full product description shown on product page..."
+              className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black resize-none" />
+          </div>
+          {/* Image Upload */}
+          <div>
+            <label className="font-body text-xs font-medium text-black block mb-1">Product Image</label>
+            <div className="border-2 border-dashed border-gray-200 rounded-lg p-3 text-center hover:border-gray-400 transition-colors">
+              {formData.img_url ? (
+                <div className="relative">
+                  <img src={formData.img_url} alt="Preview" className="w-full h-40 object-cover rounded" />
+                  <button type="button" onClick={() => handleChange("img_url", "")} className="absolute top-2 right-2 bg-white rounded-full p-1 shadow">
+                    <X className="w-4 h-4 text-gray-600" />
+                  </button>
+                </div>
+              ) : (
+                <label className="cursor-pointer block">
+                  {uploading ? <Loader2 className="w-6 h-6 text-gray-300 mx-auto animate-spin" /> : <Upload className="w-6 h-6 text-gray-300 mx-auto mb-1" />}
+                  <p className="font-body text-xs text-gray-500 mt-1">{uploading ? "Uploading..." : "Click to upload"}</p>
+                  <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" disabled={uploading} />
+                </label>
+              )}
+            </div>
+            <input type="text" value={formData.img_url.startsWith("http") ? formData.img_url : ""} onChange={(e) => handleChange("img_url", e.target.value)}
+              placeholder="Or paste image URL..."
+              className="mt-2 w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black" />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="font-body text-xs font-medium text-black block mb-1">Badge</label>
+              <select value={formData.badge} onChange={(e) => handleChange("badge", e.target.value)}
+                className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black bg-white">
+                <option value="">None</option>
+                <option value="New In">New In</option>
+                <option value="Best Seller">Best Seller</option>
+                <option value="On Offer">On Offer</option>
+                <option value="Limited">Limited</option>
+              </select>
+            </div>
+            <div>
+              <label className="font-body text-xs font-medium text-black block mb-1">Tags (comma separated)</label>
+              <input type="text" value={formData.tags} onChange={(e) => handleChange("tags", e.target.value)}
+                placeholder="hair, serum, natural"
+                className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black" />
+            </div>
+          </div>
+          <div className="flex items-center gap-6">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <div className={`w-9 h-5 rounded-full relative transition-colors ${formData.in_stock ? "bg-black" : "bg-gray-200"}`}
+                onClick={() => handleChange("in_stock", !formData.in_stock)}>
+                <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${formData.in_stock ? "left-[18px]" : "left-0.5"}`} />
               </div>
-            ) : (
-              <label className="cursor-pointer block">
-                {uploading ? <Loader2 className="w-6 h-6 text-gray-300 mx-auto animate-spin" /> : <Upload className="w-6 h-6 text-gray-300 mx-auto mb-1" />}
-                <p className="font-body text-xs text-gray-500 mt-1">{uploading ? "Uploading..." : "Click to upload"}</p>
-                <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" disabled={uploading} />
-              </label>
-            )}
+              <span className="font-body text-xs text-black">In Stock</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <div className={`w-9 h-5 rounded-full relative transition-colors ${formData.is_active ? "bg-black" : "bg-gray-200"}`}
+                onClick={() => handleChange("is_active", !formData.is_active)}>
+                <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${formData.is_active ? "left-[18px]" : "left-0.5"}`} />
+              </div>
+              <span className="font-body text-xs text-black">Active</span>
+            </label>
           </div>
-          <input type="text" value={formData.img_url.startsWith("http") ? formData.img_url : ""} onChange={(e) => setFormData({ ...formData, img_url: e.target.value })}
-            placeholder="Or paste image URL..."
-            className="mt-2 w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black" />
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className="font-body text-xs font-medium text-black block mb-1">Badge</label>
-            <select value={formData.badge} onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
-              className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black bg-white">
-              <option value="">None</option>
-              <option value="New In">New In</option>
-              <option value="Best Seller">Best Seller</option>
-              <option value="On Offer">On Offer</option>
-              <option value="Limited">Limited</option>
-            </select>
+          <div className="flex justify-end gap-3 pt-3 border-t border-gray-100">
+            <button type="button" onClick={onClose} className="px-5 py-2.5 border border-gray-200 rounded font-body text-xs hover:bg-gray-50 transition-colors">Cancel</button>
+            <button type="submit" disabled={!formData.name || !formData.price || isSubmitting}
+              className="px-5 py-2.5 bg-black text-white rounded font-body text-xs hover:bg-gray-800 transition-colors disabled:bg-gray-300 flex items-center gap-2">
+              {isSubmitting && <Loader2 className="w-3 h-3 animate-spin" />}
+              {submitLabel}
+            </button>
           </div>
-          <div>
-            <label className="font-body text-xs font-medium text-black block mb-1">Tags (comma separated)</label>
-            <input type="text" value={formData.tags} onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-              placeholder="hair, serum, natural"
-              className="w-full border border-gray-200 rounded px-3 py-2.5 font-body text-sm focus:outline-none focus:border-black" />
-          </div>
-        </div>
-        <div className="flex items-center gap-6">
-          <label className="flex items-center gap-2 cursor-pointer">
-            <div className={`w-9 h-5 rounded-full relative transition-colors ${formData.in_stock ? "bg-black" : "bg-gray-200"}`}
-              onClick={() => setFormData({ ...formData, in_stock: !formData.in_stock })}>
-              <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${formData.in_stock ? "left-[18px]" : "left-0.5"}`} />
-            </div>
-            <span className="font-body text-xs text-black">In Stock</span>
-          </label>
-          <label className="flex items-center gap-2 cursor-pointer">
-            <div className={`w-9 h-5 rounded-full relative transition-colors ${formData.is_active ? "bg-black" : "bg-gray-200"}`}
-              onClick={() => setFormData({ ...formData, is_active: !formData.is_active })}>
-              <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${formData.is_active ? "left-[18px]" : "left-0.5"}`} />
-            </div>
-            <span className="font-body text-xs text-black">Active</span>
-          </label>
-        </div>
-        <div className="flex justify-end gap-3 pt-3 border-t border-gray-100">
-          <button type="button" onClick={onClose} className="px-5 py-2.5 border border-gray-200 rounded font-body text-xs hover:bg-gray-50 transition-colors">Cancel</button>
-          <button type="submit" disabled={!formData.name || !formData.price || isSubmitting}
-            className="px-5 py-2.5 bg-black text-white rounded font-body text-xs hover:bg-gray-800 transition-colors disabled:bg-gray-300 flex items-center gap-2">
-            {isSubmitting && <Loader2 className="w-3 h-3 animate-spin" />}
-            {submitLabel}
-          </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const AdminProducts = () => {
   const { data: products = [], isLoading } = useProducts(false);
@@ -148,8 +174,7 @@ const AdminProducts = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [formData, setFormData] = useState({ ...emptyForm });
-  const [uploading, setUploading] = useState(false);
+  const [editInitialData, setEditInitialData] = useState<ProductFormData | null>(null);
 
   const selectedProduct = products.find((p) => p.id === selectedId) || null;
 
@@ -159,12 +184,10 @@ const AdminProducts = () => {
     return matchSearch && matchCat;
   });
 
-  const resetForm = () => setFormData({ ...emptyForm });
-
   const openEdit = (id: string) => {
     const p = products.find((x) => x.id === id)!;
     setSelectedId(id);
-    setFormData({
+    setEditInitialData({
       name: p.name, price: String(p.price_num), originalPrice: p.original_price ? String(p.original_price) : "",
       category_name: p.category_name || "", description: p.description, img_url: p.img_url || "",
       tags: (p.tags || []).join(", "), in_stock: p.in_stock, badge: p.badge || "",
@@ -173,22 +196,7 @@ const AdminProducts = () => {
     setShowEditModal(true);
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploading(true);
-    try {
-      const url = await uploadProductImage(file);
-      setFormData((f) => ({ ...f, img_url: url }));
-      toast({ title: "Image uploaded!" });
-    } catch (err: unknown) {
-      toast({ title: "Upload failed", description: err instanceof Error ? err.message : "Unknown error", variant: "destructive" });
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const handleAdd = () => {
+  const handleAdd = (formData: ProductFormData) => {
     if (!formData.name || !formData.price) return;
     createProduct.mutate({
       name: formData.name,
@@ -203,10 +211,10 @@ const AdminProducts = () => {
       is_active: formData.is_active,
       details: formData.details || null,
       shipping_info: formData.shipping_info || null,
-    }, { onSuccess: () => { setShowAddModal(false); resetForm(); } });
+    }, { onSuccess: () => { setShowAddModal(false); } });
   };
 
-  const handleEdit = () => {
+  const handleEdit = (formData: ProductFormData) => {
     if (!selectedId) return;
     updateProduct.mutate({
       id: selectedId,
@@ -222,7 +230,7 @@ const AdminProducts = () => {
       is_active: formData.is_active,
       details: formData.details || null,
       shipping_info: formData.shipping_info || null,
-    }, { onSuccess: () => { setShowEditModal(false); setSelectedId(null); resetForm(); } });
+    }, { onSuccess: () => { setShowEditModal(false); setSelectedId(null); setEditInitialData(null); } });
   };
 
   const handleDelete = () => {
@@ -241,7 +249,7 @@ const AdminProducts = () => {
           <button className="flex items-center gap-1.5 px-3 py-2 border border-gray-200 rounded font-body text-xs hover:bg-gray-50 transition-colors">
             <Download className="w-3.5 h-3.5" /> Export
           </button>
-          <button onClick={() => { resetForm(); setShowAddModal(true); }}
+          <button onClick={() => setShowAddModal(true)}
             className="flex items-center gap-1.5 px-4 py-2 bg-black text-white rounded font-body text-xs hover:bg-gray-800 transition-colors">
             <Plus className="w-3.5 h-3.5" /> Add Product
           </button>
@@ -336,8 +344,8 @@ const AdminProducts = () => {
         </div>
       </div>
 
-      {showAddModal && <ProductFormModal title="Add Product" onSubmit={handleAdd} submitLabel="Add Product" onClose={() => { setShowAddModal(false); resetForm(); }} formData={formData} setFormData={setFormData} categories={categories} uploading={uploading} handleImageUpload={handleImageUpload} isSubmitting={createProduct.isPending || updateProduct.isPending} />}
-      {showEditModal && <ProductFormModal title="Edit Product" onSubmit={handleEdit} submitLabel="Save Changes" onClose={() => { setShowEditModal(false); setSelectedId(null); resetForm(); }} formData={formData} setFormData={setFormData} categories={categories} uploading={uploading} handleImageUpload={handleImageUpload} isSubmitting={createProduct.isPending || updateProduct.isPending} />}
+      {showAddModal && <ProductFormModal title="Add Product" onSubmit={handleAdd} submitLabel="Add Product" onClose={() => setShowAddModal(false)} initialData={emptyForm} categories={categories} isSubmitting={createProduct.isPending} />}
+      {showEditModal && editInitialData && <ProductFormModal title="Edit Product" onSubmit={handleEdit} submitLabel="Save Changes" onClose={() => { setShowEditModal(false); setSelectedId(null); setEditInitialData(null); }} initialData={editInitialData} categories={categories} isSubmitting={updateProduct.isPending} />}
 
       {/* Preview Modal */}
       {showPreviewModal && selectedProduct && (

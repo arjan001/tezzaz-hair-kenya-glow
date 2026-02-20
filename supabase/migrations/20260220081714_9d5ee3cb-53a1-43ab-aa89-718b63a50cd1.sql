@@ -270,9 +270,12 @@ CREATE POLICY "Admins can manage roles" ON public.user_roles FOR ALL USING (publ
 CREATE POLICY "Anyone can view categories" ON public.categories FOR SELECT USING (true);
 CREATE POLICY "Admins can manage categories" ON public.categories FOR ALL USING (public.is_admin(auth.uid()));
 
--- PRODUCTS – public read active, admin full
+-- PRODUCTS – public read active, admin full CRUD
 CREATE POLICY "Anyone can view active products" ON public.products FOR SELECT USING (is_active = true);
-CREATE POLICY "Admins can manage products" ON public.products FOR ALL USING (public.is_admin(auth.uid()));
+CREATE POLICY "Admins can view all products" ON public.products FOR SELECT USING (public.is_admin(auth.uid()));
+CREATE POLICY "Admins can insert products" ON public.products FOR INSERT WITH CHECK (public.is_admin(auth.uid()));
+CREATE POLICY "Admins can update products" ON public.products FOR UPDATE USING (public.is_admin(auth.uid())) WITH CHECK (public.is_admin(auth.uid()));
+CREATE POLICY "Admins can delete products" ON public.products FOR DELETE USING (public.is_admin(auth.uid()));
 
 -- GALLERY – public read
 CREATE POLICY "Anyone can view gallery" ON public.gallery_items FOR SELECT USING (true);
@@ -315,10 +318,12 @@ CREATE POLICY "Admins can view analytics" ON public.analytics_events FOR SELECT 
 -- STORAGE POLICIES
 CREATE POLICY "Public read products bucket" ON storage.objects FOR SELECT USING (bucket_id = 'products');
 CREATE POLICY "Admins upload products" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'products' AND public.is_admin(auth.uid()));
+CREATE POLICY "Admins update products" ON storage.objects FOR UPDATE USING (bucket_id = 'products' AND public.is_admin(auth.uid()));
 CREATE POLICY "Admins delete products" ON storage.objects FOR DELETE USING (bucket_id = 'products' AND public.is_admin(auth.uid()));
 
 CREATE POLICY "Public read gallery bucket" ON storage.objects FOR SELECT USING (bucket_id = 'gallery');
 CREATE POLICY "Admins upload gallery" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'gallery' AND public.is_admin(auth.uid()));
+CREATE POLICY "Admins update gallery" ON storage.objects FOR UPDATE USING (bucket_id = 'gallery' AND public.is_admin(auth.uid()));
 CREATE POLICY "Admins delete gallery" ON storage.objects FOR DELETE USING (bucket_id = 'gallery' AND public.is_admin(auth.uid()));
 
 CREATE POLICY "Public read avatars" ON storage.objects FOR SELECT USING (bucket_id = 'avatars');

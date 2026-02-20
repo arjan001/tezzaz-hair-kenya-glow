@@ -98,12 +98,9 @@ export function useAdminAuth() {
 
     // After signup, promote to admin if no admin exists
     if (data.user) {
-      const { data: existingAdmins } = await supabase
-        .from("user_roles")
-        .select("id")
-        .eq("role", "admin");
+      const { data: adminExistsResult } = await supabase.rpc("admin_exists");
 
-      if (!existingAdmins || existingAdmins.length === 0) {
+      if (!adminExistsResult) {
         // This is the first admin - promote via RPC
         await supabase.rpc("promote_to_admin", { _user_id: data.user.id });
       }
@@ -141,13 +138,21 @@ export function useAdminExists() {
 
   useEffect(() => {
     const check = async () => {
-      const { data } = await supabase
-        .from("user_roles")
-        .select("id")
-        .eq("role", "admin")
-        .limit(1);
+      // Use the admin_exists() SECURITY DEFINER RPC function
+      // which can check all roles regardless of the caller's auth status
+      const { data, error } = await supabase.rpc("admin_exists");
 
-      setExists(!!data && data.length > 0);
+      if (error) {
+        // Fallback to direct query if RPC is not available
+        const { data: roles } = await supabase
+          .from("user_roles")
+          .select("id")
+          .eq("role", "admin")
+          .limit(1);
+        setExists(!!roles && roles.length > 0);
+      } else {
+        setExists(!!data);
+      }
       setLoading(false);
     };
     check();
