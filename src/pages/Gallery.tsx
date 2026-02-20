@@ -43,6 +43,7 @@ const Gallery = () => {
       <SEOHead
         title="Gallery | Tezzaz Hair & Beauty Studio Nairobi"
         description="Browse our gallery of stunning hair designs, braids, locs, and nail art by Tezzaz Hair Nairobi."
+        canonicalPath="/gallery"
       />
       <Navbar />
 
